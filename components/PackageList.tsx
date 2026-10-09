@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { PackageItem } from '@/types/package.types';
 import PackageCard from './PackageCard';
-import { Filter, Calendar, MapPin, Search } from 'lucide-react';
+import { Filter, Search } from 'lucide-react';
 
 interface PackageListProps {
   initialPackages: PackageItem[];
@@ -27,107 +27,91 @@ export default function PackageList({ initialPackages }: PackageListProps) {
   });
 
   return (
-    <section id="jadwal" className="py-12 px-4 max-w-7xl mx-auto space-y-8">
-      <div className="space-y-2">
-        <div className="inline-flex items-center gap-2 text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full uppercase tracking-wider">
-          <Calendar className="w-3.5 h-3.5" />
-          Jadwal Resmi Musim 1448 H
+    <section id="jadwal" className="py-14 md:py-18 px-4 max-w-7xl mx-auto space-y-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-5">
+        <div>
+          <span className="text-xs font-semibold text-emerald-800 uppercase tracking-wider block mb-1">
+            Katalog Keberangkatan
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+            Daftar Paket Umroh &amp; Haji Khusus
+          </h2>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
-          Katalog Paket Umroh &amp; Haji Khusus
-        </h2>
-        <p className="text-sm text-slate-500 max-w-2xl">
-          Pilih jadwal keberangkatan dan jenis program sesuai kebutuhan ibadah Anda dan keluarga.
-        </p>
+        <div className="text-xs text-slate-500 font-mono">
+          Tersedia {filteredPackages.length} pilihan paket
+        </div>
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
-            <Filter className="w-4 h-4 text-emerald-700" />
-            <span>Filter Jadwal &amp; Keberangkatan</span>
-          </div>
-          <span className="text-xs text-slate-500 font-medium">
-            Ditemukan {filteredPackages.length} Paket
-          </span>
-        </div>
-
+      <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {/* Filter Search */}
+          {/* Search */}
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Cari Paket / Hotel / Maskapai</label>
+            <label className="block text-[11px] font-semibold text-slate-600 mb-1">Cari Paket / Hotel / Maskapai</label>
             <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Contoh: Pullman, Garuda..."
-                className="w-full text-xs border border-slate-300 rounded-xl pl-9 pr-3 py-2.5 bg-white focus:outline-emerald-600"
+                placeholder="Misal: Pullman, Garuda..."
+                className="w-full text-xs border border-slate-200 rounded-lg pl-8 pr-3 py-2 bg-slate-50 focus:bg-white focus:outline-emerald-700 transition-colors"
               />
             </div>
           </div>
 
-          {/* Filter Kategori */}
+          {/* Kategori */}
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Kategori Program</label>
+            <label className="block text-[11px] font-semibold text-slate-600 mb-1">Kategori Program</label>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full text-xs border border-slate-300 rounded-xl p-2.5 bg-white focus:outline-emerald-600"
+              className="w-full text-xs border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-emerald-700 transition-colors"
             >
               <option value="all">Semua Kategori</option>
-              <option value="reguler_vip">Reguler VIP (Ring 1 Pelataran)</option>
-              <option value="ekonomis">Ekonomis Berkah</option>
+              <option value="reguler_vip">VIP Pelataran</option>
+              <option value="ekonomis">Ekonomis</option>
               <option value="plus_wisata">Plus Wisata (Turki / Thaif)</option>
               <option value="haji_khusus">Haji Khusus Kemenag</option>
             </select>
           </div>
 
-          {/* Filter Kota Keberangkatan */}
+          {/* Kota Keberangkatan */}
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Kota Keberangkatan</label>
-            <div className="relative">
-              <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-              <select
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
-                className="w-full text-xs border border-slate-300 rounded-xl pl-9 pr-3 py-2.5 bg-white focus:outline-emerald-600"
-              >
-                <option value="all">Semua Bandara</option>
-                <option value="Jakarta">Jakarta (CGK)</option>
-                <option value="Surabaya">Surabaya (SUB)</option>
-                <option value="Makassar">Makassar (UPG)</option>
-              </select>
-            </div>
+            <label className="block text-[11px] font-semibold text-slate-600 mb-1">Kota Keberangkatan</label>
+            <select
+              value={selectedCity}
+              onChange={(e) => setSelectedCity(e.target.value)}
+              className="w-full text-xs border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-emerald-700 transition-colors"
+            >
+              <option value="all">Semua Embarkasi</option>
+              <option value="Jakarta">Jakarta (CGK)</option>
+              <option value="Surabaya">Surabaya (SUB)</option>
+              <option value="Makassar">Makassar (UPG)</option>
+            </select>
           </div>
         </div>
       </div>
 
       {/* Grid Paket */}
       {filteredPackages.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
           {filteredPackages.map((pkg) => (
             <PackageCard key={pkg.id} pkg={pkg} />
           ))}
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-3">
-          <div className="w-12 h-12 mx-auto bg-slate-100 rounded-full flex items-center justify-center text-slate-400">
-            <Filter className="w-6 h-6" />
-          </div>
-          <h4 className="font-bold text-slate-800 text-sm">Tidak ada paket yang sesuai dengan filter</h4>
-          <p className="text-xs text-slate-500">Coba ubah opsi pencarian atau pilih kategori lain.</p>
+        <div className="bg-white rounded-xl border border-slate-200 p-12 text-center space-y-2">
+          <div className="text-xs font-semibold text-slate-700">Tidak ada paket yang cocok dengan filter.</div>
           <button
             onClick={() => {
               setSelectedCategory('all');
               setSelectedCity('all');
               setSearchQuery('');
             }}
-            className="text-xs text-emerald-800 font-bold hover:underline"
+            className="text-xs text-emerald-800 font-semibold hover:underline"
           >
-            Reset Semua Filter
+            Reset filter pencarian
           </button>
         </div>
       )}
