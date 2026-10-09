@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mitra-umroh-v1';
+const CACHE_NAME = 'mitra-umroh-v2';
 const OFFLINE_URLS = ['/', '/tracking', '/manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {
