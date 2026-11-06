@@ -1,4 +1,4 @@
-import { ShieldCheck, MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Footer() {
@@ -10,45 +10,48 @@ export default function Footer() {
           <div className="space-y-3">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-lg bg-[#0e3b2f] text-amber-300 font-serif font-bold flex items-center justify-center text-base">
-                M
+                D
               </div>
               <div>
-                <div className="font-bold text-white text-sm leading-tight">Mitra Umroh Mandiri</div>
-                <div className="text-[10px] text-emerald-300/70">PPIU U.412/2021 &bull; PIHK 912/2023</div>
+                <div className="font-bold text-white text-sm leading-tight">Darunnisa Travel</div>
+                <div className="text-[10px] text-emerald-300/70">Yayasan Darunnisa &bull; Sejak 1991</div>
               </div>
             </div>
             <p className="text-slate-400 leading-relaxed text-[11px]">
-              Penyelenggara Perjalanan Ibadah Umrah dan Haji Khusus resmi terdaftar di Kementerian Agama RI dan terintegrasi sistem pengawasan SISKOPATUH.
+              PT Darunnisa Wisata Barokah (Yayasan Darunnisa). Penyelenggara perjalanan Umrah berafiliasi konsorsium KBIH dan Haji Khusus resmi izin Kementerian Agama RI.
             </p>
+            <div className="text-[10px] text-amber-200/90 font-mono">
+              PPIU U.412/2021 &bull; PIHK 912/2023
+            </div>
           </div>
 
           {/* Kolom 2: Navigasi Program */}
           <div className="space-y-2.5">
-            <h4 className="font-semibold text-white text-xs uppercase tracking-wider">Program</h4>
+            <h4 className="font-semibold text-white text-xs uppercase tracking-wider">Layanan &amp; Program</h4>
             <ul className="space-y-2 text-slate-400 text-[11px]">
               <li>
                 <Link href="/#jadwal" className="hover:text-amber-200 transition-colors">
-                  Umroh VIP Pelataran 9 Hari
+                  Katalog Umrah &amp; Haji (UI-01)
                 </Link>
               </li>
               <li>
-                <Link href="/#jadwal" className="hover:text-amber-200 transition-colors">
-                  Umroh Plus Turki Cappadocia
-                </Link>
-              </li>
-              <li>
-                <Link href="/#jadwal" className="hover:text-amber-200 transition-colors">
-                  Haji Khusus Kuota Kemenag
+                <Link href="/#daftar" className="hover:text-amber-200 transition-colors">
+                  Pengajuan Pendaftaran Daring (UI-03)
                 </Link>
               </li>
               <li>
                 <Link href="/#rekomendasi-ml" className="hover:text-amber-200 transition-colors">
-                  Pencocok Kamar Jemaah
+                  Rekomendasi Paket AI (UI-04)
+                </Link>
+              </li>
+              <li>
+                <Link href="/#kalkulator-biaya" className="hover:text-amber-200 transition-colors">
+                  Simulasi Estimasi Biaya
                 </Link>
               </li>
               <li>
                 <Link href="/tracking" className="hover:text-amber-200 transition-colors">
-                  Lacak Berkas &amp; Dokumen
+                  Lacak Berkas Jemaah
                 </Link>
               </li>
             </ul>
@@ -56,19 +59,19 @@ export default function Footer() {
 
           {/* Kolom 3: Kontak Operasional */}
           <div className="space-y-2.5">
-            <h4 className="font-semibold text-white text-xs uppercase tracking-wider">Kontak Kantor</h4>
+            <h4 className="font-semibold text-white text-xs uppercase tracking-wider">Kantor Operasional</h4>
             <div className="space-y-2 text-slate-400 text-[11px]">
               <div className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                <span>Gedung Graha Mandiri Lt. 3, Jl. Protokol No. 88, Jakarta Selatan</span>
+                <span>Gedung Yayasan Darunnisa, Jl. Pemuda Raya No. 45, Rawamangun, Jakarta Timur</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>0812-3456-7890</span>
+                <span>0812-3456-7890 / 021-4786-9901</span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>info@mitraumrohmandiri.com</span>
+                <span>operasional@darunnisatravel.id</span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
@@ -79,9 +82,9 @@ export default function Footer() {
 
           {/* Kolom 4: Kepatuhan Hukum */}
           <div className="space-y-2.5">
-            <h4 className="font-semibold text-white text-xs uppercase tracking-wider">Kepatuhan Hukum</h4>
+            <h4 className="font-semibold text-white text-xs uppercase tracking-wider">Kepatuhan Hukum &amp; Privasi</h4>
             <p className="text-slate-400 leading-relaxed text-[11px]">
-              Seluruh data identitas jemaah dilindungi sesuai UU Pelindungan Data Pribadi (UU PDP No. 27/2022). Jemaah diproteksi asuransi perjalanan internasional.
+              Sesuai arahan mitra, dokumen fisik sensitif (KTP, paspor, buku nikah) diproses manual di kantor yayasan demi keamanan data jemaah. Terhubung sistem pengawasan SISKOPATUH Kemenag RI.
             </p>
             <div className="pt-1">
               <Link
@@ -97,7 +100,7 @@ export default function Footer() {
         {/* Baris Hak Cipta */}
         <div className="pt-6 border-t border-[#09261d] flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-500">
           <div>
-            &copy; 2026 Mitra Umroh Mandiri. Seluruh hak cipta dilindungi.
+            &copy; 2026 Yayasan Darunnisa (PT Darunnisa Wisata Barokah). Seluruh hak cipta dilindungi.
           </div>
           <div className="flex items-center gap-4">
             <span>Standar Resmi SISKOPATUH</span>

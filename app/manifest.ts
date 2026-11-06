@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Mitra Umroh Mandiri',
-    short_name: 'Mitra Umroh',
-    description: 'Aplikasi Resmi Layanan Haji Khusus & Umroh Berizin Kemenag RI',
+    name: 'Darunnisa Hajj & Umrah Travel',
+    short_name: 'Darunnisa',
+    description: 'Aplikasi Resmi Layanan Haji Khusus & Umroh Yayasan Darunnisa Berizin Kemenag RI',
     start_url: '/',
     display: 'standalone',
     orientation: 'portrait',

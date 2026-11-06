@@ -124,7 +124,7 @@ export default function TrackingPageClient() {
               <div>
                 <span className="text-slate-500 block">Paket yang Dipilih:</span>
                 <strong className="text-slate-800 font-semibold">
-                  {bookingData.packages?.name || 'Paket Umroh Reguler'}
+                  {bookingData.packages?.nama_paket || bookingData.packages?.name || 'Paket Umroh Reguler'}
                 </strong>
               </div>
               <div>

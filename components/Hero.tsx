@@ -1,21 +1,26 @@
 import Link from 'next/link';
-import { ArrowDown, Calendar, Search } from 'lucide-react';
+import { Calendar, Sparkles, ClipboardCheck } from 'lucide-react';
 
-export default function Hero() {
+interface HeroProps {
+  onOpenRegister?: () => void;
+}
+
+export default function Hero({ onOpenRegister }: HeroProps) {
   return (
-    <section className="bg-gradient-to-b from-[#08221b] via-[#092921] to-[#0b3329] text-white pt-16 pb-14 md:pt-20 md:pb-18 px-4 border-b border-[#124235]">
+    <section className="bg-gradient-to-b from-[#08221b] via-[#092921] to-[#0b3329] text-white pt-14 pb-12 md:pt-20 md:pb-16 px-4 border-b border-[#124235]">
       <div className="max-w-7xl mx-auto">
         <div className="max-w-3xl space-y-5">
-          <div className="inline-flex items-center gap-2 text-[11px] font-semibold text-emerald-300 bg-[#0e3b2f] border border-[#1b5544] px-3 py-1 rounded-full uppercase tracking-wider">
-            <span>Musim Umroh 1448 H / 2026–2027</span>
+          <div className="inline-flex items-center gap-2 text-[11px] font-semibold text-emerald-300 bg-[#0e3b2f] border border-[#1b5544] px-3.5 py-1 rounded-full uppercase tracking-wider">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Yayasan Darunnisa &bull; Musim 1448 H / 2026–2027</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-balance leading-[1.1] text-slate-100">
-            Jadwal Resmi Umroh &amp; Haji Khusus
+            Darunnisa Hajj &amp; Umrah Travel
           </h1>
 
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl text-pretty font-normal">
-            Hotel bintang 5 di pelataran Masjidil Haram dan Nabawi, penerbangan langsung Garuda Indonesia dan Saudia Airlines, serta bimbingan muthawif bersertifikasi Kemenag.
+            Biro perjalanan Haji Khusus dan Umrah berafiliasi konsorsium KBIH sejak 1991. Fasilitas hotel bintang 5 pelataran Masjidil Haram dan Nabawi, penerbangan langsung Garuda &amp; Saudia, serta bimbingan muthawif bersertifikasi resmi.
           </p>
 
           <div className="pt-2 flex flex-wrap gap-3">
@@ -24,15 +29,33 @@ export default function Hero() {
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-semibold px-5 py-3 rounded-xl text-xs sm:text-sm transition-colors"
             >
               <Calendar className="w-4 h-4" />
-              <span>Lihat Daftar Paket</span>
+              <span>Lihat Jadwal Paket</span>
             </Link>
+
+            {onOpenRegister ? (
+              <button
+                onClick={onOpenRegister}
+                className="inline-flex items-center gap-2 bg-[#0e3b2f] hover:bg-[#134d3d] text-emerald-100 border border-[#1c5a48] font-medium px-5 py-3 rounded-xl text-xs sm:text-sm transition-colors cursor-pointer"
+              >
+                <ClipboardCheck className="w-4 h-4 text-amber-300" />
+                <span>Pengajuan Pendaftaran</span>
+              </button>
+            ) : (
+              <Link
+                href="#daftar"
+                className="inline-flex items-center gap-2 bg-[#0e3b2f] hover:bg-[#134d3d] text-emerald-100 border border-[#1c5a48] font-medium px-5 py-3 rounded-xl text-xs sm:text-sm transition-colors"
+              >
+                <ClipboardCheck className="w-4 h-4 text-amber-300" />
+                <span>Pengajuan Pendaftaran</span>
+              </Link>
+            )}
 
             <Link
               href="#rekomendasi-ml"
-              className="inline-flex items-center gap-2 bg-[#0e3b2f] hover:bg-[#134d3d] text-emerald-100 border border-[#1c5a48] font-medium px-5 py-3 rounded-xl text-xs sm:text-sm transition-colors"
+              className="inline-flex items-center gap-2 bg-emerald-950/60 hover:bg-[#0e3b2f] text-emerald-200 border border-emerald-800/60 font-medium px-4 py-3 rounded-xl text-xs sm:text-sm transition-colors"
             >
-              <Search className="w-4 h-4 text-emerald-300" />
-              <span>Pencocok Kebutuhan Kamar</span>
+              <Sparkles className="w-4 h-4 text-emerald-400" />
+              <span>Rekomendasi AI</span>
             </Link>
           </div>
 
@@ -42,7 +65,7 @@ export default function Hero() {
               <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-amber-200 tabular-nums">
                 &lt; 100m
               </div>
-              <div className="text-slate-300 text-[11px] mt-0.5">Jarak hotel ke pintu masjid</div>
+              <div className="text-slate-300 text-[11px] mt-0.5">Jarak hotel ke pelataran masjid</div>
             </div>
 
             <div>
@@ -54,9 +77,9 @@ export default function Hero() {
 
             <div className="col-span-2 sm:col-span-1">
               <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-emerald-300 tabular-nums">
-                100% Legal
+                Resmi Kemenag
               </div>
-              <div className="text-slate-300 text-[11px] mt-0.5">Terdaftar izin PPIU &amp; PIHK</div>
+              <div className="text-slate-300 text-[11px] mt-0.5">Izin PPIU &amp; PIHK Terakreditasi A</div>
             </div>
           </div>
         </div>

@@ -22,14 +22,14 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Mitra Umroh Mandiri | Haji Khusus & Umroh Resmi Kemenag RI',
+  title: 'Darunnisa Hajj & Umrah Travel | Yayasan Darunnisa Resmi Kemenag RI',
   description:
-    'Penyelenggara perjalanan ibadah umroh dan haji khusus resmi berizin Kemenag RI. Dilengkapi fitur rekomendasi cerdas Machine Learning dan tracking kesiapan jemaah transparan.',
+    'Penyelenggara perjalanan ibadah Umrah dan Haji Khusus resmi Yayasan Darunnisa berizin Kemenag RI (PPIU & PIHK) sejak 1991. Dilengkapi rekomendasi paket AI dan tracking dokumen berkas.',
   manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Mitra Umroh',
+    title: 'Darunnisa Travel',
   },
   icons: {
     icon: '/icons/icon-192x192.png',
