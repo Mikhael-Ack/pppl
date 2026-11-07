@@ -5,7 +5,11 @@ export async function submitPengajuan(
   input: PengajuanInput
 ): Promise<{ success: boolean; data?: PengajuanItem; error?: string }> {
   try {
+    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+    const kodePengajuan = input.kode_pengajuan || `DRN-${Date.now().toString().slice(-4)}${randomSuffix}`;
+
     const payload = {
+      kode_pengajuan: kodePengajuan,
       nama_lengkap: input.nama_lengkap.trim(),
       jenis_kelamin: input.jenis_kelamin,
       no_hp: input.no_hp.trim(),

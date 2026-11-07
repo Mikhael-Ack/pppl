@@ -6,10 +6,12 @@ export interface PengajuanInput {
   id_paket?: number;
   pesan?: string;
   email?: string;
+  kode_pengajuan?: string;
 }
 
 export interface PengajuanItem extends PengajuanInput {
   id_pengajuan: number;
+  kode_pengajuan?: string;
   nik?: string | null;
   nama_ayah?: string | null;
   tempat_lahir?: string | null;

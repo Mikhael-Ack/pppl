@@ -29,7 +29,7 @@ export default function RegistrationModal({
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [successData, setSuccessData] = useState<{ id_pengajuan: number } | null>(null);
+  const [successData, setSuccessData] = useState<{ id_pengajuan: number; kode_pengajuan?: string } | null>(null);
 
   if (!isOpen) return null;
 
@@ -63,7 +63,10 @@ export default function RegistrationModal({
     setLoading(false);
 
     if (res.success && res.data) {
-      setSuccessData({ id_pengajuan: res.data.id_pengajuan });
+      setSuccessData({
+        id_pengajuan: res.data.id_pengajuan,
+        kode_pengajuan: res.data.kode_pengajuan || `DRN-REG-00${res.data.id_pengajuan}`,
+      });
     } else {
       setErrorMsg(res.error || 'Gagal mengirim pengajuan, silakan coba lagi.');
     }
@@ -119,7 +122,7 @@ export default function RegistrationModal({
                 Terima kasih, data minat pendaftaran Anda telah tersimpan di sistem Yayasan Darunnisa dengan nomor pengajuan:
               </p>
               <div className="inline-block bg-slate-100 border border-slate-300 px-4 py-2 rounded-xl font-mono text-base font-bold text-emerald-900 tracking-wider my-2">
-                DRN-REG-00{successData.id_pengajuan}
+                {successData.kode_pengajuan || `DRN-REG-00${successData.id_pengajuan}`}
               </div>
               <p className="text-[11px] text-slate-500">
                 Staf operasional Darunnisa akan menghubungi nomor WhatsApp Anda dalam 1x24 jam untuk verifikasi ketersediaan kamar dan jadwal manasik.

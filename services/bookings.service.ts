@@ -17,6 +17,55 @@ export async function getBookingByCode(bookingCode: string): Promise<BookingItem
     }
 
     if (!data) {
+      // Cek di tabel pengajuan jika mencari dengan kode_pengajuan atau no_hp
+      try {
+        const { data: pengajuanData } = await supabase
+          .from('pengajuan')
+          .select('*, paket(*)')
+          .or(`kode_pengajuan.ilike.${code},no_hp.eq.${code}`)
+          .limit(1)
+          .maybeSingle();
+
+        if (pengajuanData) {
+          const stepMap: Record<string, number> = {
+            baru: 1,
+            dihubungi: 1,
+            diproses: 2,
+            ditolak: 1,
+          };
+          return {
+            id: `pengajuan-${pengajuanData.id_pengajuan}`,
+            booking_code: pengajuanData.kode_pengajuan || `DRN-REG-00${pengajuanData.id_pengajuan}`,
+            full_name: pengajuanData.nama_lengkap,
+            phone_number: pengajuanData.no_hp,
+            room_type: 'quad',
+            total_persons: 1,
+            current_step: stepMap[pengajuanData.status_pengajuan] || 1,
+            payment_status: pengajuanData.status_pengajuan === 'diproses' ? 'dp_paid' : 'dp_unpaid',
+            packages: {
+              id_paket: pengajuanData.paket?.id_paket || 1,
+              kode_paket: pengajuanData.paket?.kode_paket || 'UMR-REG-9D',
+              nama_paket: pengajuanData.paket?.nama_paket || 'Umrah Darunnisa',
+              program: 'umrah',
+              harga: pengajuanData.paket?.harga || 28500000,
+              maskapai: pengajuanData.paket?.maskapai || 'Garuda Indonesia',
+              hotel: pengajuanData.paket?.hotel || 'Makkah: Pullman Zamzam',
+              durasi_hari: pengajuanData.paket?.durasi_hari || 9,
+              deskripsi: pengajuanData.paket?.deskripsi || 'Paket resmi Yayasan Darunnisa',
+              status_aktif: true,
+              name: pengajuanData.paket?.nama_paket || 'Umrah Darunnisa',
+              price_quad: pengajuanData.paket?.harga || 28500000,
+              price_triple: (pengajuanData.paket?.harga || 28500000) + 2000000,
+              price_double: (pengajuanData.paket?.harga || 28500000) + 4000000,
+              quota_seat: 45,
+              remaining_seat: 10,
+            },
+          };
+        }
+      } catch (pengajuanErr) {
+        console.warn('[BookingsService] Pengajuan lookup skipped:', pengajuanErr);
+      }
+
       // Mock fallback data jika memasukkan demo code
       if (code === 'UMR-2026-08892') {
         return {
