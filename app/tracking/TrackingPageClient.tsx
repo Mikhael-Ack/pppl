@@ -16,6 +16,17 @@ const TRACKING_STEPS = [
   { step: 6, title: 'Keberangkatan', desc: 'Pemberangkatan rombongan di bandara' },
 ];
 
+function maskName(name: string): string {
+  if (!name) return '-';
+  const parts = name.trim().split(' ');
+  return parts
+    .map((p) => {
+      if (p.length <= 2) return p;
+      return p[0] + '*'.repeat(Math.min(p.length - 2, 4)) + p[p.length - 1];
+    })
+    .join(' ');
+}
+
 export default function TrackingPageClient() {
   const [bookingCode, setBookingCode] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -114,8 +125,8 @@ export default function TrackingPageClient() {
             {/* Info Kartu Ringkasan */}
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
               <div>
-                <span className="text-slate-500 block">Nama Jemaah Terdaftar:</span>
-                <strong className="text-slate-900 text-sm font-semibold">{bookingData.full_name}</strong>
+                <span className="text-slate-500 block">Nama Jemaah (Disamarkan):</span>
+                <strong className="text-slate-900 text-sm font-semibold">{maskName(bookingData.full_name)}</strong>
               </div>
               <div>
                 <span className="text-slate-500 block">Nomor Registrasi:</span>
