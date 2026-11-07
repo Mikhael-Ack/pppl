@@ -57,7 +57,7 @@ export default function HomePageClient({ initialPackages }: HomePageClientProps)
                 <span>Pendaftaran Awal Bebas Ribet (UI-03)</span>
               </div>
               <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                Siap Melaksanakan Ibadah Umroh &amp; Haji Khusus?
+                Siap Melaksanakan Ibadah Umrah &amp; Haji Khusus?
               </h3>
               <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
                 Kunci kuota kursi Anda sekarang tanpa dokumen sensitif di awal. Cukup isi nama, nomor WhatsApp, dan pilihan paket Anda, staf Yayasan Darunnisa akan memproses reservasi Anda.

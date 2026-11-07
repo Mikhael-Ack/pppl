@@ -114,7 +114,7 @@ export default function PackageDetailModal({
           <div className="space-y-3">
             <h4 className="font-bold text-slate-900 text-xs">Deskripsi &amp; Fasilitas Termasuk</h4>
             <p className="text-slate-600 leading-relaxed text-xs">
-              {paket.deskripsi || 'Paket resmi berizin Kemenag RI dengan bimbingan muthawif bersertifikasi, visa umroh/haji resmi, perlengkapan ibadah lengkap (koper, ihram/mukena), manasik intensif, dan asuransi perjalanan syariah.'}
+              {paket.deskripsi || 'Paket resmi berizin Kemenag RI dengan bimbingan muthawif bersertifikasi, visa umrah/haji resmi, perlengkapan ibadah lengkap (koper, ihram/mukena), manasik intensif, dan asuransi perjalanan syariah.'}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11px] text-slate-600">
               <div className="flex items-center gap-2">

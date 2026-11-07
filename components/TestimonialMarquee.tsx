@@ -8,17 +8,17 @@ const REVIEWS_ROW_1 = [
   },
   {
     name: 'Hj. Endang Rahmawati',
-    program: 'Jakarta Selatan • Umroh Reguler Bintang 4',
+    program: 'Jakarta Selatan • Umrah Reguler Bintang 4',
     quote: 'Perlengkapan koper tiba 2 minggu sebelum keberangkatan. Bimbingan manasik di asrama haji sangat tertib dan detail sesuai sunnah.',
   },
   {
     name: 'dr. Farhan Prasetyo',
-    program: 'Bandung • Umroh Plus Turki 12 Hari',
+    program: 'Bandung • Umrah Plus Turki 12 Hari',
     quote: 'Jadwal ziarah Istanbul dan ibadah di Makkah tidak saling berbenturan. Penerbangan Turkish Airlines tepat waktu dan penanganan bagasi rapi.',
   },
   {
     name: 'Bpk. Hendra Gunawan',
-    program: 'Bekasi • Umroh Ekonomis',
+    program: 'Bekasi • Umrah Ekonomis',
     quote: 'Meskipun paket ekonomis, jarak hotel ke pelataran masih wajar (sekitar 350m jalan kaki) dan makanan katering Indonesia selalu hangat.',
   },
 ];
@@ -31,12 +31,12 @@ const REVIEWS_ROW_2 = [
   },
   {
     name: 'Ustadz M. Ridwan',
-    program: 'Makassar • Umroh Syawal',
-    quote: 'Muthawif pembimbing menguasai fiqh manasik dan rute sejarah di Madinah. Jamaah dibimbing dengan sabar saat thawaf dan sai.',
+    program: 'Makassar • Umrah Syawal',
+    quote: 'Muthawif pembimbing menguasai fiqh manasik dan rute sejarah di Madinah. Jemaah dibimbing dengan sabar saat thawaf dan sai.',
   },
   {
     name: 'Ibu Ratna Dewi',
-    program: 'Tangerang • Umroh Keluarga',
+    program: 'Tangerang • Umrah Keluarga',
     quote: 'Kamar quad bersih dan tidak sempit. Bus eksekutif antar kota Makkah ke Madinah nyaman untuk anak-anak.',
   },
   {

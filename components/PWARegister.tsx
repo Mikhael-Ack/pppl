@@ -59,10 +59,10 @@ export default function PWARegister() {
   return (
     <div className="fixed bottom-4 right-4 z-50 max-w-sm bg-slate-900 text-white rounded-2xl p-4 shadow-2xl border border-emerald-500/40 flex items-center gap-3 animate-fadeIn">
       <div className="w-10 h-10 rounded-xl bg-emerald-800 text-amber-300 font-bold flex items-center justify-center shrink-0">
-        M
+        D
       </div>
       <div className="flex-1">
-        <div className="text-xs font-bold text-white leading-tight">Install Aplikasi Umroh</div>
+        <div className="text-xs font-bold text-white leading-tight">Install Aplikasi Darunnisa Umrah</div>
         <div className="text-[10px] text-slate-300 mt-0.5">Akses cepat jadwal &amp; tracking langsung di HP/Desktop.</div>
       </div>
       <div className="flex items-center gap-1.5 shrink-0">

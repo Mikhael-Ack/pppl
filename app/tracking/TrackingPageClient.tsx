@@ -10,9 +10,9 @@ import { Search, CheckCircle2, Clock, PackageCheck, AlertCircle, Calendar, Phone
 const TRACKING_STEPS = [
   { step: 1, title: 'Booking & Pembayaran DP', desc: 'Validasi uang muka kuota seat' },
   { step: 2, title: 'Verifikasi Dokumen', desc: 'Pengecekan paspor & buku vaksin' },
-  { step: 3, title: 'Penerbitan Visa Umroh', desc: 'Proses sinkronisasi sistem Nusuk KSA' },
+  { step: 3, title: 'Penerbitan Visa Umrah', desc: 'Proses sinkronisasi sistem Nusuk KSA' },
   { step: 4, title: 'Perlengkapan Koper', desc: 'Pengiriman/pengambilan koper & seragam' },
-  { step: 5, title: 'Manasik Umroh', desc: 'Bimbingan tata cara ibadah sesuai sunnah' },
+  { step: 5, title: 'Manasik Umrah', desc: 'Bimbingan tata cara ibadah sesuai sunnah' },
   { step: 6, title: 'Keberangkatan', desc: 'Pemberangkatan rombongan di bandara' },
 ];
 
@@ -124,7 +124,7 @@ export default function TrackingPageClient() {
               <div>
                 <span className="text-slate-500 block">Paket yang Dipilih:</span>
                 <strong className="text-slate-800 font-semibold">
-                  {bookingData.packages?.nama_paket || bookingData.packages?.name || 'Paket Umroh Reguler'}
+                  {bookingData.packages?.nama_paket || bookingData.packages?.name || 'Paket Umrah Reguler'}
                 </strong>
               </div>
               <div>

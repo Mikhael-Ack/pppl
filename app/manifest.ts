@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Darunnisa Hajj & Umrah Travel',
     short_name: 'Darunnisa',
-    description: 'Aplikasi Resmi Layanan Haji Khusus & Umroh Yayasan Darunnisa Berizin Kemenag RI',
+    description: 'Aplikasi Resmi Layanan Haji Khusus & Umrah Yayasan Darunnisa Berizin Kemenag RI',
     start_url: '/',
     display: 'standalone',
     orientation: 'portrait',

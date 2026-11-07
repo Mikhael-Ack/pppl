@@ -16,7 +16,7 @@ export default function MLMatcher() {
     priceEst: string;
     features: string[];
   }>({
-    title: 'Paket Umroh VIP Ring 1 Pelataran 9 Hari',
+    title: 'Paket Umrah VIP Ring 1 Pelataran 9 Hari',
     reason: 'Keberadaan jemaah lansia memprioritaskan hotel ring 1 (< 100m dari pintu masjid tanpa tanjakan) agar ibadah dapat dilakukan setiap waktu tanpa kelelahan fisik.',
     priceEst: 'Rp 33.500.000',
     features: [
@@ -27,13 +27,13 @@ export default function MLMatcher() {
   });
 
   const handlePredict = () => {
-    let title = 'Paket Umroh VIP Ring 1 Pelataran 9 Hari';
+    let title = 'Paket Umrah VIP Ring 1 Pelataran 9 Hari';
     let reason = '';
     let priceEst = 'Rp 33.500.000';
     let features: string[] = [];
 
     if (duration === 12) {
-      title = 'Paket Umroh Plus Turki Cappadocia 12 Hari';
+      title = 'Paket Umrah Plus Turki Cappadocia 12 Hari';
       reason = 'Durasi 12 hari dialokasikan untuk program ziarah sejarah dengan jadwal istirahat seimbang dan maskapai Turkish Airlines.';
       priceEst = 'Rp 39.500.000';
       features = [
@@ -43,7 +43,7 @@ export default function MLMatcher() {
       ];
     } else if (hasElderly || distancePriority === 'ring1') {
       if (budget >= 32) {
-        title = 'Paket Umroh VIP Ring 1 Pelataran 9 Hari';
+        title = 'Paket Umrah VIP Ring 1 Pelataran 9 Hari';
         reason = 'Keberadaan jemaah lansia memprioritaskan hotel ring 1 (< 100m dari pintu masjid tanpa tanjakan) agar ibadah dapat dilakukan setiap waktu tanpa kelelahan fisik.';
         priceEst = 'Rp 33.500.000';
         features = [
@@ -52,7 +52,7 @@ export default function MLMatcher() {
           'Muthawif pendamping & koordinasi kursi roda',
         ];
       } else {
-        title = 'Paket Umroh Reguler Bintang 4 (Jarak 150m)';
+        title = 'Paket Umrah Reguler Bintang 4 (Jarak 150m)';
         reason = 'Anggaran di bawah Rp 32 juta dengan jemaah lansia dialokasikan ke hotel bintang 4 berjarak 150m dengan akses jalan rata dan pendampingan petugas.';
         priceEst = 'Rp 29.800.000';
         features = [
@@ -63,7 +63,7 @@ export default function MLMatcher() {
       }
     } else {
       if (budget < 29) {
-        title = 'Paket Umroh Hemat Berkah 9 Hari';
+        title = 'Paket Umrah Hemat Berkah 9 Hari';
         reason = 'Fisik bugar dengan anggaran ekonomis dialokasikan ke hotel bintang 3 berjarak 350m untuk menghemat biaya secara signifikan.';
         priceEst = 'Rp 26.900.000';
         features = [
@@ -72,7 +72,7 @@ export default function MLMatcher() {
           'Perlengkapan koper & kain ihram lengkap',
         ];
       } else {
-        title = 'Paket Umroh Reguler Bintang 4 (9 Hari)';
+        title = 'Paket Umrah Reguler Bintang 4 (9 Hari)';
         reason = 'Pilihan seimbang antara efisiensi biaya dan kenyamanan hotel bintang 4 di ring 2.';
         priceEst = 'Rp 30.500.000';
         features = [

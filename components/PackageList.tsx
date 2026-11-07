@@ -39,7 +39,7 @@ export default function PackageList({
             Katalog Resmi (UI-01)
           </span>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
-            Jadwal Paket Umroh &amp; Haji Khusus Darunnisa
+            Jadwal Paket Umrah &amp; Haji Khusus Darunnisa
           </h2>
         </div>
         <div className="text-xs text-slate-500 font-mono">

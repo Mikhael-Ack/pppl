@@ -21,7 +21,7 @@ export default function ChatbotWidget({ packages, onOpenRegister }: ChatbotWidge
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'bot',
-      text: 'Assalamu’alaikum! Saya asisten pintar Darunnisa Travel (M5.1). Ada yang bisa saya bantu terkait jadwal keberangkatan, rincian hotel bintang 5, atau simulasi paket umroh/haji khusus?',
+      text: 'Assalamu’alaikum! Saya asisten pintar Darunnisa Travel (M5.1). Ada yang bisa saya bantu terkait jadwal keberangkatan, rincian hotel bintang 5, atau simulasi paket umrah/haji khusus?',
     },
   ]);
 
