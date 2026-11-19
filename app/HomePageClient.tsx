@@ -75,7 +75,11 @@ export default function HomePageClient({ initialPackages }: HomePageClientProps)
 
         {/* Section 4: Feature ML 1 - Smart Matcher (UI-04) */}
         <div className="bg-slate-100/90 border-y border-slate-200">
-          <MLMatcher />
+          <MLMatcher
+            packages={initialPackages}
+            onViewDetail={(pkg) => setSelectedDetail(pkg)}
+            onRegister={(pkg) => handleOpenRegister(pkg)}
+          />
         </div>
 
         {/* Section 5: Feature ML 2 - Kalkulator Biaya */}
