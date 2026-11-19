@@ -1019,3 +1019,151 @@ export async function aktifkanKembaliJamaahAdmin(
 
   return { success: true };
 }
+
+/**
+ * M8.1 & M8.2 Catat Pembayaran & Pantau Status Pembayaran (UI-11 & UI-13)
+ * Sesuai Pseudocode Bab 4.2 Hal. 10 & Flowchart Gambar 7.1 Hal. 16 SD v1.1:
+ * - JIKA status_jamaah = "batal" -> tolak pencatatan pembayaran baru dengan pesan "Jamaah berstatus batal"
+ * - JIKA jumlah <= 0 -> tampilkan pesan kesalahan
+ * - sisa <- total_biaya - total pembayaran sebelumnya
+ * - JIKA jumlah > sisa -> tampilkan "Jumlah melebihi sisa pembayaran"
+ * - SELAIN ITU simpan ke tabel pembayaran bersama id_admin, lalu hitung ulang sisa dan status
+ */
+export interface PembayaranItem {
+  id_pembayaran: number;
+  id_jamaah: number;
+  tgl_bayar: string;
+  jumlah: number;
+  metode: 'tunai' | 'transfer';
+  no_bukti: string | null;
+  catatan: string | null;
+  id_admin: number | null;
+  created_at?: string;
+  admin?: {
+    id_admin: number;
+    nama_lengkap: string;
+    username: string;
+  } | null;
+}
+
+export async function getPembayaranByJamaahAdmin(
+  id_jamaah: number
+): Promise<PembayaranItem[]> {
+  const { data } = await supabase
+    .from('pembayaran')
+    .select('*, admin(id_admin, nama_lengkap, username)')
+    .eq('id_jamaah', id_jamaah)
+    .order('tgl_bayar', { ascending: false })
+    .order('id_pembayaran', { ascending: false });
+
+  return (data as PembayaranItem[]) || [];
+}
+
+export interface CatatPembayaranInput {
+  id_jamaah: number;
+  tgl_bayar: string;
+  jumlah: number;
+  metode: 'tunai' | 'transfer';
+  no_bukti?: string | null;
+  catatan?: string | null;
+  id_admin?: number | null;
+}
+
+export async function catatPembayaranAdmin(
+  input: CatatPembayaranInput
+): Promise<{
+  success: boolean;
+  data?: PembayaranItem;
+  sisa_terbaru?: number;
+  status_terbaru?: 'Lunas' | 'Belum lunas';
+  error?: string;
+}> {
+  const idJamaah = Number(input.id_jamaah || 0);
+  const jumlah = Number(input.jumlah || 0);
+  const tglBayar = (input.tgl_bayar || '').trim();
+  const metode = input.metode;
+
+  if (!idJamaah || !tglBayar || !metode) {
+    return {
+      success: false,
+      error: 'Tanggal pembayaran, jumlah, dan metode pembayaran wajib diisi',
+    };
+  }
+
+  if (jumlah <= 0) {
+    return {
+      success: false,
+      error: 'Jumlah pembayaran harus lebih dari 0',
+    };
+  }
+
+  // Ambil data jamaah & riwayat pembayaran sebelumnya
+  const [{ data: jamaah }, { data: prevPayments }] = await Promise.all([
+    supabase
+      .from('jamaah')
+      .select('id_jamaah, status_jamaah, total_biaya')
+      .eq('id_jamaah', idJamaah)
+      .maybeSingle(),
+    supabase
+      .from('pembayaran')
+      .select('jumlah')
+      .eq('id_jamaah', idJamaah),
+  ]);
+
+  if (!jamaah) {
+    return { success: false, error: 'Data jamaah tidak ditemukan' };
+  }
+
+  if (jamaah.status_jamaah === 'batal') {
+    return {
+      success: false,
+      error: 'Jamaah berstatus batal',
+    };
+  }
+
+  const totalDibayarSebelumnya = (prevPayments || []).reduce(
+    (acc, cur) => acc + Number(cur.jumlah || 0),
+    0
+  );
+  const sisa = Math.max(0, Number(jamaah.total_biaya) - totalDibayarSebelumnya);
+
+  if (jumlah > sisa) {
+    return {
+      success: false,
+      error: 'Jumlah melebihi sisa pembayaran',
+    };
+  }
+
+  const sessionAdmin = getAdminSession();
+  const idAdmin = input.id_admin ?? sessionAdmin?.id_admin ?? 1;
+
+  const payload = {
+    id_jamaah: idJamaah,
+    tgl_bayar: tglBayar,
+    jumlah,
+    metode,
+    no_bukti: input.no_bukti?.trim() || null,
+    catatan: input.catatan?.trim() || null,
+    id_admin: idAdmin,
+  };
+
+  const { data, error } = await supabase
+    .from('pembayaran')
+    .insert([payload])
+    .select('*, admin(id_admin, nama_lengkap, username)')
+    .single();
+
+  if (error) {
+    return { success: false, error: error.message };
+  }
+
+  const sisaTerbaru = Math.max(0, sisa - jumlah);
+  const statusTerbaru = sisaTerbaru === 0 ? 'Lunas' : 'Belum lunas';
+
+  return {
+    success: true,
+    data: data as PembayaranItem,
+    sisa_terbaru: sisaTerbaru,
+    status_terbaru: statusTerbaru,
+  };
+}
