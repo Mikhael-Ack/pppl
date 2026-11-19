@@ -1,5 +1,6 @@
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
   return (
@@ -9,8 +10,14 @@ export default function Footer() {
           {/* Kolom 1: Profil & Izin */}
           <div className="space-y-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#133666] border border-[#21579e] text-amber-300 font-serif font-bold flex items-center justify-center text-base">
-                D
+              <div className="w-8 h-8 rounded-lg bg-white p-0.5 border border-blue-900/60 shadow-xs flex items-center justify-center overflow-hidden shrink-0">
+                <Image
+                  src="/images/logo-darunnisa.jpg"
+                  alt="Logo Yayasan Darunnisa"
+                  width={32}
+                  height={32}
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
                 <div className="font-bold text-white text-sm leading-tight">Darunnisa Travel</div>

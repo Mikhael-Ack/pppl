@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Phone, ClipboardCheck } from 'lucide-react';
 
 interface NavbarProps {
@@ -33,8 +34,14 @@ export default function Navbar({ onOpenRegister }: NavbarProps) {
       {/* Main Bar */}
       <div className="max-w-7xl mx-auto px-4 h-14 sm:h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#133666] border border-[#1f5296] text-amber-300 font-serif font-bold flex items-center justify-center text-base sm:text-lg shrink-0">
-            D
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-white p-1 border border-blue-900/60 shadow-xs flex items-center justify-center shrink-0 overflow-hidden">
+            <Image
+              src="/images/logo-darunnisa.jpg"
+              alt="Logo Yayasan Darunnisa"
+              width={38}
+              height={38}
+              className="w-full h-full object-contain"
+            />
           </div>
           <div className="min-w-0">
             <div className="font-bold text-white text-sm sm:text-base tracking-tight leading-tight truncate">

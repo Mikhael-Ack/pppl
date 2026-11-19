@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   getAdminSession,
@@ -105,8 +106,14 @@ export default function AdminShell({
           {/* Brand Header */}
           <div className="p-4 border-b border-[#163d73] flex items-center justify-between md:block">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#133666] border border-[#21579e] text-amber-300 font-serif font-bold flex items-center justify-center text-base shrink-0">
-                D
+              <div className="w-8 h-8 rounded-lg bg-white p-0.5 border border-blue-900/60 shadow-xs flex items-center justify-center shrink-0 overflow-hidden">
+                <Image
+                  src="/images/logo-darunnisa.jpg"
+                  alt="Logo Yayasan Darunnisa"
+                  width={30}
+                  height={30}
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
                 <div className="font-bold text-white text-xs sm:text-sm leading-tight">

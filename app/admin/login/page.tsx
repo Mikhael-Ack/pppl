@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { loginAdmin, getAdminSession } from '@/services/admin.service';
 import { Lock, User, AlertCircle, ArrowLeft, ShieldCheck } from 'lucide-react';
 
@@ -45,8 +46,14 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
         {/* Top Banner */}
         <div className="bg-[#0b2242] text-white p-6 text-center border-b border-[#163d73] space-y-2">
-          <div className="w-11 h-11 rounded-xl bg-[#133666] border border-[#21579e] text-amber-300 font-serif font-bold text-xl flex items-center justify-center mx-auto">
-            D
+          <div className="w-12 h-12 rounded-xl bg-white p-1 border border-blue-900/60 shadow-md flex items-center justify-center mx-auto overflow-hidden">
+            <Image
+              src="/images/logo-darunnisa.jpg"
+              alt="Logo Yayasan Darunnisa"
+              width={44}
+              height={44}
+              className="w-full h-full object-contain"
+            />
           </div>
           <div>
             <div className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-amber-300 bg-[#133666] border border-[#21579e] px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-1">
