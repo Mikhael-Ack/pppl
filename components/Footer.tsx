@@ -106,6 +106,10 @@ export default function Footer() {
             <span>Standar Resmi SISKOPATUH</span>
             <span>&bull;</span>
             <span>Kemenag RI</span>
+            <span>&bull;</span>
+            <Link href="/admin/login" className="text-blue-300/80 hover:text-amber-300 transition-colors">
+              Login Admin (UI-06)
+            </Link>
           </div>
         </div>
       </div>
