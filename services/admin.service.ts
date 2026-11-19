@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { PaketItem, KeberangkatanItem } from '@/types/package.types';
+import { PengajuanItem } from '@/types/pengajuan.types';
 
 export interface AdminUser {
   id_admin: number;
@@ -520,5 +521,501 @@ export async function pindahkanJamaahKeberangkatanAdmin(
       error: 'Gagal memindahkan jamaah',
     };
   }
+  return { success: true };
+}
+
+/**
+ * M3.2 Kelola Pengajuan (UI-08)
+ * Sesuai Pseudocode Bab 4.2 SD v1.1:
+ * - pengajuan <- ambil data, urut tgl_pengajuan terbaru (filter status bila ada)
+ * - JIKA admin mengubah status lewat dropdown menjadi "dihubungi" -> update status_pengajuan
+ * - JIKA admin memilih "ditolak" -> tampilkan kotak alasan; JIKA alasan_tolak kosong ->
+ *   tampilkan pesan kesalahan; SELAIN ITU update status_pengajuan <- "ditolak" dan simpan alasan_tolak
+ * - Status "diproses" tidak dapat dipilih manual. Pengajuan "ditolak" dapat dibuka kembali dengan mengubah status ke "dihubungi".
+ */
+export async function getAllPengajuanAdmin(
+  statusFilter?: string
+): Promise<PengajuanItem[]> {
+  let query = supabase
+    .from('pengajuan')
+    .select('*, paket(*)')
+    .order('tgl_pengajuan', { ascending: false });
+
+  if (statusFilter && statusFilter !== 'all') {
+    query = query.eq('status_pengajuan', statusFilter);
+  }
+
+  const { data } = await query;
+  return (data as PengajuanItem[]) || [];
+}
+
+export async function getPengajuanByIdAdmin(
+  id_pengajuan: number
+): Promise<PengajuanItem | null> {
+  const { data } = await supabase
+    .from('pengajuan')
+    .select('*, paket(*)')
+    .eq('id_pengajuan', id_pengajuan)
+    .maybeSingle();
+  return (data as PengajuanItem) || null;
+}
+
+export async function updateStatusPengajuanAdmin(
+  id_pengajuan: number,
+  status_baru: string,
+  alasan_tolak?: string
+): Promise<{ success: boolean; error?: string }> {
+  if (status_baru === 'diproses') {
+    return {
+      success: false,
+      error: 'Status "diproses" tidak dapat dipilih manual. Gunakan tombol "Daftarkan sebagai Jamaah".',
+    };
+  }
+
+  if (!['baru', 'dihubungi', 'ditolak'].includes(status_baru)) {
+    return { success: false, error: 'Status pengajuan tidak valid' };
+  }
+
+  if (status_baru === 'ditolak' && (!alasan_tolak || !alasan_tolak.trim())) {
+    return {
+      success: false,
+      error: 'Alasan penolakan wajib diisi saat menolak pengajuan',
+    };
+  }
+
+  const payload: Record<string, any> = {
+    status_pengajuan: status_baru,
+    alasan_tolak: status_baru === 'ditolak' ? alasan_tolak!.trim() : null,
+  };
+
+  const { data, error } = await supabase
+    .from('pengajuan')
+    .update(payload)
+    .eq('id_pengajuan', id_pengajuan)
+    .select();
+
+  if (error) return { success: false, error: error.message };
+  if (!data || data.length === 0) {
+    return { success: false, error: 'Gagal memperbarui status pengajuan' };
+  }
+
+  return { success: true };
+}
+
+/**
+ * M6.1 & M6.2 Manajemen & Pencarian Data Jamaah (UI-09 & UI-10)
+ */
+export interface JamaahItem {
+  id_jamaah: number;
+  no_jamaah: string;
+  id_pengajuan: number | null;
+  id_keberangkatan: number;
+  nik: string | null;
+  nama_lengkap: string;
+  nama_ayah: string | null;
+  tempat_lahir: string;
+  tanggal_lahir: string;
+  jenis_kelamin: 'L' | 'P';
+  alamat: string | null;
+  pekerjaan: string | null;
+  pendidikan: string | null;
+  no_hp: string;
+  total_biaya: number;
+  tgl_daftar: string;
+  status_jamaah: 'aktif' | 'batal';
+  catatan: string | null;
+  status_paspor:
+    | 'menunggu_berkas'
+    | 'verifikasi_kantor'
+    | 'rekom_kemenag'
+    | 'selesai'
+    | null;
+  status_visa: 'belum_diajukan' | 'proses_mofa' | 'visa_terbit' | null;
+  status_manasik: 'belum_manasik' | 'terjadwal' | 'sudah_manasik' | null;
+  alasan_batal: string | null;
+  tgl_batal: string | null;
+  keberangkatan?: KeberangkatanWithPaket;
+  total_dibayar?: number;
+  sisa_pembayaran?: number;
+  status_pembayaran?: 'Lunas' | 'Belum lunas';
+}
+
+export async function getAllJamaahAdmin(): Promise<JamaahItem[]> {
+  const [{ data: jamaahData }, { data: payData }] = await Promise.all([
+    supabase
+      .from('jamaah')
+      .select('*, keberangkatan(*, paket(*))')
+      .order('tgl_daftar', { ascending: false })
+      .order('id_jamaah', { ascending: false }),
+    supabase.from('pembayaran').select('id_jamaah, jumlah'),
+  ]);
+
+  const paidByJamaah: Record<number, number> = {};
+  if (payData) {
+    for (const p of payData) {
+      paidByJamaah[p.id_jamaah] =
+        (paidByJamaah[p.id_jamaah] || 0) + Number(p.jumlah || 0);
+    }
+  }
+
+  return ((jamaahData as JamaahItem[]) || []).map((j) => {
+    const total_dibayar = paidByJamaah[j.id_jamaah] || 0;
+    const sisa_pembayaran = Math.max(0, Number(j.total_biaya) - total_dibayar);
+    const status_pembayaran = sisa_pembayaran === 0 ? 'Lunas' : 'Belum lunas';
+    return {
+      ...j,
+      total_dibayar,
+      sisa_pembayaran,
+      status_pembayaran,
+    };
+  });
+}
+
+export async function getJamaahByIdAdmin(
+  id_jamaah: number
+): Promise<JamaahItem | null> {
+  const [{ data: j }, { data: payData }] = await Promise.all([
+    supabase
+      .from('jamaah')
+      .select('*, keberangkatan(*, paket(*))')
+      .eq('id_jamaah', id_jamaah)
+      .maybeSingle(),
+    supabase.from('pembayaran').select('jumlah').eq('id_jamaah', id_jamaah),
+  ]);
+
+  if (!j) return null;
+  const total_dibayar = (payData || []).reduce(
+    (acc, cur) => acc + Number(cur.jumlah || 0),
+    0
+  );
+  const sisa_pembayaran = Math.max(0, Number(j.total_biaya) - total_dibayar);
+  return {
+    ...(j as JamaahItem),
+    total_dibayar,
+    sisa_pembayaran,
+    status_pembayaran: sisa_pembayaran === 0 ? 'Lunas' : 'Belum lunas',
+  };
+}
+
+export interface SaveJamaahInput {
+  id_jamaah?: number;
+  id_pengajuan?: number | null;
+  id_keberangkatan: number;
+  nik?: string | null;
+  nama_lengkap: string;
+  nama_ayah?: string | null;
+  tempat_lahir: string;
+  tanggal_lahir: string;
+  jenis_kelamin: 'L' | 'P';
+  alamat?: string | null;
+  pekerjaan?: string | null;
+  pendidikan?: string | null;
+  no_hp: string;
+  total_biaya: number;
+  catatan?: string | null;
+  status_paspor?:
+    | 'menunggu_berkas'
+    | 'verifikasi_kantor'
+    | 'rekom_kemenag'
+    | 'selesai';
+  status_visa?: 'belum_diajukan' | 'proses_mofa' | 'visa_terbit';
+  status_manasik?: 'belum_manasik' | 'terjadwal' | 'sudah_manasik';
+}
+
+/**
+ * M6.1 Tambah & Ubah Data Jamaah (UI-10)
+ * Sesuai Pseudocode Bab 4.2 SD v1.1:
+ * - JIKA kolom wajib (nama_lengkap, tempat_lahir, tanggal_lahir, jenis_kelamin, no_hp,
+ *   id_keberangkatan, total_biaya) kosong ATAU nik terisi tetapi bukan 16 digit angka / sudah terpakai
+ *   -> tampilkan pesan kesalahan
+ * - nik, nama_ayah, dan pendidikan boleh dikosongkan saat simpan awal
+ * - JIKA sisa kuota keberangkatan <= 0 -> tampilkan "Kuota keberangkatan penuh"
+ * - SELAIN ITU no_jamaah <- "JM" + tahun + nomor urut; simpan ke tabel jamaah
+ * - JIKA id_pengajuan terisi -> status_pengajuan <- "diproses"
+ */
+export async function saveJamaahAdmin(
+  input: SaveJamaahInput
+): Promise<{ success: boolean; data?: JamaahItem; error?: string }> {
+  const nama = (input.nama_lengkap || '').trim();
+  const tempatLahir = (input.tempat_lahir || '').trim();
+  const tanggalLahir = (input.tanggal_lahir || '').trim();
+  const jk = input.jenis_kelamin;
+  const noHp = (input.no_hp || '').trim();
+  const idKeb = Number(input.id_keberangkatan || 0);
+  const totalBiaya = Number(input.total_biaya || 0);
+  const rawNik = (input.nik || '').trim();
+
+  if (
+    !nama ||
+    !tempatLahir ||
+    !tanggalLahir ||
+    !jk ||
+    !noHp ||
+    !idKeb ||
+    totalBiaya <= 0
+  ) {
+    return {
+      success: false,
+      error:
+        'Kolom wajib (nama lengkap, tempat lahir, tanggal lahir, jenis kelamin, no. telepon, keberangkatan, dan total biaya > 0) harus diisi',
+    };
+  }
+
+  // Validasi NIK bila diisi: harus 16 digit angka & unik
+  if (rawNik) {
+    if (!/^\d{16}$/.test(rawNik)) {
+      return {
+        success: false,
+        error: 'NIK harus berupa 16 digit angka',
+      };
+    }
+
+    const { data: existingNik } = await supabase
+      .from('jamaah')
+      .select('id_jamaah')
+      .eq('nik', rawNik)
+      .maybeSingle();
+
+    if (existingNik && existingNik.id_jamaah !== input.id_jamaah) {
+      return {
+        success: false,
+        error: 'NIK sudah terpakai oleh jamaah lain',
+      };
+    }
+  }
+
+  // Cek apakah tambah baru atau pindah jadwal keberangkatan -> validasi sisa kuota > 0
+  let needQuotaCheck = !input.id_jamaah;
+  if (input.id_jamaah) {
+    const { data: prevJamaah } = await supabase
+      .from('jamaah')
+      .select('id_keberangkatan, status_jamaah')
+      .eq('id_jamaah', input.id_jamaah)
+      .maybeSingle();
+    if (
+      prevJamaah &&
+      prevJamaah.id_keberangkatan !== idKeb &&
+      prevJamaah.status_jamaah === 'aktif'
+    ) {
+      needQuotaCheck = true;
+    }
+  }
+
+  if (needQuotaCheck) {
+    const [{ data: kebRow }, { count: activeCount }] = await Promise.all([
+      supabase
+        .from('keberangkatan')
+        .select('kuota, status')
+        .eq('id_keberangkatan', idKeb)
+        .maybeSingle(),
+      supabase
+        .from('jamaah')
+        .select('id_jamaah', { count: 'exact', head: true })
+        .eq('id_keberangkatan', idKeb)
+        .eq('status_jamaah', 'aktif'),
+    ]);
+
+    if (!kebRow) {
+      return { success: false, error: 'Jadwal keberangkatan tidak ditemukan' };
+    }
+
+    const sisaKuota = kebRow.kuota - (activeCount || 0);
+    if (sisaKuota <= 0) {
+      return {
+        success: false,
+        error: 'Kuota keberangkatan penuh',
+      };
+    }
+  }
+
+  const commonPayload = {
+    nik: rawNik || null,
+    nama_lengkap: nama,
+    nama_ayah: input.nama_ayah?.trim() || null,
+    tempat_lahir: tempatLahir,
+    tanggal_lahir: tanggalLahir,
+    jenis_kelamin: jk,
+    alamat: input.alamat?.trim() || null,
+    pekerjaan: input.pekerjaan?.trim() || null,
+    pendidikan: input.pendidikan?.trim() || null,
+    no_hp: noHp,
+    id_keberangkatan: idKeb,
+    total_biaya: totalBiaya,
+    catatan: input.catatan?.trim() || null,
+    status_paspor: input.status_paspor || 'menunggu_berkas',
+    status_visa: input.status_visa || 'belum_diajukan',
+    status_manasik: input.status_manasik || 'belum_manasik',
+  };
+
+  if (input.id_jamaah) {
+    // Mode Ubah
+    const { data, error } = await supabase
+      .from('jamaah')
+      .update(commonPayload)
+      .eq('id_jamaah', input.id_jamaah)
+      .select('*, keberangkatan(*, paket(*))')
+      .single();
+
+    if (error) {
+      if (error.code === '23505') {
+        return { success: false, error: 'NIK sudah terpakai oleh jamaah lain' };
+      }
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data: data as JamaahItem };
+  } else {
+    // Mode Tambah Baru: Generate no_jamaah = "JM" + tahun + 4 digit nomor urut (mis. JM20260001)
+    const currentYear = new Date().getFullYear();
+    const prefix = `JM${currentYear}`;
+
+    const { data: existingJm } = await supabase
+      .from('jamaah')
+      .select('id_jamaah, no_jamaah')
+      .order('id_jamaah', { ascending: false })
+      .limit(100);
+
+    let maxSeq = 0;
+    if (existingJm) {
+      for (const row of existingJm) {
+        if (row.id_jamaah > maxSeq) maxSeq = row.id_jamaah;
+        if (row.no_jamaah && row.no_jamaah.startsWith(prefix)) {
+          const seqPart = parseInt(row.no_jamaah.slice(prefix.length), 10);
+          if (!isNaN(seqPart) && seqPart < 8000 && seqPart > maxSeq) {
+            maxSeq = seqPart;
+          }
+        }
+      }
+    }
+
+    let noJamaah = `${prefix}${String(maxSeq + 1).padStart(4, '0')}`;
+    const todayStr = new Date().toISOString().slice(0, 10);
+
+    const insertPayload = {
+      ...commonPayload,
+      no_jamaah: noJamaah,
+      id_pengajuan: input.id_pengajuan || null,
+      tgl_daftar: todayStr,
+      status_jamaah: 'aktif',
+    };
+
+    let { data, error } = await supabase
+      .from('jamaah')
+      .insert([insertPayload])
+      .select('*, keberangkatan(*, paket(*))')
+      .single();
+
+    if (error && error.code === '23505' && error.message.includes('no_jamaah')) {
+      const randSeq = Math.floor(1000 + Math.random() * 7999);
+      noJamaah = `${prefix}${randSeq}`;
+      const retry = await supabase
+        .from('jamaah')
+        .insert([{ ...insertPayload, no_jamaah: noJamaah }])
+        .select('*, keberangkatan(*, paket(*))')
+        .single();
+      data = retry.data;
+      error = retry.error;
+    }
+
+    if (error) {
+      if (error.code === '23505') {
+        return { success: false, error: 'NIK sudah terpakai oleh jamaah lain' };
+      }
+      return { success: false, error: error.message };
+    }
+
+    // JIKA id_pengajuan terisi -> status_pengajuan <- "diproses" (SD Bab 4.2 M6.1)
+    if (input.id_pengajuan) {
+      await supabase
+        .from('pengajuan')
+        .update({ status_pengajuan: 'diproses', alasan_tolak: null })
+        .eq('id_pengajuan', input.id_pengajuan);
+    }
+
+    return { success: true, data: data as JamaahItem };
+  }
+}
+
+export async function batalkanJamaahAdmin(
+  id_jamaah: number,
+  alasan_batal: string
+): Promise<{ success: boolean; error?: string }> {
+  const alasan = (alasan_batal || '').trim();
+  if (!alasan) {
+    return {
+      success: false,
+      error: 'Alasan pembatalan wajib diisi',
+    };
+  }
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const { data, error } = await supabase
+    .from('jamaah')
+    .update({
+      status_jamaah: 'batal',
+      alasan_batal: alasan,
+      tgl_batal: todayStr,
+    })
+    .eq('id_jamaah', id_jamaah)
+    .select();
+
+  if (error) return { success: false, error: error.message };
+  if (!data || data.length === 0) {
+    return { success: false, error: 'Gagal membatalkan jamaah' };
+  }
+
+  return { success: true };
+}
+
+export async function aktifkanKembaliJamaahAdmin(
+  id_jamaah: number
+): Promise<{ success: boolean; error?: string }> {
+  // Ambil id_keberangkatan jamaah
+  const { data: jamaah } = await supabase
+    .from('jamaah')
+    .select('id_keberangkatan')
+    .eq('id_jamaah', id_jamaah)
+    .maybeSingle();
+
+  if (!jamaah) {
+    return { success: false, error: 'Data jamaah tidak ditemukan' };
+  }
+
+  // JIKA sisa kuota keberangkatan <= 0 tampilkan "Kuota keberangkatan penuh" (SD Bab 4.2 M6.1)
+  const [{ data: kebRow }, { count: activeCount }] = await Promise.all([
+    supabase
+      .from('keberangkatan')
+      .select('kuota')
+      .eq('id_keberangkatan', jamaah.id_keberangkatan)
+      .maybeSingle(),
+    supabase
+      .from('jamaah')
+      .select('id_jamaah', { count: 'exact', head: true })
+      .eq('id_keberangkatan', jamaah.id_keberangkatan)
+      .eq('status_jamaah', 'aktif'),
+  ]);
+
+  if (!kebRow || kebRow.kuota - (activeCount || 0) <= 0) {
+    return {
+      success: false,
+      error: 'Kuota keberangkatan penuh',
+    };
+  }
+
+  const { data, error } = await supabase
+    .from('jamaah')
+    .update({
+      status_jamaah: 'aktif',
+      alasan_batal: null,
+      tgl_batal: null,
+    })
+    .eq('id_jamaah', id_jamaah)
+    .select();
+
+  if (error) return { success: false, error: error.message };
+  if (!data || data.length === 0) {
+    return { success: false, error: 'Gagal mengaktifkan kembali jamaah' };
+  }
+
   return { success: true };
 }
