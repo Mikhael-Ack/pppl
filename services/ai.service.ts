@@ -85,7 +85,8 @@ export function hitungRekomendasiPaket(
     }
 
     // Kriteria 2: Waktu keberangkatan (bulan/tahun)
-    if (!pref.waktu || pref.waktu === 'all') {
+    const targetWaktu = pref.waktu;
+    if (!targetWaktu || targetWaktu === 'all') {
       skor += 1;
       alasan.push(
         `Jadwal terbuka (${
@@ -98,14 +99,14 @@ export function hitungRekomendasiPaket(
           ? `${k.tahun}-${String(k.bulan).padStart(2, '0')}`
           : `${k.tahun}`;
         return (
-          ym === pref.waktu ||
-          String(k.tahun) === pref.waktu ||
-          (k.tgl_berangkat && k.tgl_berangkat.startsWith(pref.waktu))
+          ym === targetWaktu ||
+          String(k.tahun) === targetWaktu ||
+          Boolean(k.tgl_berangkat && k.tgl_berangkat.startsWith(targetWaktu))
         );
       });
       if (matchWaktu) {
         skor += 1;
-        alasan.push(`Cocok dengan periode keberangkatan (${pref.waktu})`);
+        alasan.push(`Cocok dengan periode keberangkatan (${targetWaktu})`);
       }
     }
 
