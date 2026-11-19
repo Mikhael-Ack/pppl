@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Calendar, Sparkles, ClipboardCheck, MapPin, CheckCircle2 } from 'lucide-react';
+import { Calendar, Sparkles, ClipboardCheck } from 'lucide-react';
 
 interface HeroProps {
   onOpenRegister?: () => void;
@@ -87,44 +87,18 @@ export default function Hero({ onOpenRegister }: HeroProps) {
             </div>
           </div>
 
-          {/* Kolom Kanan: Foto Dokumentasi Haji & Umrah */}
-          <div className="lg:col-span-5">
-            <div className="relative rounded-2xl overflow-hidden border border-[#245ca6]/80 bg-[#07162c] shadow-2xl shadow-blue-950/90 group">
-              <div className="relative aspect-[4/3] w-full">
-                <Image
-                  src="/images/masjidil-haram-night.jpg"
-                  alt="Masjidil Haram Makkah saat Malam Hari - Dokumentasi Perjalanan Haji & Umrah Darunnisa"
-                  fill
-                  priority
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 480px"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#07162c] via-[#07162c]/20 to-transparent"></div>
-              </div>
-
-              {/* Badge Terverifikasi di Pojok Atas */}
-              <div className="absolute top-3 left-3 bg-[#0b2242]/90 backdrop-blur-xs border border-[#21579e] text-amber-300 px-3 py-1 rounded-full text-[11px] font-medium flex items-center gap-1.5 shadow-md">
-                <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" />
-                <span>Pelataran Masjidil Haram</span>
-              </div>
-
-              {/* Keterangan di Bawah Foto */}
-              <div className="p-4 bg-[#0a1e3b] border-t border-[#1a4785] flex items-center justify-between gap-3 text-xs">
-                <div className="flex items-center gap-2 min-w-0">
-                  <MapPin className="w-4 h-4 text-amber-400 shrink-0" />
-                  <div className="min-w-0">
-                    <div className="font-semibold text-white truncate text-xs">
-                      Makkah Al-Mukarramah
-                    </div>
-                    <div className="text-[10px] text-blue-200/75 truncate">
-                      Pusat Ibadah Umrah &amp; Thawaf Ka&apos;bah
-                    </div>
-                  </div>
-                </div>
-                <div className="text-[10px] text-amber-300 font-mono shrink-0 bg-[#133666] px-2 py-1 rounded border border-[#245ca6]">
-                  1448 H / 2026
-                </div>
-              </div>
+          {/* Kolom Kanan: Foto Murni Dokumentasi Masjidil Haram */}
+          <div className="lg:col-span-5 flex items-center justify-center">
+            <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl border border-white/15 bg-[#07162c]">
+              <Image
+                src="/images/masjidil-haram-night.jpg"
+                alt="Dokumentasi Ibadah Haji & Umrah di Masjidil Haram Makkah"
+                width={735}
+                height={603}
+                priority
+                className="w-full h-auto object-cover block"
+                sizes="(max-width: 1024px) 100vw, 500px"
+              />
             </div>
           </div>
         </div>
