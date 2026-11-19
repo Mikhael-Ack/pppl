@@ -103,11 +103,17 @@ export async function getActivePackages(): Promise<PaketItem[]> {
     }
 
     return (data as PaketItem[]).map((pkg) => {
-      const keberangkatan = (pkg.keberangkatan || []).map((k) => {
-        const jumlah_terisi = countByKeberangkatan[k.id_keberangkatan] || 0;
-        const sisa_kuota = Math.max(0, k.kuota - jumlah_terisi);
-        return { ...k, jumlah_terisi, sisa_kuota };
-      });
+      const keberangkatan = (pkg.keberangkatan || [])
+        .map((k) => {
+          const jumlah_terisi = countByKeberangkatan[k.id_keberangkatan] || 0;
+          const sisa_kuota = Math.max(0, k.kuota - jumlah_terisi);
+          return { ...k, jumlah_terisi, sisa_kuota };
+        })
+        .sort((a, b) => {
+          if (a.status !== b.status) return a.status === 'buka' ? -1 : 1;
+          if (a.tahun !== b.tahun) return a.tahun - b.tahun;
+          return (a.bulan || 0) - (b.bulan || 0);
+        });
       const openJadwal = keberangkatan.find((k) => k.status === 'buka') || keberangkatan[0];
       return {
         ...pkg,

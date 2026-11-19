@@ -522,9 +522,19 @@ export default function AdminJadwalPage() {
                 </label>
                 <select
                   value={form.id_paket}
-                  onChange={(e) =>
-                    setForm({ ...form, id_paket: Number(e.target.value) })
-                  }
+                  onChange={(e) => {
+                    const nextId = Number(e.target.value);
+                    const nextPkg = packages.find((p) => p.id_paket === nextId);
+                    const nextIsUmrah = !nextPkg || nextPkg.program === 'umrah';
+                    setForm({
+                      ...form,
+                      id_paket: nextId,
+                      bulan: nextIsUmrah ? form.bulan || 3 : null,
+                      tgl_berangkat: nextIsUmrah
+                        ? form.tgl_berangkat || `${form.tahun}-03-15`
+                        : null,
+                    });
+                  }}
                   className="w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50 focus:bg-white focus:outline-blue-800"
                 >
                   {packages.map((p) => (
@@ -555,20 +565,21 @@ export default function AdminJadwalPage() {
 
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                    Bulan (1–12) {isFormUmrah ? <span className="text-rose-500">*</span> : <span className="text-slate-400">(opsional utk Haji)</span>}
+                    Bulan (1–12) {isFormUmrah ? <span className="text-rose-500">*</span> : <span className="text-slate-400">(kosong utk Haji)</span>}
                   </label>
                   <select
                     required={isFormUmrah}
-                    value={form.bulan || ''}
+                    disabled={!isFormUmrah}
+                    value={isFormUmrah ? form.bulan || '' : ''}
                     onChange={(e) =>
                       setForm({
                         ...form,
                         bulan: e.target.value ? Number(e.target.value) : null,
                       })
                     }
-                    className="w-full border border-slate-300 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-blue-800"
+                    className="w-full border border-slate-300 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-blue-800 disabled:bg-slate-200 disabled:text-slate-500"
                   >
-                    <option value="">-- Kosongkan (Khusus Haji) --</option>
+                    <option value="">-- Kosong (Khusus Haji) --</option>
                     {BULAN_NAMES.slice(1).map((name, idx) => (
                       <option key={idx + 1} value={idx + 1}>
                         {idx + 1} - {name}
@@ -581,19 +592,20 @@ export default function AdminJadwalPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                    Tanggal Berangkat {isFormUmrah ? <span className="text-rose-500">*</span> : <span className="text-slate-400">(opsional utk Haji)</span>}
+                    Tanggal Berangkat {isFormUmrah ? <span className="text-rose-500">*</span> : <span className="text-slate-400">(kosong utk Haji)</span>}
                   </label>
                   <input
                     type="date"
                     required={isFormUmrah}
-                    value={form.tgl_berangkat || ''}
+                    disabled={!isFormUmrah}
+                    value={isFormUmrah ? form.tgl_berangkat || '' : ''}
                     onChange={(e) =>
                       setForm({
                         ...form,
                         tgl_berangkat: e.target.value || null,
                       })
                     }
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 font-mono bg-slate-50 focus:bg-white focus:outline-blue-800"
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 font-mono bg-slate-50 focus:bg-white focus:outline-blue-800 disabled:bg-slate-200 disabled:text-slate-500"
                   />
                 </div>
 
