@@ -7,11 +7,11 @@ interface HeroProps {
 
 export default function Hero({ onOpenRegister }: HeroProps) {
   return (
-    <section className="bg-gradient-to-b from-[#08221b] via-[#092921] to-[#0b3329] text-white pt-14 pb-12 md:pt-20 md:pb-16 px-4 border-b border-[#124235]">
+    <section className="bg-gradient-to-b from-[#0b2242] via-[#0e2a52] to-[#123463] text-white pt-14 pb-12 md:pt-20 md:pb-16 px-4 border-b border-[#1c4a8a]">
       <div className="max-w-7xl mx-auto">
         <div className="max-w-3xl space-y-5">
-          <div className="inline-flex items-center gap-2 text-[11px] font-semibold text-emerald-300 bg-[#0e3b2f] border border-[#1b5544] px-3.5 py-1 rounded-full uppercase tracking-wider">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <div className="inline-flex items-center gap-2 text-[11px] font-semibold text-amber-300 bg-[#133666] border border-[#21579e] px-3.5 py-1 rounded-full uppercase tracking-wider">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
             <span>Yayasan Darunnisa &bull; Musim 1448 H / 2026–2027</span>
           </div>
 
@@ -19,7 +19,7 @@ export default function Hero({ onOpenRegister }: HeroProps) {
             Darunnisa Hajj &amp; Umrah Travel
           </h1>
 
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl text-pretty font-normal">
+          <p className="text-blue-100/90 text-sm sm:text-base leading-relaxed max-w-2xl text-pretty font-normal">
             Biro perjalanan Haji Khusus dan Umrah berafiliasi konsorsium KBIH sejak 1991. Fasilitas hotel bintang 5 pelataran Masjidil Haram dan Nabawi, penerbangan langsung Garuda &amp; Saudia, serta bimbingan muthawif bersertifikasi resmi.
           </p>
 
@@ -35,7 +35,7 @@ export default function Hero({ onOpenRegister }: HeroProps) {
             {onOpenRegister ? (
               <button
                 onClick={onOpenRegister}
-                className="inline-flex items-center gap-2 bg-[#0e3b2f] hover:bg-[#134d3d] text-emerald-100 border border-[#1c5a48] font-medium px-5 py-3 rounded-xl text-xs sm:text-sm transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 bg-[#133666] hover:bg-[#1a4785] text-blue-50 border border-[#245ca6] font-medium px-5 py-3 rounded-xl text-xs sm:text-sm transition-colors cursor-pointer"
               >
                 <ClipboardCheck className="w-4 h-4 text-amber-300" />
                 <span>Pengajuan Pendaftaran</span>
@@ -43,7 +43,7 @@ export default function Hero({ onOpenRegister }: HeroProps) {
             ) : (
               <Link
                 href="#daftar"
-                className="inline-flex items-center gap-2 bg-[#0e3b2f] hover:bg-[#134d3d] text-emerald-100 border border-[#1c5a48] font-medium px-5 py-3 rounded-xl text-xs sm:text-sm transition-colors"
+                className="inline-flex items-center gap-2 bg-[#133666] hover:bg-[#1a4785] text-blue-50 border border-[#245ca6] font-medium px-5 py-3 rounded-xl text-xs sm:text-sm transition-colors"
               >
                 <ClipboardCheck className="w-4 h-4 text-amber-300" />
                 <span>Pengajuan Pendaftaran</span>
@@ -52,34 +52,34 @@ export default function Hero({ onOpenRegister }: HeroProps) {
 
             <Link
               href="#rekomendasi-ml"
-              className="inline-flex items-center gap-2 bg-emerald-950/60 hover:bg-[#0e3b2f] text-emerald-200 border border-emerald-800/60 font-medium px-4 py-3 rounded-xl text-xs sm:text-sm transition-colors"
+              className="inline-flex items-center gap-2 bg-blue-950/70 hover:bg-[#133666] text-blue-100 border border-blue-800/70 font-medium px-4 py-3 rounded-xl text-xs sm:text-sm transition-colors"
             >
-              <Sparkles className="w-4 h-4 text-emerald-400" />
+              <Sparkles className="w-4 h-4 text-amber-300" />
               <span>Rekomendasi AI</span>
             </Link>
           </div>
 
           {/* Quick Metrics Bar (Tabular Nums) */}
-          <div className="pt-8 border-t border-[#134437] grid grid-cols-2 sm:grid-cols-3 gap-6 text-xs">
+          <div className="pt-8 border-t border-[#1d4c8c] grid grid-cols-2 sm:grid-cols-3 gap-6 text-xs">
             <div>
-              <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-amber-200 tabular-nums">
+              <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-amber-300 tabular-nums">
                 &lt; 100m
               </div>
-              <div className="text-slate-300 text-[11px] mt-0.5">Jarak hotel ke pelataran masjid</div>
+              <div className="text-blue-100/80 text-[11px] mt-0.5">Jarak hotel ke pelataran masjid</div>
             </div>
 
             <div>
-              <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-amber-200 tabular-nums">
+              <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-amber-300 tabular-nums">
                 Direct Flight
               </div>
-              <div className="text-slate-300 text-[11px] mt-0.5">Garuda &amp; Saudia tanpa transit</div>
+              <div className="text-blue-100/80 text-[11px] mt-0.5">Garuda &amp; Saudia tanpa transit</div>
             </div>
 
             <div className="col-span-2 sm:col-span-1">
-              <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-emerald-300 tabular-nums">
+              <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-amber-300 tabular-nums">
                 Resmi Kemenag
               </div>
-              <div className="text-slate-300 text-[11px] mt-0.5">Izin PPIU &amp; PIHK Terakreditasi A</div>
+              <div className="text-blue-100/80 text-[11px] mt-0.5">Izin PPIU &amp; PIHK Terakreditasi A</div>
             </div>
           </div>
         </div>

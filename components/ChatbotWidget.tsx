@@ -85,7 +85,7 @@ export default function ChatbotWidget({ packages, onOpenRegister }: ChatbotWidge
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-[#08221b] hover:bg-[#0c352a] text-amber-300 p-3.5 rounded-full shadow-2xl border border-emerald-500/40 flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
+          className="bg-[#0b2242] hover:bg-[#133666] text-amber-300 p-3.5 rounded-full shadow-2xl border border-amber-400/50 flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
           aria-label="Tanya Chatbot AI"
         >
           <Bot className="w-5 h-5 text-amber-300 animate-bounce" />
@@ -99,17 +99,17 @@ export default function ChatbotWidget({ packages, onOpenRegister }: ChatbotWidge
       {isOpen && (
         <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-80 sm:w-96 flex flex-col h-[460px] overflow-hidden animate-fadeIn">
           {/* Header */}
-          <div className="bg-[#08221b] text-white p-3.5 border-b border-[#0d3329] flex items-center justify-between">
+          <div className="bg-[#0b2242] text-white p-3.5 border-b border-[#163d73] flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#0e3b2f] border border-[#1b5544] flex items-center justify-center text-amber-300">
+              <div className="w-8 h-8 rounded-lg bg-[#133666] border border-[#21579e] flex items-center justify-center text-amber-300">
                 <Bot className="w-4 h-4" />
               </div>
               <div>
                 <div className="text-xs font-bold text-white flex items-center gap-1.5">
                   <span>Asisten AI Darunnisa</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
                 </div>
-                <div className="text-[10px] text-emerald-300/80">Informasi Paket &amp; Jadwal (M5.1)</div>
+                <div className="text-[10px] text-blue-200/80">Informasi Paket &amp; Jadwal (M5.1)</div>
               </div>
             </div>
             <button
@@ -128,14 +128,14 @@ export default function ChatbotWidget({ packages, onOpenRegister }: ChatbotWidge
                 className={`flex gap-2 ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {m.sender === 'bot' && (
-                  <div className="w-6 h-6 rounded-full bg-emerald-800 text-amber-300 flex items-center justify-center shrink-0 text-[10px] font-bold">
+                  <div className="w-6 h-6 rounded-full bg-[#0b2242] text-amber-300 flex items-center justify-center shrink-0 text-[10px] font-bold">
                     D
                   </div>
                 )}
                 <div
                   className={`p-2.5 rounded-2xl max-w-[82%] leading-relaxed ${
                     m.sender === 'user'
-                      ? 'bg-emerald-800 text-white rounded-tr-xs'
+                      ? 'bg-[#0b2242] text-white rounded-tr-xs'
                       : 'bg-white text-slate-800 border border-slate-200 shadow-2xs rounded-tl-xs'
                   }`}
                 >
@@ -151,7 +151,7 @@ export default function ChatbotWidget({ packages, onOpenRegister }: ChatbotWidge
               <button
                 key={idx}
                 onClick={() => handleSend(q)}
-                className="whitespace-nowrap px-2.5 py-1 bg-white hover:bg-emerald-50 text-emerald-900 border border-slate-200 rounded-lg cursor-pointer transition-colors shrink-0"
+                className="whitespace-nowrap px-2.5 py-1 bg-white hover:bg-blue-50 text-blue-950 border border-slate-200 rounded-lg cursor-pointer transition-colors shrink-0"
               >
                 {q}
               </button>
@@ -166,11 +166,11 @@ export default function ChatbotWidget({ packages, onOpenRegister }: ChatbotWidge
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Tanyakan jadwal, hotel, harga..."
-              className="flex-1 text-xs border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:outline-emerald-800 transition-colors"
+              className="flex-1 text-xs border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:outline-blue-800 transition-colors"
             />
             <button
               onClick={() => handleSend()}
-              className="bg-amber-400 hover:bg-amber-500 text-slate-950 p-2 rounded-lg cursor-pointer transition-colors"
+              className="bg-amber-400 hover:bg-amber-300 text-slate-950 p-2 rounded-lg cursor-pointer transition-colors"
               aria-label="Kirim"
             >
               <Send className="w-3.5 h-3.5" />

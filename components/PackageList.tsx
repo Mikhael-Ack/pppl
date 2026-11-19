@@ -35,7 +35,7 @@ export default function PackageList({
     <section id="jadwal" className="py-14 md:py-18 px-4 max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-5">
         <div>
-          <span className="text-xs font-semibold text-emerald-800 uppercase tracking-wider block mb-1">
+          <span className="text-xs font-semibold text-blue-800 uppercase tracking-wider block mb-1">
             Katalog Resmi (UI-01)
           </span>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
@@ -62,7 +62,7 @@ export default function PackageList({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari berdasarkan nama paket, hotel, atau maskapai..."
-                className="w-full text-xs border border-slate-200 rounded-lg pl-8 pr-3 py-2 bg-slate-50 focus:bg-white focus:outline-emerald-800 transition-colors"
+                className="w-full text-xs border border-slate-200 rounded-lg pl-8 pr-3 py-2 bg-slate-50 focus:bg-white focus:outline-blue-800 transition-colors"
               />
             </div>
           </div>
@@ -75,10 +75,11 @@ export default function PackageList({
             <select
               value={selectedProgram}
               onChange={(e) => setSelectedProgram(e.target.value)}
-              className="w-full text-xs border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-emerald-800 transition-colors"
+              className="w-full text-xs border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-blue-800 transition-colors"
             >
               <option value="all">Semua Program</option>
               <option value="umrah">Umrah (Reguler &amp; Plus)</option>
+              <option value="haji_reguler">Haji Reguler</option>
               <option value="haji_khusus">Haji Khusus (Plus)</option>
             </select>
           </div>
@@ -99,13 +100,13 @@ export default function PackageList({
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-slate-200 p-12 text-center space-y-2">
-          <div className="text-xs font-semibold text-slate-700">Tidak ada paket yang cocok dengan filter pencarian.</div>
+          <div className="text-xs font-semibold text-slate-700">Paket belum tersedia</div>
           <button
             onClick={() => {
               setSelectedProgram('all');
               setSearchQuery('');
             }}
-            className="text-xs text-emerald-800 font-semibold hover:underline cursor-pointer"
+            className="text-xs text-blue-800 font-semibold hover:underline cursor-pointer"
           >
             Reset filter pencarian
           </button>

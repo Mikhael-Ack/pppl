@@ -75,18 +75,47 @@ export const FALLBACK_PACKAGES: PaketItem[] = [
 
 export async function getActivePackages(): Promise<PaketItem[]> {
   try {
-    const { data, error } = await supabase
-      .from('paket')
-      .select('*, keberangkatan(*)')
-      .eq('status_aktif', true)
-      .order('id_paket', { ascending: true });
+    const [{ data, error }, { data: activeJamaah }] = await Promise.all([
+      supabase
+        .from('paket')
+        .select('*, keberangkatan(*)')
+        .eq('status_aktif', true)
+        .order('id_paket', { ascending: true }),
+      supabase
+        .from('jamaah')
+        .select('id_keberangkatan')
+        .eq('status_jamaah', 'aktif'),
+    ]);
 
     if (error || !data || data.length === 0) {
       console.warn('[PackagesService] Falling back to default packages:', error?.message);
       return FALLBACK_PACKAGES;
     }
 
-    return data as PaketItem[];
+    const countByKeberangkatan: Record<number, number> = {};
+    if (activeJamaah) {
+      for (const j of activeJamaah) {
+        if (j.id_keberangkatan) {
+          countByKeberangkatan[j.id_keberangkatan] =
+            (countByKeberangkatan[j.id_keberangkatan] || 0) + 1;
+        }
+      }
+    }
+
+    return (data as PaketItem[]).map((pkg) => {
+      const keberangkatan = (pkg.keberangkatan || []).map((k) => {
+        const jumlah_terisi = countByKeberangkatan[k.id_keberangkatan] || 0;
+        const sisa_kuota = Math.max(0, k.kuota - jumlah_terisi);
+        return { ...k, jumlah_terisi, sisa_kuota };
+      });
+      const openJadwal = keberangkatan.find((k) => k.status === 'buka') || keberangkatan[0];
+      return {
+        ...pkg,
+        keberangkatan,
+        quota_seat: openJadwal ? openJadwal.kuota : 0,
+        remaining_seat: openJadwal ? openJadwal.sisa_kuota : 0,
+      };
+    });
   } catch (error) {
     console.error('[PackagesService] Unexpected connection error:', error);
     return FALLBACK_PACKAGES;
@@ -95,17 +124,43 @@ export async function getActivePackages(): Promise<PaketItem[]> {
 
 export async function getPackageById(id: number): Promise<PaketItem | null> {
   try {
-    const { data, error } = await supabase
-      .from('paket')
-      .select('*, keberangkatan(*)')
-      .eq('id_paket', id)
-      .single();
+    const [{ data, error }, { data: activeJamaah }] = await Promise.all([
+      supabase
+        .from('paket')
+        .select('*, keberangkatan(*)')
+        .eq('id_paket', id)
+        .single(),
+      supabase
+        .from('jamaah')
+        .select('id_keberangkatan')
+        .eq('status_jamaah', 'aktif'),
+    ]);
 
     if (error || !data) {
       return FALLBACK_PACKAGES.find((p) => p.id_paket === id) || null;
     }
 
-    return data as PaketItem;
+    const countByKeberangkatan: Record<number, number> = {};
+    if (activeJamaah) {
+      for (const j of activeJamaah) {
+        if (j.id_keberangkatan) {
+          countByKeberangkatan[j.id_keberangkatan] =
+            (countByKeberangkatan[j.id_keberangkatan] || 0) + 1;
+        }
+      }
+    }
+
+    const pkg = data as PaketItem;
+    const keberangkatan = (pkg.keberangkatan || []).map((k) => {
+      const jumlah_terisi = countByKeberangkatan[k.id_keberangkatan] || 0;
+      const sisa_kuota = Math.max(0, k.kuota - jumlah_terisi);
+      return { ...k, jumlah_terisi, sisa_kuota };
+    });
+
+    return {
+      ...pkg,
+      keberangkatan,
+    };
   } catch {
     return FALLBACK_PACKAGES.find((p) => p.id_paket === id) || null;
   }

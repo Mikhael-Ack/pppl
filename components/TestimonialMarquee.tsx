@@ -51,9 +51,9 @@ export default function TestimonialMarquee() {
   const row2 = [...REVIEWS_ROW_2, ...REVIEWS_ROW_2];
 
   return (
-    <section className="py-16 bg-[#061b15] text-slate-100 overflow-hidden relative border-t border-[#0d3329]">
+    <section className="py-16 bg-[#081b36] text-slate-100 overflow-hidden relative border-t border-[#163d73]">
       <div className="max-w-7xl mx-auto px-4 mb-8 text-center space-y-1">
-        <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider block">
+        <span className="text-xs font-semibold text-amber-300 uppercase tracking-wider block">
           Ulasan Jemaah
         </span>
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
@@ -62,8 +62,8 @@ export default function TestimonialMarquee() {
       </div>
 
       {/* Gradient Mask Fade di Kiri & Kanan */}
-      <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-[#061b15] to-transparent z-10 pointer-events-none" />
-      <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-[#061b15] to-transparent z-10 pointer-events-none" />
+      <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-[#081b36] to-transparent z-10 pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-[#081b36] to-transparent z-10 pointer-events-none" />
 
       <div className="space-y-4">
         {/* Track 1: Bergerak ke Kiri */}
@@ -72,19 +72,19 @@ export default function TestimonialMarquee() {
             {row1.map((item, idx) => (
               <div
                 key={idx}
-                className="w-80 sm:w-96 bg-[#0a271f] hover:bg-[#0e332a] border border-[#144235] rounded-xl p-4.5 transition-colors shrink-0 flex flex-col justify-between space-y-3"
+                className="w-80 sm:w-96 bg-[#0f2b52] hover:bg-[#143769] border border-[#1d4c8c] rounded-xl p-4.5 transition-colors shrink-0 flex flex-col justify-between space-y-3"
               >
                 <div className="flex items-center gap-1 text-amber-300">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="w-3.5 h-3.5 fill-amber-300" />
                   ))}
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                <p className="text-xs text-blue-50/90 leading-relaxed font-normal">
                   &ldquo;{item.quote}&rdquo;
                 </p>
-                <div className="pt-2.5 border-t border-[#133d31]">
+                <div className="pt-2.5 border-t border-[#1a437c]">
                   <div className="font-semibold text-xs text-slate-100">{item.name}</div>
-                  <div className="text-[11px] text-emerald-300/80 mt-0.5">{item.program}</div>
+                  <div className="text-[11px] text-amber-300/90 mt-0.5">{item.program}</div>
                 </div>
               </div>
             ))}
@@ -97,19 +97,19 @@ export default function TestimonialMarquee() {
             {row2.map((item, idx) => (
               <div
                 key={idx}
-                className="w-80 sm:w-96 bg-[#0a271f] hover:bg-[#0e332a] border border-[#144235] rounded-xl p-4.5 transition-colors shrink-0 flex flex-col justify-between space-y-3"
+                className="w-80 sm:w-96 bg-[#0f2b52] hover:bg-[#143769] border border-[#1d4c8c] rounded-xl p-4.5 transition-colors shrink-0 flex flex-col justify-between space-y-3"
               >
                 <div className="flex items-center gap-1 text-amber-300">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="w-3.5 h-3.5 fill-amber-300" />
                   ))}
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                <p className="text-xs text-blue-50/90 leading-relaxed font-normal">
                   &ldquo;{item.quote}&rdquo;
                 </p>
-                <div className="pt-2.5 border-t border-[#133d31]">
+                <div className="pt-2.5 border-t border-[#1a437c]">
                   <div className="font-semibold text-xs text-slate-100">{item.name}</div>
-                  <div className="text-[11px] text-emerald-300/80 mt-0.5">{item.program}</div>
+                  <div className="text-[11px] text-amber-300/90 mt-0.5">{item.program}</div>
                 </div>
               </div>
             ))}

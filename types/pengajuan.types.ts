@@ -1,3 +1,5 @@
+import { PaketItem } from './package.types';
+
 export interface PengajuanInput {
   nama_lengkap: string;
   jenis_kelamin: 'L' | 'P';
@@ -11,7 +13,7 @@ export interface PengajuanInput {
 
 export interface PengajuanItem extends PengajuanInput {
   id_pengajuan: number;
-  kode_pengajuan?: string;
+  kode_pengajuan: string;
   nik?: string | null;
   nama_ayah?: string | null;
   tempat_lahir?: string | null;
@@ -20,4 +22,6 @@ export interface PengajuanItem extends PengajuanInput {
   pendidikan?: string | null;
   tgl_pengajuan: string;
   status_pengajuan: 'baru' | 'dihubungi' | 'diproses' | 'ditolak';
+  alasan_tolak?: string | null;
+  paket?: PaketItem | null;
 }

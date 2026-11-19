@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { X, Send, CheckCircle, AlertCircle, Phone, User, MapPin, Mail, MessageSquare } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { X, Send, CheckCircle, AlertCircle, Phone, User, MapPin, Mail, MessageSquare, Search } from 'lucide-react';
 import { PaketItem } from '@/types/package.types';
 import { submitPengajuan } from '@/services/pengajuan.service';
 import { formatRupiah } from '@/utils/formatters';
@@ -29,7 +30,13 @@ export default function RegistrationModal({
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [successData, setSuccessData] = useState<{ id_pengajuan: number; kode_pengajuan?: string } | null>(null);
+  const [successData, setSuccessData] = useState<{ id_pengajuan: number; kode_pengajuan: string } | null>(null);
+
+  useEffect(() => {
+    if (selectedPackage?.id_paket) {
+      setPaketId(selectedPackage.id_paket);
+    }
+  }, [selectedPackage]);
 
   if (!isOpen) return null;
 
@@ -41,12 +48,17 @@ export default function RegistrationModal({
       setErrorMsg('Nama lengkap wajib diisi');
       return;
     }
-    if (!noHp.trim() || noHp.trim().length < 9) {
-      setErrorMsg('Nomor WhatsApp wajib diisi dengan benar');
+    const cleanPhone = noHp.trim().replace(/\s|-/g, '');
+    if (!cleanPhone || !/^(\+62|62|0)8[0-9]{7,13}$/.test(cleanPhone)) {
+      setErrorMsg('Format nomor WhatsApp tidak valid (gunakan awalan 08 atau 628, min. 10 digit)');
       return;
     }
     if (!alamat.trim()) {
       setErrorMsg('Alamat / Kota domisili wajib diisi');
+      return;
+    }
+    if (!paketId) {
+      setErrorMsg('Paket yang diminati wajib dipilih');
       return;
     }
 
@@ -54,7 +66,7 @@ export default function RegistrationModal({
     const res = await submitPengajuan({
       nama_lengkap: namaLengkap,
       jenis_kelamin: jenisKelamin,
-      no_hp: noHp,
+      no_hp: cleanPhone,
       email: email || undefined,
       alamat: alamat,
       id_paket: Number(paketId),
@@ -63,9 +75,10 @@ export default function RegistrationModal({
     setLoading(false);
 
     if (res.success && res.data) {
+      const padded = String(res.data.id_pengajuan).padStart(4, '0');
       setSuccessData({
         id_pengajuan: res.data.id_pengajuan,
-        kode_pengajuan: res.data.kode_pengajuan || `DRN-REG-00${res.data.id_pengajuan}`,
+        kode_pengajuan: res.data.kode_pengajuan || `DRN-REG-${padded}`,
       });
     } else {
       setErrorMsg(res.error || 'Gagal mengirim pengajuan, silakan coba lagi.');
@@ -87,18 +100,18 @@ export default function RegistrationModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-fadeIn">
       <div className="bg-white rounded-2xl max-w-xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-slate-200">
         {/* Header */}
-        <div className="sticky top-0 bg-[#08221b] text-white p-5 border-b border-[#0d3329] flex items-start justify-between gap-4 z-10">
+        <div className="sticky top-0 bg-[#0b2242] text-white p-5 border-b border-[#163d73] flex items-start justify-between gap-4 z-10">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-amber-300 bg-[#0e3b2f] border border-[#1b5544] px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-1">
+            <div className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-amber-300 bg-[#133666] border border-[#21579e] px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-1">
               <span>Formulir Daring (UI-03)</span>
               <span>&bull;</span>
               <span>Yayasan Darunnisa</span>
             </div>
             <h3 className="text-lg font-bold tracking-tight text-white">
-              Pengajuan Pendaftaran Awal
+              Ajukan Minat Pendaftaran
             </h3>
-            <p className="text-[11px] text-emerald-200/80 mt-0.5">
-              Isi data kontak awal untuk konsultasi &amp; booking kuota paket.
+            <p className="text-[11px] text-blue-200/80 mt-0.5">
+              Isi data kontak awal, staf Yayasan Darunnisa akan menghubungi Anda melalui WhatsApp.
             </p>
           </div>
           <button
@@ -112,28 +125,39 @@ export default function RegistrationModal({
 
         {/* Content */}
         {successData ? (
-          <div className="p-8 text-center space-y-4">
-            <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-700 mx-auto flex items-center justify-center">
+          <div className="p-8 text-center space-y-5">
+            <div className="w-14 h-14 rounded-full bg-blue-100 text-blue-800 mx-auto flex items-center justify-center">
               <CheckCircle className="w-8 h-8" />
             </div>
-            <div className="space-y-1">
-              <h4 className="text-lg font-bold text-slate-900">Pengajuan Berhasil Terkirim!</h4>
+            <div className="space-y-2">
+              <h4 className="text-lg font-bold text-slate-900">Pengajuan diterima</h4>
               <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
-                Terima kasih, data minat pendaftaran Anda telah tersimpan di sistem Yayasan Darunnisa dengan nomor pengajuan:
+                Terima kasih. Staf Yayasan Darunnisa akan menghubungi Anda melalui WhatsApp.
               </p>
-              <div className="inline-block bg-slate-100 border border-slate-300 px-4 py-2 rounded-xl font-mono text-base font-bold text-emerald-900 tracking-wider my-2">
-                {successData.kode_pengajuan || `DRN-REG-00${successData.id_pengajuan}`}
+              <div className="bg-blue-50/70 border border-blue-200 rounded-2xl p-4 max-w-sm mx-auto my-3 space-y-1">
+                <span className="text-[11px] text-slate-500 block">Kode pengajuan Anda</span>
+                <div className="font-mono text-xl font-extrabold text-blue-950 tracking-wider">
+                  {successData.kode_pengajuan}
+                </div>
+                <span className="text-[11px] text-slate-500 block pt-0.5">
+                  Simpan kode ini untuk melacak status pengajuan Anda.
+                </span>
               </div>
-              <p className="text-[11px] text-slate-500">
-                Staf operasional Darunnisa akan menghubungi nomor WhatsApp Anda dalam 1x24 jam untuk verifikasi ketersediaan kamar dan jadwal manasik.
-              </p>
             </div>
-            <div className="pt-4">
+            <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Link
+                href={`/tracking?kode=${encodeURIComponent(successData.kode_pengajuan)}`}
+                onClick={handleReset}
+                className="w-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs py-3 px-4 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5"
+              >
+                <Search className="w-3.5 h-3.5" />
+                <span>Lacak Pengajuan</span>
+              </Link>
               <button
                 onClick={handleReset}
-                className="w-full bg-[#08221b] hover:bg-[#0c352a] text-amber-300 font-semibold text-xs py-3 rounded-xl transition-colors cursor-pointer"
+                className="w-full bg-[#0b2242] hover:bg-[#133666] text-white font-semibold text-xs py-3 px-4 rounded-xl transition-colors cursor-pointer"
               >
-                Selesai &amp; Kembali ke Halaman Utama
+                Kembali ke Beranda
               </button>
             </div>
           </div>
@@ -149,7 +173,7 @@ export default function RegistrationModal({
             {/* Nama Lengkap */}
             <div>
               <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                Nama Lengkap Sesuai KTP <span className="text-rose-500">*</span>
+                Nama lengkap <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <User className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
@@ -158,8 +182,8 @@ export default function RegistrationModal({
                   required
                   value={namaLengkap}
                   onChange={(e) => setNamaLengkap(e.target.value)}
-                  placeholder="Contoh: H. Ahmad Fauzi"
-                  className="w-full border border-slate-300 rounded-lg pl-8 pr-3 py-2 text-xs focus:outline-emerald-800 bg-slate-50 focus:bg-white transition-colors"
+                  placeholder="Nama lengkap sesuai KTP"
+                  className="w-full border border-slate-300 rounded-lg pl-8 pr-3 py-2 text-xs focus:outline-blue-800 bg-slate-50 focus:bg-white transition-colors"
                 />
               </div>
             </div>
@@ -168,7 +192,7 @@ export default function RegistrationModal({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                  Jenis Kelamin <span className="text-rose-500">*</span>
+                  Jenis kelamin <span className="text-rose-500">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
@@ -176,7 +200,7 @@ export default function RegistrationModal({
                     onClick={() => setJenisKelamin('L')}
                     className={`py-2 px-3 rounded-lg border text-xs font-medium cursor-pointer transition-colors ${
                       jenisKelamin === 'L'
-                        ? 'border-emerald-800 bg-emerald-50 text-emerald-900 font-semibold'
+                        ? 'border-blue-800 bg-blue-50 text-blue-950 font-semibold'
                         : 'border-slate-200 text-slate-600 hover:bg-slate-50'
                     }`}
                   >
@@ -187,7 +211,7 @@ export default function RegistrationModal({
                     onClick={() => setJenisKelamin('P')}
                     className={`py-2 px-3 rounded-lg border text-xs font-medium cursor-pointer transition-colors ${
                       jenisKelamin === 'P'
-                        ? 'border-emerald-800 bg-emerald-50 text-emerald-900 font-semibold'
+                        ? 'border-blue-800 bg-blue-50 text-blue-950 font-semibold'
                         : 'border-slate-200 text-slate-600 hover:bg-slate-50'
                     }`}
                   >
@@ -198,7 +222,7 @@ export default function RegistrationModal({
 
               <div>
                 <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                  Nomor Telepon / WhatsApp <span className="text-rose-500">*</span>
+                  No. telepon / WhatsApp <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
                   <Phone className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
@@ -207,35 +231,17 @@ export default function RegistrationModal({
                     required
                     value={noHp}
                     onChange={(e) => setNoHp(e.target.value)}
-                    placeholder="081234567890"
-                    className="w-full border border-slate-300 rounded-lg pl-8 pr-3 py-2 text-xs focus:outline-emerald-800 bg-slate-50 focus:bg-white transition-colors"
+                    placeholder="08xxxxxxxxxx"
+                    className="w-full border border-slate-300 rounded-lg pl-8 pr-3 py-2 text-xs focus:outline-blue-800 bg-slate-50 focus:bg-white transition-colors"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Pilihan Paket */}
-            <div>
-              <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                Paket yang Diminati <span className="text-rose-500">*</span>
-              </label>
-              <select
-                value={paketId}
-                onChange={(e) => setPaketId(Number(e.target.value))}
-                className="w-full border border-slate-300 rounded-lg p-2 text-xs focus:outline-emerald-800 bg-slate-50 focus:bg-white transition-colors"
-              >
-                {packages.map((pkg) => (
-                  <option key={pkg.id_paket} value={pkg.id_paket}>
-                    {pkg.nama_paket} ({formatRupiah(pkg.harga)})
-                  </option>
-                ))}
-              </select>
-            </div>
-
             {/* Alamat / Kota Domisili */}
             <div>
               <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                Alamat / Kota Domisili <span className="text-rose-500">*</span>
+                Alamat (kota domisili) <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <MapPin className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
@@ -244,33 +250,52 @@ export default function RegistrationModal({
                   required
                   value={alamat}
                   onChange={(e) => setAlamat(e.target.value)}
-                  placeholder="Misal: Jl. Tebet Barat No. 12, Jakarta Selatan"
-                  className="w-full border border-slate-300 rounded-lg pl-8 pr-3 py-2 text-xs focus:outline-emerald-800 bg-slate-50 focus:bg-white transition-colors"
+                  placeholder="Kota / alamat tempat tinggal"
+                  className="w-full border border-slate-300 rounded-lg pl-8 pr-3 py-2 text-xs focus:outline-blue-800 bg-slate-50 focus:bg-white transition-colors"
                 />
               </div>
             </div>
 
-            {/* Email (Opsional) */}
-            <div>
-              <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                Alamat Email <span className="text-slate-400 font-normal">(opsional)</span>
-              </label>
-              <div className="relative">
-                <Mail className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="nama@email.com"
-                  className="w-full border border-slate-300 rounded-lg pl-8 pr-3 py-2 text-xs focus:outline-emerald-800 bg-slate-50 focus:bg-white transition-colors"
-                />
+            {/* Grid 2 Kolom: Paket & Email */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  Paket diminati <span className="text-rose-500">*</span>
+                </label>
+                <select
+                  value={paketId}
+                  onChange={(e) => setPaketId(Number(e.target.value))}
+                  className="w-full border border-slate-300 rounded-lg p-2 text-xs focus:outline-blue-800 bg-slate-50 focus:bg-white transition-colors"
+                >
+                  {packages.map((pkg) => (
+                    <option key={pkg.id_paket} value={pkg.id_paket}>
+                      {pkg.nama_paket} ({formatRupiah(pkg.harga)})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  Email <span className="text-slate-400 font-normal">(opsional)</span>
+                </label>
+                <div className="relative">
+                  <Mail className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="nama@email.com"
+                    className="w-full border border-slate-300 rounded-lg pl-8 pr-3 py-2 text-xs focus:outline-blue-800 bg-slate-50 focus:bg-white transition-colors"
+                  />
+                </div>
               </div>
             </div>
 
             {/* Pesan Tambahan */}
             <div>
               <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                Pesan / Kebutuhan Khusus <span className="text-slate-400 font-normal">(opsional)</span>
+                Pesan / catatan kebutuhan <span className="text-slate-400 font-normal">(opsional)</span>
               </label>
               <div className="relative">
                 <MessageSquare className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
@@ -278,39 +303,48 @@ export default function RegistrationModal({
                   rows={2}
                   value={pesan}
                   onChange={(e) => setPesan(e.target.value)}
-                  placeholder="Misal: rencana berangkat bersama istri & orang tua lansia, butuh kursi roda."
-                  className="w-full border border-slate-300 rounded-lg pl-8 pr-3 py-2 text-xs focus:outline-emerald-800 bg-slate-50 focus:bg-white transition-colors"
+                  placeholder="Mis. butuh kursi roda, jumlah rombongan, tipe kamar"
+                  className="w-full border border-slate-300 rounded-lg pl-8 pr-3 py-2 text-xs focus:outline-blue-800 bg-slate-50 focus:bg-white transition-colors"
                 />
               </div>
             </div>
 
-            <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl text-[11px] text-emerald-900 leading-relaxed">
-              <strong>Catatan Privasi:</strong> Sesuai SOP Yayasan Darunnisa, dokumen sensitif (KTP, paspor, dan buku nikah) tidak diunggah ke sistem digital ini dan akan diserahkan langsung saat verifikasi berkas di kantor.
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-[11px] text-blue-950 leading-relaxed">
+              Data identitas lengkap (NIK, nama ayah, tempat/tanggal lahir) dan pemeriksaan berkas fisik (KTP, paspor) dilakukan di kantor Yayasan Darunnisa.
             </div>
 
             {/* Action Buttons */}
-            <div className="pt-2 flex items-center justify-end gap-3 border-t border-slate-200">
-              <button
-                type="button"
+            <div className="pt-2 flex items-center justify-between gap-3 border-t border-slate-200">
+              <Link
+                href="/tracking"
                 onClick={handleReset}
-                className="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-medium transition-colors cursor-pointer"
+                className="text-[11px] text-blue-800 font-semibold hover:underline"
               >
-                Batal
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 disabled:bg-amber-200 text-slate-950 font-bold rounded-xl text-xs transition-colors cursor-pointer inline-flex items-center gap-1.5"
-              >
-                {loading ? (
-                  <span>Mengirim Data...</span>
-                ) : (
-                  <>
-                    <Send className="w-3.5 h-3.5" />
-                    <span>Kirim Pengajuan Minat</span>
-                  </>
-                )}
-              </button>
+                Sudah ada kode? Lacak pengajuan &rarr;
+              </Link>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-medium transition-colors cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 disabled:bg-amber-200 text-slate-950 font-bold rounded-xl text-xs transition-colors cursor-pointer inline-flex items-center gap-1.5"
+                >
+                  {loading ? (
+                    <span>Mengirim...</span>
+                  ) : (
+                    <>
+                      <Send className="w-3.5 h-3.5" />
+                      <span>Kirim Pengajuan</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </form>
         )}

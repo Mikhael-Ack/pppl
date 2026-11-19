@@ -17,18 +17,27 @@ export default function PackageDetailModal({
 }: PackageDetailModalProps) {
   if (!paket) return null;
 
-  const jadwal = paket.keberangkatan && paket.keberangkatan.length > 0 ? paket.keberangkatan[0] : null;
+  const jadwal =
+    paket.keberangkatan?.find((k) => k.status === 'buka') ||
+    (paket.keberangkatan && paket.keberangkatan.length > 0 ? paket.keberangkatan[0] : null);
+  const sisaKuota = jadwal ? (jadwal.sisa_kuota ?? jadwal.kuota) : null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-fadeIn">
       <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
         {/* Header */}
-        <div className="sticky top-0 bg-[#08221b] text-white p-5 border-b border-[#0d3329] flex items-start justify-between gap-4">
+        <div className="sticky top-0 bg-[#0b2242] text-white p-5 border-b border-[#163d73] flex items-start justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-amber-300 bg-[#0e3b2f] border border-[#1b5544] px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-2">
+            <div className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-amber-300 bg-[#133666] border border-[#21579e] px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-2">
               <span>{paket.kode_paket}</span>
               <span>&bull;</span>
-              <span>{paket.program === 'haji_khusus' ? 'Haji Khusus' : 'Umrah'}</span>
+              <span>
+                {paket.program === 'haji_khusus'
+                  ? 'Haji Khusus'
+                  : paket.program === 'haji_reguler'
+                  ? 'Haji Reguler'
+                  : 'Umrah'}
+              </span>
             </div>
             <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white">
               {paket.nama_paket}
@@ -49,13 +58,13 @@ export default function PackageDetailModal({
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
             <div>
               <span className="text-[11px] text-slate-500 block mb-0.5 font-medium">Biaya Paket All-in</span>
-              <div className="text-2xl font-bold text-emerald-900 font-mono tracking-tight">
+              <div className="text-2xl font-bold text-blue-950 font-mono tracking-tight">
                 {formatRupiah(paket.harga)}
                 <span className="text-xs font-normal text-slate-500 ml-1">/ jemaah</span>
               </div>
             </div>
-            <div className="flex items-center gap-2 bg-emerald-100 text-emerald-900 px-3 py-1.5 rounded-lg font-semibold">
-              <Clock className="w-4 h-4 text-emerald-700" />
+            <div className="flex items-center gap-2 bg-amber-100 text-amber-950 border border-amber-300 px-3 py-1.5 rounded-lg font-semibold">
+              <Clock className="w-4 h-4 text-amber-800" />
               <span>Durasi {paket.durasi_hari} Hari</span>
             </div>
           </div>
@@ -64,16 +73,16 @@ export default function PackageDetailModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="border border-slate-200 rounded-xl p-4 space-y-2">
               <div className="flex items-center gap-2 font-semibold text-slate-900 text-xs">
-                <Plane className="w-4 h-4 text-emerald-700 shrink-0" />
+                <Plane className="w-4 h-4 text-blue-700 shrink-0" />
                 <span>Maskapai &amp; Penerbangan</span>
               </div>
               <p className="text-slate-600 pl-6">{paket.maskapai}</p>
-              <div className="pl-6 text-[11px] text-emerald-700 font-medium">Penerbangan langsung (Direct)</div>
+              <div className="pl-6 text-[11px] text-blue-700 font-medium">Penerbangan langsung (Direct)</div>
             </div>
 
             <div className="border border-slate-200 rounded-xl p-4 space-y-2">
               <div className="flex items-center gap-2 font-semibold text-slate-900 text-xs">
-                <Building2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                <Building2 className="w-4 h-4 text-blue-700 shrink-0" />
                 <span>Akomodasi Hotel Bintang 5</span>
               </div>
               <p className="text-slate-600 pl-6 leading-relaxed">{paket.hotel}</p>
@@ -83,13 +92,13 @@ export default function PackageDetailModal({
 
           {/* Departure & Quota Details */}
           {jadwal && (
-            <div className="border border-emerald-200 bg-emerald-50/50 rounded-xl p-4 space-y-2">
+            <div className="border border-blue-200 bg-blue-50/50 rounded-xl p-4 space-y-2">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 font-semibold text-emerald-950 text-xs">
-                  <Calendar className="w-4 h-4 text-emerald-700" />
+                <div className="flex items-center gap-2 font-semibold text-blue-950 text-xs">
+                  <Calendar className="w-4 h-4 text-blue-700" />
                   <span>Jadwal Keberangkatan Terbuka</span>
                 </div>
-                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-200/80 text-emerald-900 font-semibold uppercase">
+                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-blue-200/80 text-blue-900 font-semibold uppercase">
                   {jadwal.status}
                 </span>
               </div>
@@ -97,13 +106,13 @@ export default function PackageDetailModal({
                 <div>
                   <span className="text-[11px] text-slate-500 block">Tanggal Berangkat</span>
                   <span className="font-semibold text-slate-800">
-                    {jadwal.tgl_berangkat || `Bulan ${jadwal.bulan} Tahun ${jadwal.tahun}`}
+                    {jadwal.tgl_berangkat || (jadwal.bulan ? `Bulan ${jadwal.bulan} Tahun ${jadwal.tahun}` : `Tahun ${jadwal.tahun}`)}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[11px] text-slate-500 block">Alokasi Kuota Kursi</span>
+                  <span className="text-[11px] text-slate-500 block">Sisa Kuota Kursi</span>
                   <span className="font-semibold text-slate-800 font-mono">
-                    {jadwal.kuota} Kursi Tersedia
+                    {sisaKuota} dari {jadwal.kuota} Kursi Tersedia
                   </span>
                 </div>
               </div>
@@ -118,19 +127,19 @@ export default function PackageDetailModal({
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11px] text-slate-600">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                 <span>Bimbingan Muthawif Profesional</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                 <span>Visa Resmi &amp; Asuransi Perjalanan</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                 <span>Makan 3x Sehari Menu Indonesia</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                 <span>Free Manasik Teori &amp; Praktik</span>
               </div>
             </div>

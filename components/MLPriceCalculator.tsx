@@ -23,7 +23,7 @@ export default function MLPriceCalculator() {
   return (
     <section id="kalkulator-biaya" className="py-14 md:py-18 px-4 max-w-7xl mx-auto space-y-8">
       <div className="max-w-2xl space-y-1">
-        <span className="text-xs font-semibold text-emerald-800 uppercase tracking-wider block">
+        <span className="text-xs font-semibold text-blue-800 uppercase tracking-wider block">
           Perencanaan Keuangan
         </span>
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
@@ -43,7 +43,7 @@ export default function MLPriceCalculator() {
               <select
                 value={musimMultiplier}
                 onChange={(e) => setMusimMultiplier(Number(e.target.value))}
-                className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-slate-50 focus:bg-white focus:outline-emerald-800"
+                className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-slate-50 focus:bg-white focus:outline-blue-800"
               >
                 <option value={1.0}>Awal Musim (Okt - Nov)</option>
                 <option value={1.15}>Libur Akhir Tahun (Desember)</option>
@@ -58,7 +58,7 @@ export default function MLPriceCalculator() {
               <select
                 value={baseHotelPrice}
                 onChange={(e) => setBaseHotelPrice(Number(e.target.value))}
-                className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-slate-50 focus:bg-white focus:outline-emerald-800"
+                className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-slate-50 focus:bg-white focus:outline-blue-800"
               >
                 <option value={26000000}>Bintang 3 (Jarak 300–400m)</option>
                 <option value={29500000}>Bintang 4 (Jarak 150–250m)</option>
@@ -73,7 +73,7 @@ export default function MLPriceCalculator() {
               <select
                 value={roomAddon}
                 onChange={(e) => setRoomAddon(Number(e.target.value))}
-                className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-slate-50 focus:bg-white focus:outline-emerald-800"
+                className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-slate-50 focus:bg-white focus:outline-blue-800"
               >
                 <option value={0}>Quad (Ber-4 sekamar)</option>
                 <option value={2000000}>Triple (Ber-3 sekamar)</option>
@@ -86,7 +86,7 @@ export default function MLPriceCalculator() {
               <select
                 value={flightAddon}
                 onChange={(e) => setFlightAddon(Number(e.target.value))}
-                className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-slate-50 focus:bg-white focus:outline-emerald-800"
+                className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-slate-50 focus:bg-white focus:outline-blue-800"
               >
                 <option value={1500000}>Direct (Garuda / Saudia)</option>
                 <option value={0}>Transit (Emirates / Oman Air)</option>
@@ -100,22 +100,22 @@ export default function MLPriceCalculator() {
         </div>
 
         {/* Output Panel */}
-        <div className="lg:col-span-5 bg-[#08221b] text-white rounded-xl p-6 flex flex-col justify-between space-y-5">
+        <div className="lg:col-span-5 bg-[#0b2242] text-white rounded-xl p-6 flex flex-col justify-between space-y-5 border border-[#163d73]">
           <div className="space-y-3">
-            <span className="text-[11px] uppercase tracking-wider text-emerald-300 font-semibold block">
+            <span className="text-[11px] uppercase tracking-wider text-blue-200 font-semibold block">
               Estimasi Total Per Orang
             </span>
 
-            <div className="text-3xl sm:text-4xl font-bold font-mono text-amber-200 tracking-tight tabular-nums">
+            <div className="text-3xl sm:text-4xl font-bold font-mono text-amber-300 tracking-tight tabular-nums">
               {formatRupiah(estimatedTotal)}
             </div>
 
-            <div className="bg-[#0e3b2f] rounded-lg p-3 text-xs border border-[#1b5544] space-y-1">
-              <div className="flex justify-between items-center text-slate-300">
+            <div className="bg-[#133666] rounded-lg p-3 text-xs border border-[#21579e] space-y-1">
+              <div className="flex justify-between items-center text-blue-100">
                 <span>Rekomendasi Tabungan:</span>
                 <strong className="text-white font-mono tabular-nums">{formatRupiah(saving12Months)}/bln</strong>
               </div>
-              <div className="text-[10px] text-emerald-300/70">
+              <div className="text-[10px] text-blue-200/75">
                 Estimasi menabung berkala selama 12 bulan sebelum jadwal keberangkatan.
               </div>
             </div>

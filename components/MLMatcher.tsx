@@ -94,7 +94,7 @@ export default function MLMatcher() {
   return (
     <section id="rekomendasi-ml" className="py-14 md:py-18 px-4 max-w-7xl mx-auto space-y-8">
       <div className="max-w-2xl space-y-1">
-        <span className="text-xs font-semibold text-emerald-800 uppercase tracking-wider block">
+        <span className="text-xs font-semibold text-blue-800 uppercase tracking-wider block">
           Penyesuai Kebutuhan
         </span>
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
@@ -111,7 +111,7 @@ export default function MLMatcher() {
           <div>
             <div className="flex justify-between items-center text-xs mb-1">
               <span className="font-medium text-slate-700">Perkiraan Anggaran Per Orang:</span>
-              <strong className="text-emerald-950 font-mono text-sm tabular-nums">Rp {budget}.000.000</strong>
+              <strong className="text-blue-950 font-mono text-sm tabular-nums">Rp {budget}.000.000</strong>
             </div>
             <input
               type="range"
@@ -120,7 +120,7 @@ export default function MLMatcher() {
               step={1}
               value={budget}
               onChange={(e) => setBudget(Number(e.target.value))}
-              className="w-full accent-[#08221b] h-1.5 bg-slate-200 rounded cursor-pointer"
+              className="w-full accent-[#0b2242] h-1.5 bg-slate-200 rounded cursor-pointer"
             />
             <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
               <span>Rp 25 jt</span>
@@ -135,7 +135,7 @@ export default function MLMatcher() {
               <select
                 value={hasElderly ? '1' : '0'}
                 onChange={(e) => setHasElderly(e.target.value === '1')}
-                className="w-full text-xs border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-emerald-800"
+                className="w-full text-xs border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-blue-800"
               >
                 <option value="1">Ada lansia / butuh dekat</option>
                 <option value="0">Fisik bugar / mandiri</option>
@@ -147,7 +147,7 @@ export default function MLMatcher() {
               <select
                 value={duration}
                 onChange={(e) => setDuration(Number(e.target.value))}
-                className="w-full text-xs border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-emerald-800"
+                className="w-full text-xs border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-blue-800"
               >
                 <option value={9}>9 hari (Ibadah reguler)</option>
                 <option value={12}>12 hari (Ibadah + ziarah)</option>
@@ -160,7 +160,7 @@ export default function MLMatcher() {
             <select
               value={distancePriority}
               onChange={(e) => setDistancePriority(e.target.value)}
-              className="w-full text-xs border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-emerald-800"
+              className="w-full text-xs border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-blue-800"
             >
               <option value="ring1">Ring 1 (&lt; 100m, Pelataran Masjid)</option>
               <option value="flexible">Fleksibel (150m - 350m)</option>
@@ -169,7 +169,7 @@ export default function MLMatcher() {
 
           <button
             onClick={handlePredict}
-            className="w-full bg-[#08221b] hover:bg-[#0e3b2f] text-white font-medium py-2.5 rounded-lg text-xs transition-colors"
+            className="w-full bg-[#0b2242] hover:bg-[#133666] text-amber-300 font-semibold py-2.5 rounded-lg text-xs transition-colors cursor-pointer"
           >
             Cocokkan Pilihan Paket
           </button>
@@ -178,13 +178,13 @@ export default function MLMatcher() {
         {/* Output Box */}
         <div className="lg:col-span-7 bg-white rounded-xl border border-slate-200 p-6 flex flex-col justify-between space-y-4">
           <div className="space-y-3">
-            <div className="text-[11px] font-mono text-emerald-800 font-semibold tracking-wide uppercase">
+            <div className="text-[11px] font-mono text-blue-800 font-semibold tracking-wide uppercase">
               Paket yang Sesuai dengan Kebutuhan Anda
             </div>
 
             <h3 className="text-xl font-bold text-slate-900">{predictedPackage.title}</h3>
             
-            <div className="text-xs font-mono font-bold text-emerald-950 tabular-nums">
+            <div className="text-xs font-mono font-bold text-blue-950 tabular-nums">
               Mulai {predictedPackage.priceEst} per orang
             </div>
 
@@ -196,7 +196,7 @@ export default function MLMatcher() {
               <span className="text-[11px] font-semibold text-slate-700 block">Fasilitas utama:</span>
               {predictedPackage.features.map((f, i) => (
                 <div key={i} className="flex items-center gap-2 text-xs text-slate-600">
-                  <Check className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                  <Check className="w-3.5 h-3.5 text-blue-700 shrink-0" />
                   <span>{f}</span>
                 </div>
               ))}
@@ -209,7 +209,7 @@ export default function MLMatcher() {
               href={waUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 bg-[#08221b] hover:bg-[#0e3b2f] text-white font-semibold px-4 py-2 rounded-lg text-xs transition-colors"
+              className="inline-flex items-center gap-1.5 bg-[#0b2242] hover:bg-[#133666] text-white font-semibold px-4 py-2 rounded-lg text-xs transition-colors"
             >
               <span>Konsultasikan Paket Ini</span>
               <ArrowUpRight className="w-3.5 h-3.5 text-amber-300" />

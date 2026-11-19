@@ -50,16 +50,16 @@ export default function HomePageClient({ initialPackages }: HomePageClientProps)
 
         {/* Quick CTA Banner for Registration (UI-03 Anchor) */}
         <section id="daftar" className="max-w-7xl mx-auto px-4 py-8">
-          <div className="bg-gradient-to-r from-[#08221b] to-[#0f3d31] rounded-2xl p-6 sm:p-8 text-white border border-[#1a5646] flex flex-col md:flex-row items-center justify-between gap-6 shadow-md">
+          <div className="bg-gradient-to-r from-[#0b2242] to-[#13386b] rounded-2xl p-6 sm:p-8 text-white border border-[#1f5296] flex flex-col md:flex-row items-center justify-between gap-6 shadow-md">
             <div className="space-y-2 text-center md:text-left">
-              <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-amber-300 bg-[#0e3b2f] border border-[#1b5544] px-3 py-0.5 rounded-full uppercase">
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-amber-300 bg-[#133666] border border-[#235ca6] px-3 py-0.5 rounded-full uppercase">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>Pendaftaran Awal Bebas Ribet (UI-03)</span>
               </div>
               <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
                 Siap Melaksanakan Ibadah Umrah &amp; Haji Khusus?
               </h3>
-              <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
+              <p className="text-xs text-blue-100/85 max-w-xl leading-relaxed">
                 Kunci kuota kursi Anda sekarang tanpa dokumen sensitif di awal. Cukup isi nama, nomor WhatsApp, dan pilihan paket Anda, staf Yayasan Darunnisa akan memproses reservasi Anda.
               </p>
             </div>

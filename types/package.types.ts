@@ -6,6 +6,8 @@ export interface KeberangkatanItem {
   tgl_berangkat: string | null;
   kuota: number;
   status: 'buka' | 'tutup';
+  jumlah_terisi?: number;
+  sisa_kuota?: number;
 }
 
 export interface PaketItem {

@@ -57,8 +57,8 @@ export default function PWARegister() {
   if (!showBanner) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 max-w-sm bg-slate-900 text-white rounded-2xl p-4 shadow-2xl border border-emerald-500/40 flex items-center gap-3 animate-fadeIn">
-      <div className="w-10 h-10 rounded-xl bg-emerald-800 text-amber-300 font-bold flex items-center justify-center shrink-0">
+    <div className="fixed bottom-4 right-4 z-50 max-w-sm bg-[#0b2242] text-white rounded-2xl p-4 shadow-2xl border border-amber-400/40 flex items-center gap-3 animate-fadeIn">
+      <div className="w-10 h-10 rounded-xl bg-[#133666] border border-[#21579e] text-amber-300 font-bold flex items-center justify-center shrink-0">
         D
       </div>
       <div className="flex-1">
