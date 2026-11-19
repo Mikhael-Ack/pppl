@@ -90,31 +90,59 @@ export default function PackageDetailModal({
             </div>
           </div>
 
-          {/* Departure & Quota Details */}
-          {jadwal && (
-            <div className="border border-blue-200 bg-blue-50/50 rounded-xl p-4 space-y-2">
+          {/* Departure & Quota Details (Menampilkan seluruh jadwal paket sesuai SD Bab 4.2 M2.1) */}
+          {paket.keberangkatan && paket.keberangkatan.length > 0 && (
+            <div className="border border-blue-200 bg-blue-50/50 rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 font-semibold text-blue-950 text-xs">
                   <Calendar className="w-4 h-4 text-blue-700" />
-                  <span>Jadwal Keberangkatan Terbuka</span>
+                  <span>Jadwal Keberangkatan &amp; Ketersediaan Kuota</span>
                 </div>
-                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-blue-200/80 text-blue-900 font-semibold uppercase">
-                  {jadwal.status}
+                <span className="text-[11px] font-mono text-slate-500">
+                  {paket.keberangkatan.length} jadwal
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-4 pt-1">
-                <div>
-                  <span className="text-[11px] text-slate-500 block">Tanggal Berangkat</span>
-                  <span className="font-semibold text-slate-800">
-                    {jadwal.tgl_berangkat || (jadwal.bulan ? `Bulan ${jadwal.bulan} Tahun ${jadwal.tahun}` : `Tahun ${jadwal.tahun}`)}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[11px] text-slate-500 block">Sisa Kuota Kursi</span>
-                  <span className="font-semibold text-slate-800 font-mono">
-                    {sisaKuota} dari {jadwal.kuota} Kursi Tersedia
-                  </span>
-                </div>
+              <div className="divide-y divide-blue-200/60 border border-blue-200/80 rounded-lg bg-white overflow-hidden">
+                {paket.keberangkatan.map((jdw) => {
+                  const sisa = jdw.sisa_kuota ?? jdw.kuota;
+                  return (
+                    <div
+                      key={jdw.id_keberangkatan}
+                      className="p-3 flex flex-wrap items-center justify-between gap-2 text-xs"
+                    >
+                      <div>
+                        <span className="text-[10px] text-slate-500 block">
+                          Periode / Tanggal Berangkat
+                        </span>
+                        <span className="font-semibold text-slate-900 font-mono">
+                          {jdw.tgl_berangkat ||
+                            (jdw.bulan
+                              ? `Bulan ${jdw.bulan} Tahun ${jdw.tahun}`
+                              : `Alokasi Kuota Tahun ${jdw.tahun}`)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <span className="text-[10px] text-slate-500 block">
+                            Sisa Kuota Kursi
+                          </span>
+                          <span className="font-bold text-blue-950 font-mono">
+                            Sisa {sisa} / {jdw.kuota} Kursi
+                          </span>
+                        </div>
+                        <span
+                          className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase ${
+                            jdw.status === 'buka' && sisa > 0
+                              ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
+                              : 'bg-rose-100 text-rose-900 border border-rose-300'
+                          }`}
+                        >
+                          {jdw.status === 'buka' && sisa <= 0 ? 'penuh' : jdw.status}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
