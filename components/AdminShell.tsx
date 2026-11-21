@@ -18,6 +18,8 @@ import {
   LogOut,
   ExternalLink,
   ShieldCheck,
+  BookOpen,
+  X,
 } from 'lucide-react';
 
 interface AdminShellProps {
@@ -74,6 +76,7 @@ export default function AdminShell({
   const pathname = usePathname();
   const [admin, setAdmin] = useState<AdminUser | null>(null);
   const [checked, setChecked] = useState(false);
+  const [manualOpen, setManualOpen] = useState(false);
 
   useEffect(() => {
     const session = getAdminSession();
@@ -180,6 +183,15 @@ export default function AdminShell({
 
         {/* Bottom Actions (Desktop) */}
         <div className="hidden md:block p-3 border-t border-[#163d73] space-y-1.5">
+          <button
+            onClick={() => setManualOpen(true)}
+            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-medium text-amber-300 bg-[#133666]/80 hover:bg-[#133666] border border-[#21579e] transition-colors cursor-pointer"
+          >
+            <span className="flex items-center gap-2">
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Panduan Staf (User Manual)</span>
+            </span>
+          </button>
           <Link
             href="/"
             className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[11px] text-blue-200 hover:bg-[#133666] hover:text-white transition-colors"
@@ -214,7 +226,16 @@ export default function AdminShell({
               <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>
             )}
           </div>
-          {actions && <div className="flex items-center gap-2">{actions}</div>}
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={() => setManualOpen(true)}
+              className="md:hidden inline-flex items-center gap-1.5 bg-[#0b2242] text-amber-300 font-semibold text-xs px-3 py-2 rounded-xl cursor-pointer"
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Panduan Staf</span>
+            </button>
+            {actions}
+          </div>
         </header>
 
         {/* Page Body */}
@@ -222,6 +243,64 @@ export default function AdminShell({
           {children}
         </main>
       </div>
+
+      {/* Modal User Manual & SOP Pelatihan Staf Operasional (NF-04 / TC-31) */}
+      {manualOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden text-xs">
+            <div className="bg-[#0b2242] text-white p-5 border-b border-[#163d73] flex items-center justify-between">
+              <div>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-amber-300 block">
+                  Dokumentasi Operasional (NF-04 &bull; TC-31)
+                </span>
+                <h3 className="text-base font-bold">
+                  Panduan Pengguna (User Manual) &amp; SOP Staf Darunnisa
+                </h3>
+              </div>
+              <button
+                onClick={() => setManualOpen(false)}
+                className="p-1.5 rounded-lg bg-[#133666] hover:bg-[#1c4b8c] text-blue-200 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-5 overflow-y-auto space-y-4 text-slate-700 leading-relaxed">
+              <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950">
+                <strong>Kebijakan Keamanan &amp; Privasi (NF-02):</strong> Berkas fisik sensitif (KTP asli, Paspor, Buku Nikah) diserahkan dan diverifikasi secara manual di kantor Yayasan Darunnisa. Sistem ini hanya mencatat status checklist administrasi tanpa unggah file dokumen sensitif.
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-bold text-slate-900">1. Kelola Paket &amp; Jadwal Keberangkatan (UI-07 &amp; UI-12)</h4>
+                <p>
+                  Tambahkan atau ubah paket Umrah, Haji Reguler, dan Haji Khusus di menu <strong>Paket</strong>. Buka angkatan keberangkatan di menu <strong>Jadwal</strong> (program Umrah wajib mengisi bulan &amp; tanggal berangkat; program Haji cukup tahun alokasi kuota). Gunakan tab <strong>Jamaah per Keberangkatan</strong> untuk mengelompokkan dan memindahkan jamaah antarkloter.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-bold text-slate-900">2. Verifikasi Pengajuan &amp; Pendaftaran Jamaah (UI-08, UI-09, UI-10)</h4>
+                <p>
+                  Periksa calon jamaah yang mendaftar dari website di menu <strong>Pengajuan</strong>. Ubah status ke <em>Dihubungi</em> setelah tindak lanjut WhatsApp, atau klik <strong>Daftarkan</strong> untuk mengonversi pengajuan menjadi jamaah resmi di <strong>UI-10</strong> (status pengajuan otomatis berubah menjadi <em>Diproses</em> dan nomor induk <code>JM2026xxxx</code> diterbitkan).
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-bold text-slate-900">3. Pencatatan &amp; Pemantauan Pembayaran (UI-11 &amp; UI-13)</h4>
+                <p>
+                  Pantau tagihan seluruh jamaah di menu <strong>Pembayaran</strong>. Klik <strong>Detail / Bayar</strong> untuk mencatat pembayaran tunai atau transfer antarbank. Sistem otomatis menghitung ulang sisa tagihan dan memperbarui status menjadi <em>Lunas</em> atau <em>Belum lunas</em> di basis data terpusat (Cloud Supabase).
+                </p>
+              </div>
+            </div>
+            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+              <span className="text-[11px] text-slate-500 font-mono">
+                Berkas lengkap: docs/USER_MANUAL.md (v1.1)
+              </span>
+              <button
+                onClick={() => setManualOpen(false)}
+                className="bg-[#0b2242] hover:bg-[#133666] text-amber-300 font-bold px-4 py-2 rounded-xl cursor-pointer"
+              >
+                Tutup Panduan
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

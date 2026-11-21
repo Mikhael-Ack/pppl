@@ -87,9 +87,13 @@ export async function getActivePackages(): Promise<PaketItem[]> {
         .eq('status_jamaah', 'aktif'),
     ]);
 
-    if (error || !data || data.length === 0) {
+    if (error || !data) {
       console.warn('[PackagesService] Falling back to default packages:', error?.message);
       return FALLBACK_PACKAGES;
+    }
+
+    if (data.length === 0) {
+      return [];
     }
 
     const countByKeberangkatan: Record<number, number> = {};

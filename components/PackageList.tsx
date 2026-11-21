@@ -100,16 +100,20 @@ export default function PackageList({
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-slate-200 p-12 text-center space-y-2">
-          <div className="text-xs font-semibold text-slate-700">Paket belum tersedia</div>
-          <button
-            onClick={() => {
-              setSelectedProgram('all');
-              setSearchQuery('');
-            }}
-            className="text-xs text-blue-800 font-semibold hover:underline cursor-pointer"
-          >
-            Reset filter pencarian
-          </button>
+          <div className="text-xs font-semibold text-slate-700">
+            Paket belum tersedia &mdash; Informasi paket tidak tersedia saat ini.
+          </div>
+          {(selectedProgram !== 'all' || searchQuery !== '') && (
+            <button
+              onClick={() => {
+                setSelectedProgram('all');
+                setSearchQuery('');
+              }}
+              className="text-xs text-blue-800 font-semibold hover:underline cursor-pointer"
+            >
+              Reset filter pencarian
+            </button>
+          )}
         </div>
       )}
     </section>

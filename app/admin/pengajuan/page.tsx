@@ -192,8 +192,8 @@ export default function AdminPengajuanPage() {
                 </tr>
               ) : list.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-10 text-center text-slate-500">
-                    Tidak ada data pengajuan untuk filter status ini.
+                  <td colSpan={7} className="py-10 text-center text-slate-500 font-semibold">
+                    Belum ada pengajuan masuk &mdash; Daftar pengajuan kosong.
                   </td>
                 </tr>
               ) : (

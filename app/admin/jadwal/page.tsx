@@ -393,97 +393,103 @@ export default function AdminJadwalPage() {
           </div>
 
           {/* Kelompok Keberangkatan Cards */}
-          {filteredKelompok.map((kel) => (
-            <div
-              key={kel.id_keberangkatan}
-              className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs"
-            >
-              <div className="bg-[#0b2242] text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-3 text-xs">
-                <div className="flex items-center gap-2.5">
-                  <span className="font-bold text-amber-300">
-                    {kel.paket?.nama_paket || `Paket #${kel.id_paket}`}
-                  </span>
-                  <span>&mdash;</span>
-                  <span className="font-mono text-blue-100">
-                    {kel.bulan ? `${BULAN_NAMES[kel.bulan]} ` : ''}
-                    {kel.tahun}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 font-mono">
-                  <span className="bg-[#133666] border border-[#21579e] px-2.5 py-1 rounded-lg">
-                    Terisi <strong>{kel.jumlah_terisi || 0}</strong>/{kel.kuota}
-                  </span>
-                  <span className="bg-amber-400 text-slate-950 font-bold px-2.5 py-1 rounded-lg">
-                    Sisa {kel.sisa_kuota ?? kel.kuota}
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-4">
-                {!kel.jamaah_list || kel.jamaah_list.length === 0 ? (
-                  <div className="text-xs text-slate-500 py-4 text-center">
-                    Belum ada jamaah aktif terdaftar pada jadwal keberangkatan ini.
-                  </div>
-                ) : (
-                  <table className="w-full text-left border-collapse text-xs">
-                    <thead>
-                      <tr className="border-b border-slate-200 text-slate-500">
-                        <th className="py-2 px-3">No. Jamaah</th>
-                        <th className="py-2 px-3">Nama Lengkap</th>
-                        <th className="py-2 px-3">No. HP</th>
-                        <th className="py-2 px-3">Checklist Administrasi</th>
-                        <th className="py-2 px-3 text-right">Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {kel.jamaah_list.map((j) => (
-                        <tr key={j.id_jamaah} className="hover:bg-slate-50">
-                          <td className="py-2.5 px-3 font-mono font-bold text-blue-950">
-                            {j.no_jamaah}
-                          </td>
-                          <td className="py-2.5 px-3 font-semibold text-slate-900">
-                            {j.nama_lengkap}
-                          </td>
-                          <td className="py-2.5 px-3 font-mono text-slate-600">
-                            {j.no_hp}
-                          </td>
-                          <td className="py-2.5 px-3 text-[11px] text-slate-600">
-                            Paspor: <strong>{j.status_paspor || 'menunggu_berkas'}</strong> &bull; Visa:{' '}
-                            <strong>{j.status_visa || 'belum_diajukan'}</strong>
-                          </td>
-                          <td className="py-2.5 px-3 text-right">
-                            <button
-                              onClick={() => {
-                                setErrorMsg(null);
-                                const otherKeb = jadwalList.find(
-                                  (k) =>
-                                    k.id_keberangkatan !== kel.id_keberangkatan &&
-                                    (k.sisa_kuota ?? k.kuota) > 0
-                                );
-                                setTargetKebId(
-                                  otherKeb?.id_keberangkatan || kel.id_keberangkatan
-                                );
-                                setMoveModal({
-                                  id_jamaah: j.id_jamaah,
-                                  no_jamaah: j.no_jamaah,
-                                  nama_lengkap: j.nama_lengkap,
-                                  current_id_keberangkatan: kel.id_keberangkatan,
-                                });
-                              }}
-                              className="inline-flex items-center gap-1 text-blue-900 bg-blue-50 hover:bg-blue-100 border border-blue-200 font-semibold px-2.5 py-1 rounded-lg cursor-pointer"
-                            >
-                              <ArrowRightLeft className="w-3 h-3" />
-                              <span>Pindahkan</span>
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
+          {filteredKelompok.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-slate-200 p-10 text-center text-xs text-slate-500 font-semibold">
+              Belum ada jamaah pada periode ini &mdash; Daftar jamaah kosong.
             </div>
-          ))}
+          ) : (
+            filteredKelompok.map((kel) => (
+              <div
+                key={kel.id_keberangkatan}
+                className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs"
+              >
+                <div className="bg-[#0b2242] text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2.5">
+                    <span className="font-bold text-amber-300">
+                      {kel.paket?.nama_paket || `Paket #${kel.id_paket}`}
+                    </span>
+                    <span>&mdash;</span>
+                    <span className="font-mono text-blue-100">
+                      {kel.bulan ? `${BULAN_NAMES[kel.bulan]} ` : ''}
+                      {kel.tahun}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 font-mono">
+                    <span className="bg-[#133666] border border-[#21579e] px-2.5 py-1 rounded-lg">
+                      Terisi <strong>{kel.jumlah_terisi || 0}</strong>/{kel.kuota}
+                    </span>
+                    <span className="bg-amber-400 text-slate-950 font-bold px-2.5 py-1 rounded-lg">
+                      Sisa {kel.sisa_kuota ?? kel.kuota}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-4">
+                  {!kel.jamaah_list || kel.jamaah_list.length === 0 ? (
+                    <div className="text-xs text-slate-500 py-4 text-center font-medium">
+                      Belum ada jamaah pada periode ini &mdash; Daftar jamaah kosong.
+                    </div>
+                  ) : (
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className="border-b border-slate-200 text-slate-500">
+                          <th className="py-2 px-3">No. Jamaah</th>
+                          <th className="py-2 px-3">Nama Lengkap</th>
+                          <th className="py-2 px-3">No. HP</th>
+                          <th className="py-2 px-3">Checklist Administrasi</th>
+                          <th className="py-2 px-3 text-right">Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {kel.jamaah_list.map((j) => (
+                          <tr key={j.id_jamaah} className="hover:bg-slate-50">
+                            <td className="py-2.5 px-3 font-mono font-bold text-blue-950">
+                              {j.no_jamaah}
+                            </td>
+                            <td className="py-2.5 px-3 font-semibold text-slate-900">
+                              {j.nama_lengkap}
+                            </td>
+                            <td className="py-2.5 px-3 font-mono text-slate-600">
+                              {j.no_hp}
+                            </td>
+                            <td className="py-2.5 px-3 text-[11px] text-slate-600">
+                              Paspor: <strong>{j.status_paspor || 'menunggu_berkas'}</strong> &bull; Visa:{' '}
+                              <strong>{j.status_visa || 'belum_diajukan'}</strong>
+                            </td>
+                            <td className="py-2.5 px-3 text-right">
+                              <button
+                                onClick={() => {
+                                  setErrorMsg(null);
+                                  const otherKeb = jadwalList.find(
+                                    (k) =>
+                                      k.id_keberangkatan !== kel.id_keberangkatan &&
+                                      (k.sisa_kuota ?? k.kuota) > 0
+                                  );
+                                  setTargetKebId(
+                                    otherKeb?.id_keberangkatan || kel.id_keberangkatan
+                                  );
+                                  setMoveModal({
+                                    id_jamaah: j.id_jamaah,
+                                    no_jamaah: j.no_jamaah,
+                                    nama_lengkap: j.nama_lengkap,
+                                    current_id_keberangkatan: kel.id_keberangkatan,
+                                  });
+                                }}
+                                className="inline-flex items-center gap-1 text-blue-900 bg-blue-50 hover:bg-blue-100 border border-blue-200 font-semibold px-2.5 py-1 rounded-lg cursor-pointer"
+                              >
+                                <ArrowRightLeft className="w-3 h-3" />
+                                <span>Pindahkan</span>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
         </div>
       )}
 

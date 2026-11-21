@@ -34,6 +34,7 @@ export default function MLMatcher({
   const [durasiMaks, setDurasiMaks] = useState<number>(0);
   const [fasilitas, setFasilitas] =
     useState<PreferensiRekomendasi['fasilitas']>('ring1');
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const [appliedPref, setAppliedPref] = useState<PreferensiRekomendasi>({
     anggaran_maks: 45 * 1000000,
@@ -65,6 +66,13 @@ export default function MLMatcher({
   }, [packages, appliedPref]);
 
   const handleCariRekomendasi = () => {
+    if (!budgetJuta || budgetJuta <= 0 || !program) {
+      setValidationError(
+        'Silakan isi anggaran maksimal dan pilih program terlebih dahulu.'
+      );
+      return;
+    }
+    setValidationError(null);
     setAppliedPref({
       anggaran_maks: budgetJuta * 1000000,
       program,
@@ -96,6 +104,12 @@ export default function MLMatcher({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Form Preferensi (Sesuai Gambar 6.1 UI-04 & Bab 4.2 M4.1 SD v1.1) */}
         <div className="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-5 space-y-4 shadow-2xs">
+          {validationError && (
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+              <span>{validationError}</span>
+            </div>
+          )}
           <div>
             <div className="flex justify-between items-center text-xs mb-1">
               <span className="font-semibold text-slate-700">

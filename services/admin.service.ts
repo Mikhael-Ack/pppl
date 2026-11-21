@@ -720,6 +720,7 @@ export interface SaveJamaahInput {
     | 'selesai';
   status_visa?: 'belum_diajukan' | 'proses_mofa' | 'visa_terbit';
   status_manasik?: 'belum_manasik' | 'terjadwal' | 'sudah_manasik';
+  simulateOffline?: boolean;
 }
 
 /**
@@ -736,203 +737,231 @@ export interface SaveJamaahInput {
 export async function saveJamaahAdmin(
   input: SaveJamaahInput
 ): Promise<{ success: boolean; data?: JamaahItem; error?: string }> {
-  const nama = (input.nama_lengkap || '').trim();
-  const tempatLahir = (input.tempat_lahir || '').trim();
-  const tanggalLahir = (input.tanggal_lahir || '').trim();
-  const jk = input.jenis_kelamin;
-  const noHp = (input.no_hp || '').trim();
-  const idKeb = Number(input.id_keberangkatan || 0);
-  const totalBiaya = Number(input.total_biaya || 0);
-  const rawNik = (input.nik || '').trim();
-
-  if (
-    !nama ||
-    !tempatLahir ||
-    !tanggalLahir ||
-    !jk ||
-    !noHp ||
-    !idKeb ||
-    totalBiaya <= 0
-  ) {
-    return {
-      success: false,
-      error:
-        'Kolom wajib (nama lengkap, tempat lahir, tanggal lahir, jenis kelamin, no. telepon, keberangkatan, dan total biaya > 0) harus diisi',
-    };
-  }
-
-  // Validasi NIK bila diisi: harus 16 digit angka & unik
-  if (rawNik) {
-    if (!/^\d{16}$/.test(rawNik)) {
-      return {
-        success: false,
-        error: 'NIK harus berupa 16 digit angka',
-      };
-    }
-
-    const { data: existingNik } = await supabase
-      .from('jamaah')
-      .select('id_jamaah')
-      .eq('nik', rawNik)
-      .maybeSingle();
-
-    if (existingNik && existingNik.id_jamaah !== input.id_jamaah) {
-      return {
-        success: false,
-        error: 'NIK sudah terpakai oleh jamaah lain',
-      };
-    }
-  }
-
-  // Cek apakah tambah baru atau pindah jadwal keberangkatan -> validasi sisa kuota > 0
-  let needQuotaCheck = !input.id_jamaah;
-  if (input.id_jamaah) {
-    const { data: prevJamaah } = await supabase
-      .from('jamaah')
-      .select('id_keberangkatan, status_jamaah')
-      .eq('id_jamaah', input.id_jamaah)
-      .maybeSingle();
+  try {
     if (
-      prevJamaah &&
-      prevJamaah.id_keberangkatan !== idKeb &&
-      prevJamaah.status_jamaah === 'aktif'
+      input.simulateOffline ||
+      (typeof navigator !== 'undefined' && navigator.onLine === false)
     ) {
-      needQuotaCheck = true;
-    }
-  }
-
-  if (needQuotaCheck) {
-    const [{ data: kebRow }, { count: activeCount }] = await Promise.all([
-      supabase
-        .from('keberangkatan')
-        .select('kuota, status')
-        .eq('id_keberangkatan', idKeb)
-        .maybeSingle(),
-      supabase
-        .from('jamaah')
-        .select('id_jamaah', { count: 'exact', head: true })
-        .eq('id_keberangkatan', idKeb)
-        .eq('status_jamaah', 'aktif'),
-    ]);
-
-    if (!kebRow) {
-      return { success: false, error: 'Jadwal keberangkatan tidak ditemukan' };
-    }
-
-    const sisaKuota = kebRow.kuota - (activeCount || 0);
-    if (sisaKuota <= 0) {
       return {
         success: false,
-        error: 'Kuota keberangkatan penuh',
+        error:
+          'Gagal menyimpan data: Koneksi jaringan ke basis data cloud terputus',
       };
     }
-  }
 
-  const commonPayload = {
-    nik: rawNik || null,
-    nama_lengkap: nama,
-    nama_ayah: input.nama_ayah?.trim() || null,
-    tempat_lahir: tempatLahir,
-    tanggal_lahir: tanggalLahir,
-    jenis_kelamin: jk,
-    alamat: input.alamat?.trim() || null,
-    pekerjaan: input.pekerjaan?.trim() || null,
-    pendidikan: input.pendidikan?.trim() || null,
-    no_hp: noHp,
-    id_keberangkatan: idKeb,
-    total_biaya: totalBiaya,
-    catatan: input.catatan?.trim() || null,
-    status_paspor: input.status_paspor || 'menunggu_berkas',
-    status_visa: input.status_visa || 'belum_diajukan',
-    status_manasik: input.status_manasik || 'belum_manasik',
-  };
+    const nama = (input.nama_lengkap || '').trim();
+    const tempatLahir = (input.tempat_lahir || '').trim();
+    const tanggalLahir = (input.tanggal_lahir || '').trim();
+    const jk = input.jenis_kelamin;
+    const noHp = (input.no_hp || '').trim();
+    const idKeb = Number(input.id_keberangkatan || 0);
+    const totalBiaya = Number(input.total_biaya || 0);
+    const rawNik = (input.nik || '').trim();
 
-  if (input.id_jamaah) {
-    // Mode Ubah
-    const { data, error } = await supabase
-      .from('jamaah')
-      .update(commonPayload)
-      .eq('id_jamaah', input.id_jamaah)
-      .select('*, keberangkatan(*, paket(*))')
-      .single();
-
-    if (error) {
-      if (error.code === '23505') {
-        return { success: false, error: 'NIK sudah terpakai oleh jamaah lain' };
-      }
-      return { success: false, error: error.message };
+    if (
+      !nama ||
+      !tempatLahir ||
+      !tanggalLahir ||
+      !jk ||
+      !noHp ||
+      !idKeb ||
+      totalBiaya <= 0
+    ) {
+      return {
+        success: false,
+        error:
+          'Kolom wajib (nama lengkap, tempat lahir, tanggal lahir, jenis kelamin, no. telepon, keberangkatan, dan total biaya > 0) harus diisi',
+      };
     }
 
-    return { success: true, data: data as JamaahItem };
-  } else {
-    // Mode Tambah Baru: Generate no_jamaah = "JM" + tahun + 4 digit nomor urut (mis. JM20260001)
-    const currentYear = new Date().getFullYear();
-    const prefix = `JM${currentYear}`;
+    // Validasi NIK bila diisi: harus 16 digit angka & unik
+    if (rawNik) {
+      if (!/^\d{16}$/.test(rawNik)) {
+        return {
+          success: false,
+          error: 'NIK harus berupa 16 digit angka',
+        };
+      }
 
-    const { data: existingJm } = await supabase
-      .from('jamaah')
-      .select('id_jamaah, no_jamaah')
-      .order('id_jamaah', { ascending: false })
-      .limit(100);
+      const { data: existingNik, error: nikErr } = await supabase
+        .from('jamaah')
+        .select('id_jamaah')
+        .eq('nik', rawNik)
+        .maybeSingle();
 
-    let maxSeq = 0;
-    if (existingJm) {
-      for (const row of existingJm) {
-        if (row.id_jamaah > maxSeq) maxSeq = row.id_jamaah;
-        if (row.no_jamaah && row.no_jamaah.startsWith(prefix)) {
-          const seqPart = parseInt(row.no_jamaah.slice(prefix.length), 10);
-          if (!isNaN(seqPart) && seqPart < 8000 && seqPart > maxSeq) {
-            maxSeq = seqPart;
+      if (nikErr) {
+        return {
+          success: false,
+          error: 'Gagal terhubung ke basis data cloud: ' + nikErr.message,
+        };
+      }
+
+      if (existingNik && existingNik.id_jamaah !== input.id_jamaah) {
+        return {
+          success: false,
+          error: 'NIK sudah terpakai oleh jamaah lain',
+        };
+      }
+    }
+
+    // Cek apakah tambah baru atau pindah jadwal keberangkatan -> validasi sisa kuota > 0
+    let needQuotaCheck = !input.id_jamaah;
+    if (input.id_jamaah) {
+      const { data: prevJamaah } = await supabase
+        .from('jamaah')
+        .select('id_keberangkatan, status_jamaah')
+        .eq('id_jamaah', input.id_jamaah)
+        .maybeSingle();
+      if (
+        prevJamaah &&
+        prevJamaah.id_keberangkatan !== idKeb &&
+        prevJamaah.status_jamaah === 'aktif'
+      ) {
+        needQuotaCheck = true;
+      }
+    }
+
+    if (needQuotaCheck) {
+      const [{ data: kebRow }, { count: activeCount }] = await Promise.all([
+        supabase
+          .from('keberangkatan')
+          .select('kuota, status')
+          .eq('id_keberangkatan', idKeb)
+          .maybeSingle(),
+        supabase
+          .from('jamaah')
+          .select('id_jamaah', { count: 'exact', head: true })
+          .eq('id_keberangkatan', idKeb)
+          .eq('status_jamaah', 'aktif'),
+      ]);
+
+      if (!kebRow) {
+        return { success: false, error: 'Jadwal keberangkatan tidak ditemukan' };
+      }
+
+      const sisaKuota = kebRow.kuota - (activeCount || 0);
+      if (sisaKuota <= 0) {
+        return {
+          success: false,
+          error: 'Kuota keberangkatan penuh',
+        };
+      }
+    }
+
+    const commonPayload = {
+      nik: rawNik || null,
+      nama_lengkap: nama,
+      nama_ayah: input.nama_ayah?.trim() || null,
+      tempat_lahir: tempatLahir,
+      tanggal_lahir: tanggalLahir,
+      jenis_kelamin: jk,
+      alamat: input.alamat?.trim() || null,
+      pekerjaan: input.pekerjaan?.trim() || null,
+      pendidikan: input.pendidikan?.trim() || null,
+      no_hp: noHp,
+      id_keberangkatan: idKeb,
+      total_biaya: totalBiaya,
+      catatan: input.catatan?.trim() || null,
+      status_paspor: input.status_paspor || 'menunggu_berkas',
+      status_visa: input.status_visa || 'belum_diajukan',
+      status_manasik: input.status_manasik || 'belum_manasik',
+    };
+
+    if (input.id_jamaah) {
+      // Mode Ubah
+      const { data, error } = await supabase
+        .from('jamaah')
+        .update(commonPayload)
+        .eq('id_jamaah', input.id_jamaah)
+        .select('*, keberangkatan(*, paket(*))')
+        .single();
+
+      if (error) {
+        if (error.code === '23505') {
+          return { success: false, error: 'NIK sudah terpakai oleh jamaah lain' };
+        }
+        return { success: false, error: error.message };
+      }
+
+      return { success: true, data: data as JamaahItem };
+    } else {
+      // Mode Tambah Baru: Generate no_jamaah = "JM" + tahun + 4 digit nomor urut (mis. JM20260001)
+      const currentYear = new Date().getFullYear();
+      const prefix = `JM${currentYear}`;
+
+      const { data: existingJm } = await supabase
+        .from('jamaah')
+        .select('id_jamaah, no_jamaah')
+        .order('id_jamaah', { ascending: false })
+        .limit(100);
+
+      let maxSeq = 0;
+      if (existingJm) {
+        for (const row of existingJm) {
+          if (row.id_jamaah > maxSeq) maxSeq = row.id_jamaah;
+          if (row.no_jamaah && row.no_jamaah.startsWith(prefix)) {
+            const seqPart = parseInt(row.no_jamaah.slice(prefix.length), 10);
+            if (!isNaN(seqPart) && seqPart < 8000 && seqPart > maxSeq) {
+              maxSeq = seqPart;
+            }
           }
         }
       }
-    }
 
-    let noJamaah = `${prefix}${String(maxSeq + 1).padStart(4, '0')}`;
-    const todayStr = new Date().toISOString().slice(0, 10);
+      let noJamaah = `${prefix}${String(maxSeq + 1).padStart(4, '0')}`;
+      const todayStr = new Date().toISOString().slice(0, 10);
 
-    const insertPayload = {
-      ...commonPayload,
-      no_jamaah: noJamaah,
-      id_pengajuan: input.id_pengajuan || null,
-      tgl_daftar: todayStr,
-      status_jamaah: 'aktif',
-    };
+      const insertPayload = {
+        ...commonPayload,
+        no_jamaah: noJamaah,
+        id_pengajuan: input.id_pengajuan || null,
+        tgl_daftar: todayStr,
+        status_jamaah: 'aktif',
+      };
 
-    let { data, error } = await supabase
-      .from('jamaah')
-      .insert([insertPayload])
-      .select('*, keberangkatan(*, paket(*))')
-      .single();
-
-    if (error && error.code === '23505' && error.message.includes('no_jamaah')) {
-      const randSeq = Math.floor(1000 + Math.random() * 7999);
-      noJamaah = `${prefix}${randSeq}`;
-      const retry = await supabase
+      let { data, error } = await supabase
         .from('jamaah')
-        .insert([{ ...insertPayload, no_jamaah: noJamaah }])
+        .insert([insertPayload])
         .select('*, keberangkatan(*, paket(*))')
         .single();
-      data = retry.data;
-      error = retry.error;
-    }
 
-    if (error) {
-      if (error.code === '23505') {
-        return { success: false, error: 'NIK sudah terpakai oleh jamaah lain' };
+      if (error && error.code === '23505' && error.message.includes('no_jamaah')) {
+        const randSeq = Math.floor(1000 + Math.random() * 7999);
+        noJamaah = `${prefix}${randSeq}`;
+        const retry = await supabase
+          .from('jamaah')
+          .insert([{ ...insertPayload, no_jamaah: noJamaah }])
+          .select('*, keberangkatan(*, paket(*))')
+          .single();
+        data = retry.data;
+        error = retry.error;
       }
-      return { success: false, error: error.message };
-    }
 
-    // JIKA id_pengajuan terisi -> status_pengajuan <- "diproses" (SD Bab 4.2 M6.1)
-    if (input.id_pengajuan) {
-      await supabase
-        .from('pengajuan')
-        .update({ status_pengajuan: 'diproses', alasan_tolak: null })
-        .eq('id_pengajuan', input.id_pengajuan);
-    }
+      if (error) {
+        if (error.code === '23505') {
+          return { success: false, error: 'NIK sudah terpakai oleh jamaah lain' };
+        }
+        return { success: false, error: error.message };
+      }
 
-    return { success: true, data: data as JamaahItem };
+      // JIKA id_pengajuan terisi -> status_pengajuan <- "diproses" (SD Bab 4.2 M6.1)
+      if (input.id_pengajuan) {
+        await supabase
+          .from('pengajuan')
+          .update({ status_pengajuan: 'diproses', alasan_tolak: null })
+          .eq('id_pengajuan', input.id_pengajuan);
+      }
+
+      return { success: true, data: data as JamaahItem };
+    }
+  } catch (err: any) {
+    return {
+      success: false,
+      error:
+        'Gagal menyimpan data: Koneksi jaringan ke basis data cloud terputus (' +
+        (err?.message || 'Network Error') +
+        ')',
+    };
   }
 }
 
@@ -1067,6 +1096,7 @@ export interface CatatPembayaranInput {
   no_bukti?: string | null;
   catatan?: string | null;
   id_admin?: number | null;
+  simulateOffline?: boolean;
 }
 
 export async function catatPembayaranAdmin(
@@ -1078,92 +1108,126 @@ export async function catatPembayaranAdmin(
   status_terbaru?: 'Lunas' | 'Belum lunas';
   error?: string;
 }> {
-  const idJamaah = Number(input.id_jamaah || 0);
-  const jumlah = Number(input.jumlah || 0);
-  const tglBayar = (input.tgl_bayar || '').trim();
-  const metode = input.metode;
+  try {
+    if (
+      input.simulateOffline ||
+      (typeof navigator !== 'undefined' && navigator.onLine === false)
+    ) {
+      return {
+        success: false,
+        error:
+          'Gagal menyimpan data pembayaran: Koneksi jaringan ke basis data cloud terputus',
+      };
+    }
 
-  if (!idJamaah || !tglBayar || !metode) {
-    return {
-      success: false,
-      error: 'Tanggal pembayaran, jumlah, dan metode pembayaran wajib diisi',
+    const idJamaah = Number(input.id_jamaah || 0);
+    const jumlah = Number(input.jumlah || 0);
+    const tglBayar = (input.tgl_bayar || '').trim();
+    const metode = input.metode;
+
+    if (!idJamaah || !tglBayar || !metode) {
+      return {
+        success: false,
+        error: 'Tanggal pembayaran, jumlah, dan metode pembayaran wajib diisi',
+      };
+    }
+
+    if (jumlah <= 0) {
+      return {
+        success: false,
+        error: 'Jumlah pembayaran harus lebih dari 0',
+      };
+    }
+
+    // Ambil data jamaah & riwayat pembayaran sebelumnya
+    const [{ data: jamaah, error: jmErr }, { data: prevPayments, error: payErr }] =
+      await Promise.all([
+        supabase
+          .from('jamaah')
+          .select('id_jamaah, status_jamaah, total_biaya')
+          .eq('id_jamaah', idJamaah)
+          .maybeSingle(),
+        supabase
+          .from('pembayaran')
+          .select('jumlah')
+          .eq('id_jamaah', idJamaah),
+      ]);
+
+    if (jmErr || payErr) {
+      return {
+        success: false,
+        error:
+          'Gagal terhubung ke basis data cloud: ' +
+          (jmErr?.message || payErr?.message || 'Koneksi gagal'),
+      };
+    }
+
+    if (!jamaah) {
+      return { success: false, error: 'Data jamaah tidak ditemukan' };
+    }
+
+    if (jamaah.status_jamaah === 'batal') {
+      return {
+        success: false,
+        error: 'Jamaah berstatus batal',
+      };
+    }
+
+    const totalDibayarSebelumnya = (prevPayments || []).reduce(
+      (acc, cur) => acc + Number(cur.jumlah || 0),
+      0
+    );
+    const sisa = Math.max(
+      0,
+      Number(jamaah.total_biaya) - totalDibayarSebelumnya
+    );
+
+    if (jumlah > sisa) {
+      return {
+        success: false,
+        error: 'Jumlah melebihi sisa pembayaran',
+      };
+    }
+
+    const sessionAdmin = getAdminSession();
+    const idAdmin = input.id_admin ?? sessionAdmin?.id_admin ?? 1;
+
+    const payload = {
+      id_jamaah: idJamaah,
+      tgl_bayar: tglBayar,
+      jumlah,
+      metode,
+      no_bukti: input.no_bukti?.trim() || null,
+      catatan: input.catatan?.trim() || null,
+      id_admin: idAdmin,
     };
-  }
 
-  if (jumlah <= 0) {
-    return {
-      success: false,
-      error: 'Jumlah pembayaran harus lebih dari 0',
-    };
-  }
-
-  // Ambil data jamaah & riwayat pembayaran sebelumnya
-  const [{ data: jamaah }, { data: prevPayments }] = await Promise.all([
-    supabase
-      .from('jamaah')
-      .select('id_jamaah, status_jamaah, total_biaya')
-      .eq('id_jamaah', idJamaah)
-      .maybeSingle(),
-    supabase
+    const { data, error } = await supabase
       .from('pembayaran')
-      .select('jumlah')
-      .eq('id_jamaah', idJamaah),
-  ]);
+      .insert([payload])
+      .select('*, admin(id_admin, nama_lengkap, username)')
+      .single();
 
-  if (!jamaah) {
-    return { success: false, error: 'Data jamaah tidak ditemukan' };
-  }
+    if (error) {
+      return { success: false, error: error.message };
+    }
 
-  if (jamaah.status_jamaah === 'batal') {
+    const sisaTerbaru = Math.max(0, sisa - jumlah);
+    const statusTerbaru = sisaTerbaru === 0 ? 'Lunas' : 'Belum lunas';
+
+    return {
+      success: true,
+      data: data as PembayaranItem,
+      sisa_terbaru: sisaTerbaru,
+      status_terbaru: statusTerbaru,
+    };
+  } catch (err: any) {
     return {
       success: false,
-      error: 'Jamaah berstatus batal',
+      error:
+        'Gagal menyimpan data pembayaran: Koneksi jaringan ke basis data cloud terputus (' +
+        (err?.message || 'Network Error') +
+        ')',
     };
   }
-
-  const totalDibayarSebelumnya = (prevPayments || []).reduce(
-    (acc, cur) => acc + Number(cur.jumlah || 0),
-    0
-  );
-  const sisa = Math.max(0, Number(jamaah.total_biaya) - totalDibayarSebelumnya);
-
-  if (jumlah > sisa) {
-    return {
-      success: false,
-      error: 'Jumlah melebihi sisa pembayaran',
-    };
-  }
-
-  const sessionAdmin = getAdminSession();
-  const idAdmin = input.id_admin ?? sessionAdmin?.id_admin ?? 1;
-
-  const payload = {
-    id_jamaah: idJamaah,
-    tgl_bayar: tglBayar,
-    jumlah,
-    metode,
-    no_bukti: input.no_bukti?.trim() || null,
-    catatan: input.catatan?.trim() || null,
-    id_admin: idAdmin,
-  };
-
-  const { data, error } = await supabase
-    .from('pembayaran')
-    .insert([payload])
-    .select('*, admin(id_admin, nama_lengkap, username)')
-    .single();
-
-  if (error) {
-    return { success: false, error: error.message };
-  }
-
-  const sisaTerbaru = Math.max(0, sisa - jumlah);
-  const statusTerbaru = sisaTerbaru === 0 ? 'Lunas' : 'Belum lunas';
-
-  return {
-    success: true,
-    data: data as PembayaranItem,
-    sisa_terbaru: sisaTerbaru,
-    status_terbaru: statusTerbaru,
-  };
 }

@@ -37,6 +37,14 @@ export function hitungRekomendasiPaket(
   hasil: HasilRekomendasiItem[];
   pesan_kosong: string | null;
 } {
+  if (!pref || !pref.anggaran_maks || Number(pref.anggaran_maks) <= 0 || !pref.program) {
+    return {
+      hasil: [],
+      pesan_kosong:
+        'Isian preferensi wajib belum terisi. Silakan isi anggaran maksimal dan pilih program terlebih dahulu.',
+    };
+  }
+
   // 1. Kandidat = paket aktif yang memiliki keberangkatan terbuka dengan sisa kuota > 0
   const kandidatValid = packages.filter((pkg) => {
     if (!pkg.status_aktif) return false;
@@ -323,14 +331,21 @@ export async function answerWithGroundedRAG(
     const rag = await buildSafeRAGContext();
     const lower = q.toLowerCase();
 
-    // Proteksi Privasi Data Jemaah: Tolak pertanyaan yang meminta NIK, nomor HP jemaah, atau daftar nama pribadi jemaah
-    if (
+    // Proteksi Privasi Data Jamaah (NF-07 / TC-35): Tolak pertanyaan yang meminta data pribadi, pembayaran, atau dokumen sensitif jamaah
+    const isAskingPrivateData =
       lower.includes('nik ') ||
       lower.includes('nomor ktp') ||
+      lower.includes('ktp jamaah') ||
+      lower.includes('paspor jamaah') ||
+      lower.includes('nomor paspor') ||
+      lower.includes('riwayat pembayaran jamaah') ||
+      lower.includes('cicilan jamaah') ||
+      lower.includes('sisa pembayaran jamaah') ||
       lower.includes('siapa saja nama jamaah') ||
-      lower.includes('data pribadi jamaah') ||
-      lower.includes('nomor hp jamaah')
-    ) {
+      lower.includes('data pribadi') ||
+      lower.includes('nomor hp jamaah');
+
+    if (isAskingPrivateData) {
       return {
         reply: FALLBACK_UNAVAILABLE_MSG,
         contextUsed: rag.contextText,

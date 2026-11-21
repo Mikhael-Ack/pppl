@@ -332,9 +332,9 @@ export default function AdminPembayaranPage() {
                       <tr>
                         <td
                           colSpan={5}
-                          className="py-8 text-center text-slate-500"
+                          className="py-8 text-center text-slate-500 font-semibold"
                         >
-                          Belum ada riwayat pembayaran untuk jamaah ini.
+                          Belum ada pembayaran &mdash; Riwayat pembayaran kosong.
                         </td>
                       </tr>
                     ) : (
