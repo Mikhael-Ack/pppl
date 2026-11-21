@@ -148,13 +148,13 @@ export default function AdminPengajuanPage() {
       )}
 
       {/* Filter Bar Status Pengajuan */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-4 flex flex-wrap items-center justify-between gap-4 text-xs shadow-2xs">
-        <div className="flex items-center gap-3">
+      <div className="bg-white rounded-2xl border border-slate-200 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 text-xs shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
           <label className="font-semibold text-slate-700">Status:</label>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="border border-slate-300 rounded-xl px-3 py-2 bg-slate-50 focus:bg-white focus:outline-blue-800 font-medium"
+            className="w-full sm:w-auto border border-slate-300 rounded-xl px-3 py-2 bg-slate-50 focus:bg-white focus:outline-blue-800 font-medium"
           >
             <option value="all">Semua Status</option>
             <option value="baru">Baru</option>
