@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Info Perbaikan Bug &amp; Siap Re-Test untuk Lead Tester (Ilyas)</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 14mm 14mm 14mm 14mm;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    body {
+      font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+      font-size: 9.2pt;
+      line-height: 1.42;
+      color: #0f172a;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+    }
+    .header-box {
+      border-bottom: 3px solid #0b2242;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+    }
+    .header-left h2 {
+      font-size: 9.5pt;
+      font-weight: 700;
+      color: #b45309;
+      margin: 0 0 2px 0;
+      text-transform: uppercase;
+    }
+    .header-left h1 {
+      font-size: 14pt;
+      font-weight: 800;
+      color: #0b2242;
+      margin: 0 0 3px 0;
+    }
+    .header-left p {
+      font-size: 8.5pt;
+      color: #475569;
+      margin: 0;
+    }
+    .header-right {
+      text-align: right;
+      font-size: 8.2pt;
+      color: #334155;
+      shrink: 0;
+    }
+    .badge-doc {
+      display: inline-block;
+      background: #0b2242;
+      color: #fcd34d;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-size: 8.2pt;
+      margin-bottom: 4px;
+    }
+    .info-banner {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-left: 5px solid #0b2242;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      font-size: 8.8pt;
+    }
+    .info-banner strong {
+      color: #0b2242;
+    }
+    h3.section-title {
+      font-size: 10.5pt;
+      font-weight: 800;
+      color: #ffffff;
+      background: #0b2242;
+      padding: 6px 10px;
+      border-left: 5px solid #f59e0b;
+      margin: 14px 0 8px 0;
+      border-radius: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
+      font-size: 8.3pt;
+    }
+    tr {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 8px;
+      vertical-align: top;
+      text-align: left;
+    }
+    thead th {
+      background-color: #0b2242;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 8.3pt;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    .status-ready {
+      display: inline-block;
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid #6ee7b7;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-size: 7.5pt;
+      white-space: nowrap;
+    }
+    .code-file {
+      font-family: Consolas, 'Courier New', monospace;
+      font-size: 7.5pt;
+      color: #1e3a8a;
+      background: #eff6ff;
+      padding: 1px 4px;
+      border-radius: 3px;
+      display: inline-block;
+      margin-top: 2px;
+    }
+    .cred-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .cred-card {
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 9px 11px;
+      background: #f8fafc;
+      font-size: 8.4pt;
+    }
+    .cred-card h4 {
+      margin: 0 0 4px 0;
+      font-size: 8.8pt;
+      color: #0b2242;
+    }
+    .footer-note {
+      margin-top: 14px;
+      padding-top: 8px;
+      border-top: 1px solid #cbd5e1;
+      font-size: 8pt;
+      color: #64748b;
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-box">
+    <div class="header-left">
+      <h2>Darunnisa Hajj &amp; Umrah Travel &bull; Tim RAM (4IA01)</h2>
+      <h1>CATATAN PERBAIKAN BUG &amp; STATUS SIAP RE-TEST</h1>
+      <p>Ditujukan kepada: <strong>Ramadhan Ilyas Nur Felim (Lead Tester)</strong> &bull; Dari: Mikhael Adicahya Kurniawan (Lead Programmer)</p>
+    </div>
+    <div class="header-right">
+      <div class="badge-doc">SIAP UJI ULANG (RE-TEST)</div>
+      <div>Tanggal Update: <strong>25 November 2026</strong></div>
+      <div>Commit Build: <strong>cff5999 (Next.js 16.4.6)</strong></div>
+    </div>
+  </div>
+
+  <div class="info-banner">
+    Seluruh <strong>7 poin temuan bug &amp; saran perbaikan UX</strong> dari catatan Lead Tester telah diperbaiki di kode sumber, lolos <em>production build</em> (14/14 route) dan uji ATP otomatis (27/27 Non-AI &amp; 10/10 AI lulus), serta sudah <strong>live di Vercel</strong> (<code>https://pppl-two.vercel.app</code>) untuk langsung diuji ulang.
+  </div>
+
+  <h3 class="section-title">DAFTAR PERBAIKAN &amp; PANDUAN UJI ULANG (RE-TEST)</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:5%;">No</th>
+        <th style="width:16%;">Modul / Halaman</th>
+        <th style="width:24%;">Temuan / Saran Lead Tester</th>
+        <th style="width:30%;">Perbaikan yang Sudah Diterapkan</th>
+        <th style="width:17%;">Cara Re-Test di Web</th>
+        <th style="width:8%;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1</strong></td>
+        <td><strong>Kelola Paket</strong><br/>(UI-07 &bull; <code>/admin/paket</code>)</td>
+        <td>Tidak ada tombol hapus paket (contoh paket uji <code>FEFA</code> tidak bisa dihapus).</td>
+        <td>
+          Ditambahkan tombol <strong>Hapus</strong> + modal konfirmasi hapus (<code>deletePaketAdmin</code>). Paket dummy tanpa jamaah bisa langsung dihapus; paket yang sudah memiliki jamaah tetap dilindungi (disarankan nonaktifkan).
+          <br/><span class="code-file">app/admin/paket/page.tsx</span>
+        </td>
+        <td>Buka <code>/admin/paket</code> &rarr; klik <strong>Hapus</strong> pada baris paket uji (mis. <code>FEFA</code>) &rarr; konfirmasi.</td>
+        <td><span class="status-ready">Siap Test</span></td>
+      </tr>
+      <tr>
+        <td><strong>2</strong></td>
+        <td><strong>Paket &amp; Jadwal</strong><br/>(UI-07 &rarr; UI-12)</td>
+        <td>Paket baru yang ditambah di menu Paket tidak langsung muncul di menu Jadwal untuk pengelompokan jamaah.</td>
+        <td>
+          Form <strong>Tambah Paket Baru</strong> kini menyertakan isian <strong>Jadwal Keberangkatan Awal</strong> (aktif default). Di halaman <code>/admin/jadwal</code> juga tampil banner + tombol cepat <strong>Buat Jadwal</strong> jika ada paket aktif yang belum punya jadwal.
+          <br/><span class="code-file">app/admin/jadwal/page.tsx</span>
+        </td>
+        <td>Tambah paket baru di <code>/admin/paket</code> &rarr; buka <code>/admin/jadwal</code> &rarr; paket otomatis muncul di daftar jadwal.</td>
+        <td><span class="status-ready">Siap Test</span></td>
+      </tr>
+      <tr>
+        <td><strong>3</strong></td>
+        <td><strong>Detail Paket Jamaah</strong><br/>(UI-02 &bull; Modal Detail)</td>
+        <td>Label fasilitas di modal detail (<em>Hotel Bintang 5, Ring 1, Direct Flight, 4 checklist</em>) statis dan tidak mengikuti data paket admin.</td>
+        <td>
+          Seluruh teks <em>hardcoded</em> dihapus. Judul diubah menjadi <strong>Akomodasi Hotel</strong>; maskapai, hotel, dan deskripsi fasilitas kini tampil 100% sesuai inputan admin di UI-07.
+          <br/><span class="code-file">PackageDetailModal.tsx</span>
+        </td>
+        <td>Buat/ubah paket (mis. hotel Bintang 4) &rarr; klik <strong>Detail Paket</strong> di beranda &rarr; cek kesesuaian teks.</td>
+        <td><span class="status-ready">Siap Test</span></td>
+      </tr>
+      <tr>
+        <td><strong>4</strong></td>
+        <td><strong>Data Jamaah</strong><br/>(UI-09 &bull; <code>/admin/jamaah</code>)</td>
+        <td>Baris pertama selalu terbuka penuh saat awal/relogin, membuat tampilan pencarian tidak konsisten.</td>
+        <td>
+          <code>expandedId</code> awal diubah menjadi <code>null</code>. Kini semua baris jamaah tampil ringkas 1 baris secara konsisten baik saat awal buka, login ulang, maupun saat mencari nama. Detail baru terbuka jika baris diklik.
+          <br/><span class="code-file">app/admin/jamaah/page.tsx</span>
+        </td>
+        <td>Buka/refresh <code>/admin/jamaah</code> &amp; cari nama posisi ke-1 atau ke-2 &rarr; semua tampil rapi 1 baris.</td>
+        <td><span class="status-ready">Siap Test</span></td>
+      </tr>
+      <tr>
+        <td><strong>5</strong></td>
+        <td><strong>Banner Install Aplikasi</strong><br/>(PWA Prompt)</td>
+        <td>Kotak ngambang <em>"Install Aplikasi"</em> selalu muncul lagi setiap pindah halaman atau klik Tambah Jamaah meski sudah disilang.</td>
+        <td>
+          Status tutup (<code>X</code>) disimpan di <code>sessionStorage</code> sehingga tidak muncul lagi selama sesi aktif, dan banner otomatis disembunyikan di seluruh halaman <code>/admin/*</code>.
+          <br/><span class="code-file">components/PWARegister.tsx</span>
+        </td>
+        <td>Klik silang (<code>X</code>) pada banner di beranda lalu pindah halaman / masuk admin &rarr; banner tidak muncul lagi.</td>
+        <td><span class="status-ready">Siap Test</span></td>
+      </tr>
+      <tr>
+        <td><strong>6</strong></td>
+        <td><strong>Pengajuan Masuk</strong><br/>(UI-08 &bull; <code>/admin/pengajuan</code>)</td>
+        <td>Tidak ada fitur hapus pengajuan batal/iseng, dan cara menolak pengajuan (<em>Ditolak</em>) sulit ditemukan admin.</td>
+        <td>
+          Ditambahkan tombol eksplisit <strong>Tolak</strong> (merah) di kolom Aksi untuk memunculkan dialog alasan penolakan, serta tombol <strong>Hapus</strong> + konfirmasi (<code>deletePengajuanAdmin</code>) untuk pengajuan yang belum terdaftar jamaah.
+          <br/><span class="code-file">app/admin/pengajuan/page.tsx</span>
+        </td>
+        <td>Buka <code>/admin/pengajuan</code> &rarr; cek tombol <strong>Tolak</strong> dan ikon <strong>Hapus</strong> di sebelah tombol Daftarkan.</td>
+        <td><span class="status-ready">Siap Test</span></td>
+      </tr>
+      <tr>
+        <td><strong>7</strong></td>
+        <td><strong>Tombol Chatbot AI</strong><br/>(UI-05 &bull; Beranda)</td>
+        <td>Tulisan <em>"Chatbot AI Paket (UI-05)"</em> kurang mengajak pengguna untuk bertanya, dan di HP hanya muncul ikon tanpa teks.</td>
+        <td>
+          Label diubah menjadi <strong>"Ada pertanyaan? Tanya AI"</strong> pada desktop dan <strong>"Tanya AI"</strong> pada tampilan mobile agar calon jamaah langsung sadar fitur tanya jawab.
+          <br/><span class="code-file">components/ChatbotWidget.tsx</span>
+        </td>
+        <td>Buka beranda di desktop &amp; HP &rarr; cek tombol pojok kanan bawah menampilkan teks ajakan yang jelas.</td>
+        <td><span class="status-ready">Siap Test</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 class="section-title">AKSES LINGKUNGAN UJI ULANG (LIVE DEPLOYMENT)</h3>
+  <div class="cred-box">
+    <div class="cred-card">
+      <h4>Portal Calon Jamaah &amp; Admin</h4>
+      <div>URL Publik: <strong><code>https://pppl-two.vercel.app</code></strong></div>
+      <div>URL Admin: <strong><code>https://pppl-two.vercel.app/admin/login</code></strong></div>
+    </div>
+    <div class="cred-card">
+      <h4>Akun Login Admin (UI-06)</h4>
+      <div>Username: <strong><code>admin</code></strong></div>
+      <div>Password: <strong><code>admin123</code></strong></div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <span>Build Status: Next.js 16.4.6 &bull; 14/14 Routes Compiled &bull; Commit: <code>cff5999</code></span>
+    <span>Dokumen Internal Tim RAM (4IA01) &ndash; P3L Universitas Gunadarma</span>
+  </div>
+
+</body>
+</html>

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Phone, ClipboardCheck } from 'lucide-react';
+import FontSizeControl from './FontSizeControl';
 
 interface NavbarProps {
   onOpenRegister?: () => void;
@@ -74,6 +75,9 @@ export default function Navbar({ onOpenRegister }: NavbarProps) {
 
         {/* Action Button */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="hidden sm:block">
+            <FontSizeControl variant="dark" />
+          </div>
           <Link
             href="/tracking"
             className="whitespace-nowrap text-xs font-medium text-blue-100 hover:text-white bg-[#133666] hover:bg-[#1a4785] border border-[#1f5296] px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-colors"

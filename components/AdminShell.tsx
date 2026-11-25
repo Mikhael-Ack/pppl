@@ -19,8 +19,10 @@ import {
   ExternalLink,
   ShieldCheck,
   BookOpen,
+  History,
   X,
 } from 'lucide-react';
+import FontSizeControl from './FontSizeControl';
 
 interface AdminShellProps {
   title: string;
@@ -61,6 +63,12 @@ const NAV_ITEMS = [
     href: '/admin/jadwal',
     ui: 'UI-12',
     icon: Calendar,
+  },
+  {
+    label: 'Log Admin',
+    href: '/admin/log',
+    ui: 'LOG',
+    icon: History,
   },
 ];
 
@@ -227,6 +235,7 @@ export default function AdminShell({
             )}
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            <FontSizeControl variant="light" />
             <button
               onClick={() => setManualOpen(true)}
               className="md:hidden inline-flex items-center gap-1.5 bg-[#0b2242] text-amber-300 font-semibold text-xs px-3 py-2 rounded-xl cursor-pointer"

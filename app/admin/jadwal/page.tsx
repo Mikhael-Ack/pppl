@@ -15,6 +15,9 @@ import {
   Plus,
   Pencil,
   Calendar,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   Users,
   ArrowRightLeft,
   CheckCircle2,
@@ -39,10 +42,14 @@ const BULAN_NAMES = [
 ];
 
 export default function AdminJadwalPage() {
-  const [activeTab, setActiveTab] = useState<'jadwal' | 'kelompok'>('jadwal');
+  const [activeTab, setActiveTab] = useState<'jadwal' | 'kelompok' | 'kalender'>('jadwal');
   const [jadwalList, setJadwalList] = useState<KeberangkatanWithPaket[]>([]);
   const [packages, setPackages] = useState<PaketItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // State Kalender Jadwal (M7.1 Visual Calendar)
+  const [calYear, setCalYear] = useState<number>(2027);
+  const [calMonth, setCalMonth] = useState<number>(3); // 1..12
 
   // Filter untuk Tab Jamaah per Keberangkatan (M7.2)
   const [filterProgram, setFilterProgram] = useState<string>('all');
@@ -271,6 +278,17 @@ export default function AdminJadwalPage() {
         >
           <Users className="w-3.5 h-3.5" />
           <span>Jamaah per Keberangkatan (M7.2)</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('kalender')}
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+            activeTab === 'kalender'
+              ? 'bg-[#0b2242] text-amber-300'
+              : 'text-slate-600 hover:bg-slate-100'
+          }`}
+        >
+          <CalendarDays className="w-3.5 h-3.5" />
+          <span>Kalender Jadwal</span>
         </button>
       </div>
 
@@ -532,6 +550,172 @@ export default function AdminJadwalPage() {
           )}
         </div>
       )}
+
+      {/* TAB 3: KALENDER JADWAL KEBERANGKATAN */}
+      {activeTab === 'kalender' && (() => {
+        const firstDayOfMonth = new Date(calYear, calMonth - 1, 1).getDay(); // 0=Min..6=Sab
+        const daysInMonth = new Date(calYear, calMonth, 0).getDate();
+        const cells: (number | null)[] = [
+          ...Array(firstDayOfMonth).fill(null),
+          ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
+        ];
+        const prevMonth = () => {
+          if (calMonth === 1) {
+            setCalMonth(12);
+            setCalYear((y) => y - 1);
+          } else {
+            setCalMonth((m) => m - 1);
+          }
+        };
+        const nextMonth = () => {
+          if (calMonth === 12) {
+            setCalMonth(1);
+            setCalYear((y) => y + 1);
+          } else {
+            setCalMonth((m) => m + 1);
+          }
+        };
+
+        const hajiTahunIni = jadwalList.filter(
+          (k) => !k.tgl_berangkat && k.tahun === calYear
+        );
+        const jadwalBulanIni = jadwalList.filter((k) => {
+          if (!k.tgl_berangkat) return false;
+          const [yStr, mStr] = k.tgl_berangkat.split('-');
+          return Number(yStr) === calYear && Number(mStr) === calMonth;
+        });
+
+        const jadwalDenganTanggal = jadwalList.filter((k) => Boolean(k.tgl_berangkat));
+
+        return (
+          <div className="space-y-4">
+            {/* Kontrol Navigasi Kalender */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-4 flex flex-wrap items-center justify-between gap-3 text-xs shadow-2xs">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={prevMonth}
+                  className="p-2 rounded-xl border border-slate-200 hover:bg-slate-100 cursor-pointer"
+                  title="Bulan Sebelumnya"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <div className="font-bold text-sm text-[#0b2242] min-w-[140px] text-center">
+                  {BULAN_NAMES[calMonth]} {calYear}
+                </div>
+                <button
+                  type="button"
+                  onClick={nextMonth}
+                  className="p-2 rounded-xl border border-slate-200 hover:bg-slate-100 cursor-pointer"
+                  title="Bulan Berikutnya"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              {jadwalDenganTanggal.length > 0 && (
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[11px] text-slate-500 font-semibold">
+                    Lompat ke jadwal:
+                  </span>
+                  {jadwalDenganTanggal.map((k) => {
+                    const [yStr, mStr] = k.tgl_berangkat!.split('-');
+                    return (
+                      <button
+                        key={k.id_keberangkatan}
+                        type="button"
+                        onClick={() => {
+                          setCalYear(Number(yStr));
+                          setCalMonth(Number(mStr));
+                        }}
+                        className="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 font-mono text-[11px] cursor-pointer"
+                      >
+                        {BULAN_NAMES[Number(mStr)]} {yStr} ({k.paket?.kode_paket})
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {hajiTahunIni.length > 0 && (
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 text-xs flex flex-wrap items-center gap-2">
+                <span className="font-bold text-amber-950">
+                  Alokasi Haji Tahun {calYear}:
+                </span>
+                {hajiTahunIni.map((h) => (
+                  <button
+                    key={h.id_keberangkatan}
+                    type="button"
+                    onClick={() => handleOpenEdit(h)}
+                    className="px-2.5 py-1 rounded-lg bg-white border border-amber-300 text-amber-950 font-semibold hover:bg-amber-100 cursor-pointer"
+                  >
+                    {h.paket?.nama_paket} &bull; Sisa {h.sisa_kuota ?? h.kuota}/{h.kuota} kursi
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Grid Kalender Bulanan */}
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+              <div className="grid grid-cols-7 bg-[#0b2242] text-white text-center text-[11px] font-bold py-2.5">
+                <div>Min</div>
+                <div>Sen</div>
+                <div>Sel</div>
+                <div>Rab</div>
+                <div>Kam</div>
+                <div>Jum</div>
+                <div>Sab</div>
+              </div>
+              <div className="grid grid-cols-7 divide-x divide-y divide-slate-200 border-t border-slate-200">
+                {cells.map((day, idx) => {
+                  const eventsOnDay = day
+                    ? jadwalBulanIni.filter(
+                        (k) => Number(k.tgl_berangkat!.split('-')[2]) === day
+                      )
+                    : [];
+                  return (
+                    <div
+                      key={idx}
+                      className={`min-h-[88px] sm:min-h-[104px] p-1.5 sm:p-2 text-xs ${
+                        day ? 'bg-white' : 'bg-slate-50/70'
+                      }`}
+                    >
+                      {day && (
+                        <>
+                          <div className="font-mono text-[11px] font-bold text-slate-500 mb-1">
+                            {day}
+                          </div>
+                          <div className="space-y-1">
+                            {eventsOnDay.map((ev) => (
+                              <button
+                                key={ev.id_keberangkatan}
+                                type="button"
+                                onClick={() => handleOpenEdit(ev)}
+                                className="w-full text-left p-1.5 rounded-lg bg-[#0b2242] hover:bg-[#133666] text-white text-[10px] leading-tight space-y-0.5 cursor-pointer shadow-2xs"
+                              >
+                                <div className="font-bold text-amber-300 truncate">
+                                  {ev.paket?.kode_paket || `Paket #${ev.id_paket}`}
+                                </div>
+                                <div className="truncate text-blue-100">
+                                  {ev.paket?.nama_paket}
+                                </div>
+                                <div className="font-mono text-[9px] text-emerald-300">
+                                  Sisa {ev.sisa_kuota ?? ev.kuota}/{ev.kuota}
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Modal Tambah / Ubah Jadwal Keberangkatan (M7.1) */}
       {modalOpen && (

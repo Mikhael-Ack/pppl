@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { PaketItem, KeberangkatanItem } from '@/types/package.types';
 import { PengajuanItem } from '@/types/pengajuan.types';
+import { recordAdminLog } from './log.service';
 
 export interface AdminUser {
   id_admin: number;
@@ -181,6 +182,14 @@ export async function loginAdmin(
     };
 
     setAdminSession(adminUser);
+    await recordAdminLog({
+      aksi: 'LOGIN_ADMIN',
+      modul: 'M1.1 Autentikasi',
+      detail: `Admin '${adminUser.username}' (${adminUser.nama_lengkap}) berhasil login ke dasbor.`,
+      id_admin: adminUser.id_admin,
+      username: adminUser.username,
+      nama_admin: adminUser.nama_lengkap,
+    });
     return { success: true, admin: adminUser };
   } catch (err: any) {
     console.error('[AdminService] Login error:', err);
@@ -316,6 +325,11 @@ export async function savePaketAdmin(
           error: 'Gagal memperbarui paket: Izin RLS UPDATE pada tabel paket belum aktif di Supabase',
         };
       }
+      await recordAdminLog({
+        aksi: 'UBAH_PAKET',
+        modul: 'M2.2 Paket',
+        detail: `Memperbarui paket ${kode} (${nama}) - Harga Rp ${Number(input.harga).toLocaleString('id-ID')}.`,
+      });
       return { success: true, data: data[0] as PaketItem };
     } else {
       const { data, error } = await supabase
@@ -348,6 +362,12 @@ export async function savePaketAdmin(
           },
         ]);
       }
+
+      await recordAdminLog({
+        aksi: 'TAMBAH_PAKET',
+        modul: 'M2.2 Paket',
+        detail: `Menambahkan paket baru ${kode} (${nama}) - Harga Rp ${Number(input.harga).toLocaleString('id-ID')}.`,
+      });
 
       return { success: true, data: createdPaket };
     }
@@ -410,6 +430,11 @@ export async function deletePaketAdmin(
       return { success: false, error: delPkgErr.message };
     }
 
+    await recordAdminLog({
+      aksi: 'HAPUS_PAKET',
+      modul: 'M2.2 Paket',
+      detail: `Menghapus paket #${id_paket} beserta jadwal keberangkatan kosong terkait.`,
+    });
     return { success: true };
   } catch (err: any) {
     return { success: false, error: err?.message || 'Gagal menghapus paket' };
@@ -702,6 +727,12 @@ export async function updateStatusPengajuanAdmin(
     return { success: false, error: 'Gagal memperbarui status pengajuan' };
   }
 
+  await recordAdminLog({
+    aksi: status_baru === 'ditolak' ? 'TOLAK_PENGAJUAN' : 'UBAH_PENGAJUAN',
+    modul: 'M3.2 Pengajuan',
+    detail: `Mengubah status pengajuan #${id_pengajuan} menjadi '${status_baru}'${alasan_tolak ? ` (Alasan: ${alasan_tolak.trim()})` : ''}.`,
+  });
+
   return { success: true };
 }
 
@@ -729,6 +760,11 @@ export async function deletePengajuanAdmin(
       .eq('id_pengajuan', id_pengajuan);
 
     if (error) return { success: false, error: error.message };
+    await recordAdminLog({
+      aksi: 'HAPUS_PENGAJUAN',
+      modul: 'M3.2 Pengajuan',
+      detail: `Menghapus data pengajuan #${id_pengajuan}.`,
+    });
     return { success: true };
   } catch (err: any) {
     return { success: false, error: err?.message || 'Gagal menghapus pengajuan' };
@@ -1016,6 +1052,12 @@ export async function saveJamaahAdmin(
         return { success: false, error: error.message };
       }
 
+      await recordAdminLog({
+        aksi: 'UBAH_JAMAAH',
+        modul: 'M6.1 Jamaah',
+        detail: `Memperbarui data jamaah #${input.id_jamaah} (${nama}).`,
+      });
+
       return { success: true, data: data as JamaahItem };
     } else {
       // Mode Tambah Baru: Generate no_jamaah = "JM" + tahun + 4 digit nomor urut (mis. JM20260001)
@@ -1085,6 +1127,12 @@ export async function saveJamaahAdmin(
           .eq('id_pengajuan', input.id_pengajuan);
       }
 
+      await recordAdminLog({
+        aksi: 'TAMBAH_JAMAAH',
+        modul: 'M6.1 Jamaah',
+        detail: `Mendaftarkan jamaah baru ${noJamaah} (${nama}) pada keberangkatan #${idKeb}.`,
+      });
+
       return { success: true, data: data as JamaahItem };
     }
   } catch (err: any) {
@@ -1122,11 +1170,17 @@ export async function batalkanJamaahAdmin(
     .select();
 
   if (error) return { success: false, error: error.message };
-  if (!data || data.length === 0) {
-    return { success: false, error: 'Gagal membatalkan jamaah' };
-  }
+    if (!data || data.length === 0) {
+      return { success: false, error: 'Gagal membatalkan jamaah' };
+    }
 
-  return { success: true };
+    await recordAdminLog({
+      aksi: 'BATAL_JAMAAH',
+      modul: 'M6.1 Jamaah',
+      detail: `Membatalkan jamaah #${id_jamaah} (Alasan: ${alasan}).`,
+    });
+
+    return { success: true };
 }
 
 export async function aktifkanKembaliJamaahAdmin(
@@ -1347,6 +1401,12 @@ export async function catatPembayaranAdmin(
 
     const sisaTerbaru = Math.max(0, sisa - jumlah);
     const statusTerbaru = sisaTerbaru === 0 ? 'Lunas' : 'Belum lunas';
+
+    await recordAdminLog({
+      aksi: 'CATAT_PEMBAYARAN',
+      modul: 'M8.1 Pembayaran',
+      detail: `Mencatat pembayaran ${metode.toUpperCase()} Rp ${jumlah.toLocaleString('id-ID')} untuk jamaah #${idJamaah} (Sisa: Rp ${sisaTerbaru.toLocaleString('id-ID')}, Status: ${statusTerbaru}).`,
+    });
 
     return {
       success: true,

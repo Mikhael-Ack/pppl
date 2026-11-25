@@ -24,6 +24,8 @@ import {
   PlusCircle,
   X,
   User,
+  BellRing,
+  MessageCircle,
 } from 'lucide-react';
 
 export default function AdminPembayaranPage() {
@@ -490,15 +492,145 @@ export default function AdminPembayaranPage() {
   }
 
   // ============================================================================
-  // VIEW 2: UI-13 PANTAU STATUS PEMBAYARAN (M8.2)
+  // VIEW 2: UI-13 PANTAU STATUS PEMBAYARAN (M8.2) + REMINDER TENGGAT PEMBAYARAN
   // ============================================================================
+  const formatWaNumber = (raw: string) => {
+    const digits = raw.replace(/[^0-9]/g, '');
+    if (digits.startsWith('0')) return '62' + digits.slice(1);
+    return digits;
+  };
+
+  const reminderList = jamaahList
+    .filter((j) => j.status_jamaah === 'aktif' && j.status_pembayaran !== 'Lunas')
+    .map((j) => {
+      const keb = j.keberangkatan;
+      const targetDateStr =
+        keb?.tgl_berangkat ||
+        (keb?.tahun
+          ? `${keb.tahun}-${String(keb.bulan || 6).padStart(2, '0')}-01`
+          : null);
+      let daysToBerangkat: number | null = null;
+      let dueDateStr = '-';
+      if (targetDateStr) {
+        const targetMs = new Date(targetDateStr).getTime();
+        const dueMs = targetMs - 30 * 24 * 60 * 60 * 1000; // Tenggat H-30 keberangkatan
+        dueDateStr = new Date(dueMs).toISOString().slice(0, 10);
+        daysToBerangkat = Math.ceil((targetMs - Date.now()) / (1000 * 60 * 60 * 24));
+      }
+      const daysToDue = daysToBerangkat !== null ? daysToBerangkat - 30 : null;
+      const isOverdue = daysToDue !== null && daysToDue <= 0;
+      const isUrgent = daysToDue !== null && daysToDue > 0 && daysToDue <= 30;
+      const noDp = (j.total_dibayar || 0) === 0;
+
+      return {
+        jamaah: j,
+        daysToBerangkat,
+        daysToDue,
+        dueDateStr,
+        isOverdue,
+        isUrgent,
+        noDp,
+      };
+    })
+    .sort((a, b) => (a.daysToDue ?? 9999) - (b.daysToDue ?? 9999));
+
   return (
     <AdminShell
       title="Pemantauan Pembayaran"
       uiCode="UI-13"
       modulCode="M8.2"
-      subtitle="Pantau total biaya, jumlah dibayar, sisa pembayaran, dan status pelunasan seluruh jamaah. Klik baris untuk membuka detail pembayaran (UI-11)."
+      subtitle="Pantau total biaya, jumlah dibayar, sisa pembayaran, status pelunasan, dan reminder tenggat pembayaran jamaah."
     >
+      {/* Panel Reminder Tenggat Pembayaran (H-30 sebelum keberangkatan) */}
+      {!loadingList && reminderList.length > 0 && (
+        <div className="bg-amber-50/90 border border-amber-300 rounded-2xl p-4 sm:p-5 space-y-3 shadow-2xs">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2 text-amber-950 font-bold text-xs sm:text-sm">
+              <BellRing className="w-4 h-4 text-amber-700 shrink-0" />
+              <span>
+                Reminder Tenggat Pembayaran ({reminderList.length} Jamaah Belum Lunas)
+              </span>
+            </div>
+            <span className="text-[11px] text-amber-900 font-medium">
+              Standar pelunasan: maksimal H-30 sebelum tanggal keberangkatan
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {reminderList.slice(0, 6).map((item) => {
+              const j = item.jamaah;
+              const sisa = j.sisa_pembayaran ?? j.total_biaya;
+              const waText = encodeURIComponent(
+                `Assalamu'alaikum ${j.nama_lengkap}, kami dari Yayasan Darunnisa Travel mengingatkan sisa pembayaran paket ${
+                  j.keberangkatan?.paket?.nama_paket || 'Umrah/Haji'
+                } sebesar ${formatRupiah(sisa)} (tenggat pelunasan H-30: ${
+                  item.dueDateStr
+                }). Terima kasih.`
+              );
+              return (
+                <div
+                  key={j.id_jamaah}
+                  className="bg-white rounded-xl border border-amber-200 p-3.5 space-y-2 text-xs shadow-2xs"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="font-bold text-slate-900 truncate">
+                        {j.nama_lengkap}
+                      </div>
+                      <div className="text-[11px] font-mono text-slate-500">
+                        {j.no_jamaah} &bull; Tenggat: {item.dueDateStr}
+                      </div>
+                    </div>
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap ${
+                        item.isOverdue
+                          ? 'bg-rose-100 text-rose-800 border-rose-300'
+                          : item.isUrgent
+                          ? 'bg-amber-100 text-amber-900 border-amber-300'
+                          : 'bg-blue-50 text-blue-900 border-blue-200'
+                      }`}
+                    >
+                      {item.isOverdue
+                        ? 'Lewat Tenggat'
+                        : item.daysToDue !== null
+                        ? `H-${item.daysToDue} Tenggat`
+                        : 'Belum Lunas'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between text-[11px] bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">
+                    <span className="text-slate-600">Sisa Tagihan:</span>
+                    <strong className="font-mono text-rose-700">
+                      {formatRupiah(sisa)}
+                    </strong>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-0.5">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenDetail(j.id_jamaah)}
+                      className="flex-1 bg-[#0b2242] hover:bg-[#133666] text-amber-300 font-semibold py-1.5 px-2.5 rounded-lg text-[11px] cursor-pointer text-center"
+                    >
+                      Catat Bayar
+                    </button>
+                    <a
+                      href={`https://wa.me/${formatWaNumber(j.no_hp)}?text=${waText}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-1.5 px-2.5 rounded-lg text-[11px]"
+                      title="Kirim Pengingat via WhatsApp"
+                    >
+                      <MessageCircle className="w-3 h-3" />
+                      <span>Ingatkan WA</span>
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Filter Bar UI-13 (Sesuai Gambar 6.2 UI-13 SD v1.1) */}
       <div className="bg-white rounded-2xl border border-slate-200 p-4 flex flex-wrap items-center justify-between gap-4 text-xs shadow-2xs">
         <div className="flex flex-wrap items-center gap-4">

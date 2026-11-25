@@ -11,16 +11,44 @@ interface PackageListProps {
   onRegister?: (pkg: PaketItem) => void;
 }
 
+const BULAN_OPTIONS = [
+  { value: '1', label: 'Januari' },
+  { value: '2', label: 'Februari' },
+  { value: '3', label: 'Maret' },
+  { value: '4', label: 'April' },
+  { value: '5', label: 'Mei' },
+  { value: '6', label: 'Juni' },
+  { value: '7', label: 'Juli' },
+  { value: '8', label: 'Agustus' },
+  { value: '9', label: 'September' },
+  { value: '10', label: 'Oktober' },
+  { value: '11', label: 'November' },
+  { value: '12', label: 'Desember' },
+];
+
 export default function PackageList({
   initialPackages,
   onViewDetail,
   onRegister,
 }: PackageListProps) {
   const [selectedProgram, setSelectedProgram] = useState<string>('all');
+  const [selectedMonth, setSelectedMonth] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const filteredPackages = initialPackages.filter((pkg) => {
     const matchProgram = selectedProgram === 'all' || pkg.program === selectedProgram;
+
+    const matchMonth =
+      selectedMonth === 'all' ||
+      (pkg.keberangkatan || []).some((k) => {
+        if (k.bulan && String(k.bulan) === selectedMonth) return true;
+        if (k.tgl_berangkat) {
+          const monthPart = Number(k.tgl_berangkat.split('-')[1]);
+          return String(monthPart) === selectedMonth;
+        }
+        return false;
+      });
+
     const matchSearch =
       searchQuery === '' ||
       pkg.nama_paket.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -28,7 +56,7 @@ export default function PackageList({
       pkg.maskapai.toLowerCase().includes(searchQuery.toLowerCase()) ||
       pkg.kode_paket.toLowerCase().includes(searchQuery.toLowerCase());
 
-    return matchProgram && matchSearch;
+    return matchProgram && matchMonth && matchSearch;
   });
 
   return (
@@ -49,7 +77,7 @@ export default function PackageList({
 
       {/* Filter Bar */}
       <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Search */}
           <div className="sm:col-span-2">
             <label className="block text-[11px] font-semibold text-slate-600 mb-1">
@@ -65,6 +93,25 @@ export default function PackageList({
                 className="w-full text-xs border border-slate-200 rounded-lg pl-8 pr-3 py-2 bg-slate-50 focus:bg-white focus:outline-blue-800 transition-colors"
               />
             </div>
+          </div>
+
+          {/* Month Filter (Search Bulan Keberangkatan) */}
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+              Bulan Keberangkatan
+            </label>
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="w-full text-xs border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-blue-800 transition-colors"
+            >
+              <option value="all">Semua Bulan</option>
+              {BULAN_OPTIONS.map((b) => (
+                <option key={b.value} value={b.value}>
+                  {b.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Program Filter */}
@@ -103,10 +150,11 @@ export default function PackageList({
           <div className="text-xs font-semibold text-slate-700">
             Paket belum tersedia &mdash; Informasi paket tidak tersedia saat ini.
           </div>
-          {(selectedProgram !== 'all' || searchQuery !== '') && (
+          {(selectedProgram !== 'all' || selectedMonth !== 'all' || searchQuery !== '') && (
             <button
               onClick={() => {
                 setSelectedProgram('all');
+                setSelectedMonth('all');
                 setSearchQuery('');
               }}
               className="text-xs text-blue-800 font-semibold hover:underline cursor-pointer"
