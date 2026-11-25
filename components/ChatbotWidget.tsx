@@ -103,12 +103,15 @@ export default function ChatbotWidget({
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-[#0b2242] hover:bg-[#133666] text-amber-300 p-3.5 rounded-full shadow-2xl border border-amber-400/50 flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
-          aria-label="Tanya Chatbot AI"
+          className="bg-[#0b2242] hover:bg-[#133666] text-amber-300 px-3.5 py-3 rounded-full shadow-2xl border border-amber-400/50 flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
+          aria-label="Ada pertanyaan? Tanya AI"
         >
-          <Bot className="w-5 h-5 text-amber-300 animate-bounce" />
-          <span className="text-xs font-semibold text-white pr-1 hidden sm:inline">
-            Chatbot AI Paket (UI-05)
+          <Bot className="w-5 h-5 text-amber-300 animate-bounce shrink-0" />
+          <span className="text-xs font-semibold text-white pr-0.5 hidden sm:inline">
+            Ada pertanyaan? Tanya AI
+          </span>
+          <span className="text-xs font-semibold text-white pr-0.5 sm:hidden">
+            Tanya AI
           </span>
         </button>
       )}

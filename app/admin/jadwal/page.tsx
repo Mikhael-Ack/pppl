@@ -177,6 +177,12 @@ export default function AdminJadwalPage() {
 
   const uniqueYears = Array.from(new Set(jadwalList.map((k) => k.tahun))).sort();
 
+  const paketTanpaJadwal = packages.filter(
+    (p) =>
+      p.status_aktif &&
+      !jadwalList.some((j) => j.id_paket === p.id_paket)
+  );
+
   return (
     <AdminShell
       title="Jadwal & Jamaah per Keberangkatan"
@@ -204,6 +210,40 @@ export default function AdminJadwalPage() {
             className="text-blue-200 hover:text-white cursor-pointer"
           >
             <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Info Paket Aktif yang Belum Memiliki Jadwal */}
+      {paketTanpaJadwal.length > 0 && (
+        <div className="bg-amber-50 border border-amber-300 rounded-2xl p-4 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-0.5 text-amber-950">
+            <div className="font-bold">
+              Ada {paketTanpaJadwal.length} paket aktif yang belum memiliki jadwal keberangkatan:
+            </div>
+            <div className="text-[11px] text-amber-900">
+              {paketTanpaJadwal.map((p) => `${p.kode_paket} (${p.nama_paket})`).join(', ')}
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              const targetPkg = paketTanpaJadwal[0];
+              setErrorMsg(null);
+              setForm({
+                id_keberangkatan: undefined,
+                id_paket: targetPkg.id_paket,
+                tahun: 2027,
+                bulan: targetPkg.program === 'umrah' ? 3 : null,
+                tgl_berangkat: targetPkg.program === 'umrah' ? '2027-03-20' : null,
+                kuota: 45,
+                status: 'buka',
+              });
+              setModalOpen(true);
+            }}
+            className="inline-flex items-center gap-1.5 bg-[#0b2242] hover:bg-[#133666] text-amber-300 font-bold px-3.5 py-2 rounded-xl whitespace-nowrap cursor-pointer shrink-0"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Buat Jadwal ({paketTanpaJadwal[0].kode_paket})</span>
           </button>
         </div>
       )}

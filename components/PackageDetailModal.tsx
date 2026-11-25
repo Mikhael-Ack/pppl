@@ -69,24 +69,22 @@ export default function PackageDetailModal({
             </div>
           </div>
 
-          {/* Key Facilities Grid */}
+          {/* Key Facilities Grid (Dinamis sesuai data paket dari Admin UI-07) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="border border-slate-200 rounded-xl p-4 space-y-2">
               <div className="flex items-center gap-2 font-semibold text-slate-900 text-xs">
                 <Plane className="w-4 h-4 text-blue-700 shrink-0" />
                 <span>Maskapai &amp; Penerbangan</span>
               </div>
-              <p className="text-slate-600 pl-6">{paket.maskapai}</p>
-              <div className="pl-6 text-[11px] text-blue-700 font-medium">Penerbangan langsung (Direct)</div>
+              <p className="text-slate-700 pl-6 leading-relaxed">{paket.maskapai}</p>
             </div>
 
             <div className="border border-slate-200 rounded-xl p-4 space-y-2">
               <div className="flex items-center gap-2 font-semibold text-slate-900 text-xs">
                 <Building2 className="w-4 h-4 text-blue-700 shrink-0" />
-                <span>Akomodasi Hotel Bintang 5</span>
+                <span>Akomodasi Hotel</span>
               </div>
-              <p className="text-slate-600 pl-6 leading-relaxed">{paket.hotel}</p>
-              <div className="pl-6 text-[11px] text-amber-700 font-medium">Ring 1 pelataran masjid</div>
+              <p className="text-slate-700 pl-6 leading-relaxed">{paket.hotel}</p>
             </div>
           </div>
 
@@ -147,29 +145,13 @@ export default function PackageDetailModal({
             </div>
           )}
 
-          {/* Description & Inclusions */}
-          <div className="space-y-3">
+          {/* Description & Inclusions (100% mengikuti isian admin di UI-07) */}
+          <div className="space-y-2">
             <h4 className="font-bold text-slate-900 text-xs">Deskripsi &amp; Fasilitas Termasuk</h4>
-            <p className="text-slate-600 leading-relaxed text-xs">
-              {paket.deskripsi || 'Paket resmi berizin Kemenag RI dengan bimbingan muthawif bersertifikasi, visa umrah/haji resmi, perlengkapan ibadah lengkap (koper, ihram/mukena), manasik intensif, dan asuransi perjalanan syariah.'}
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11px] text-slate-600">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                <span>Bimbingan Muthawif Profesional</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                <span>Visa Resmi &amp; Asuransi Perjalanan</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                <span>Makan 3x Sehari Menu Indonesia</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                <span>Free Manasik Teori &amp; Praktik</span>
-              </div>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-slate-700 leading-relaxed text-xs whitespace-pre-line">
+              {paket.deskripsi?.trim()
+                ? paket.deskripsi
+                : 'Belum ada keterangan fasilitas tambahan untuk paket ini. Hubungi staf Yayasan Darunnisa untuk rincian lengkap.'}
             </div>
           </div>
         </div>

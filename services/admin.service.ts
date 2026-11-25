@@ -233,6 +233,13 @@ export interface SavePaketInput {
   durasi_hari: number;
   deskripsi: string;
   status_aktif: boolean;
+  jadwal_awal?: {
+    buat_jadwal: boolean;
+    tahun: number;
+    bulan: number | null;
+    tgl_berangkat: string | null;
+    kuota: number;
+  };
 }
 
 export async function savePaketAdmin(
@@ -252,6 +259,23 @@ export async function savePaketAdmin(
       success: false,
       error: 'Harga paket dan durasi perjalanan (hari) harus lebih dari 0',
     };
+  }
+
+  // Validasi jadwal awal jika dicentang saat tambah paket baru
+  if (!input.id_paket && input.jadwal_awal?.buat_jadwal) {
+    const j = input.jadwal_awal;
+    if (!j.tahun || Number(j.kuota) <= 0) {
+      return {
+        success: false,
+        error: 'Tahun keberangkatan dan kuota kursi (> 0) wajib diisi untuk jadwal awal',
+      };
+    }
+    if (input.program === 'umrah' && (!j.bulan || !j.tgl_berangkat)) {
+      return {
+        success: false,
+        error: 'Untuk program Umrah, bulan dan tanggal berangkat jadwal awal wajib diisi',
+      };
+    }
   }
 
   try {
@@ -306,10 +330,89 @@ export async function savePaketAdmin(
         }
         return { success: false, error: error.message };
       }
-      return { success: true, data: data as PaketItem };
+
+      const createdPaket = data as PaketItem;
+
+      // Otomatis buat jadwal keberangkatan awal agar paket baru langsung muncul di menu Jadwal (UI-12)
+      if (input.jadwal_awal?.buat_jadwal) {
+        const j = input.jadwal_awal;
+        const isUmrah = input.program === 'umrah';
+        await supabase.from('keberangkatan').insert([
+          {
+            id_paket: createdPaket.id_paket,
+            tahun: Number(j.tahun),
+            bulan: isUmrah ? Number(j.bulan) : null,
+            tgl_berangkat: isUmrah ? j.tgl_berangkat : null,
+            kuota: Number(j.kuota),
+            status: 'buka',
+          },
+        ]);
+      }
+
+      return { success: true, data: createdPaket };
     }
   } catch (err: any) {
     return { success: false, error: err.message || 'Gagal menyimpan data paket' };
+  }
+}
+
+export async function deletePaketAdmin(
+  id_paket: number
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    // 1. Ambil daftar id_keberangkatan milik paket ini
+    const { data: kebList } = await supabase
+      .from('keberangkatan')
+      .select('id_keberangkatan')
+      .eq('id_paket', id_paket);
+
+    const kebIds = (kebList || []).map((k) => k.id_keberangkatan);
+
+    if (kebIds.length > 0) {
+      // 2. Cek apakah ada jamaah yang terdaftar pada keberangkatan paket ini
+      const { count: jmCount } = await supabase
+        .from('jamaah')
+        .select('id_jamaah', { count: 'exact', head: true })
+        .in('id_keberangkatan', kebIds);
+
+      if ((jmCount || 0) > 0) {
+        return {
+          success: false,
+          error:
+            'Paket tidak dapat dihapus karena sudah memiliki data jamaah terdaftar. Gunakan tombol nonaktifkan (Aktif: Tidak) agar riwayat tetap terjaga.',
+        };
+      }
+
+      // Hapus jadwal keberangkatan kosong milik paket ini
+      const { error: delKebErr } = await supabase
+        .from('keberangkatan')
+        .delete()
+        .in('id_keberangkatan', kebIds);
+
+      if (delKebErr) {
+        return { success: false, error: delKebErr.message };
+      }
+    }
+
+    // 3. Lepaskan referensi id_paket pada pengajuan jika ada (set null) agar tidak kena FK constraint
+    await supabase
+      .from('pengajuan')
+      .update({ id_paket: null })
+      .eq('id_paket', id_paket);
+
+    // 4. Hapus paket
+    const { error: delPkgErr } = await supabase
+      .from('paket')
+      .delete()
+      .eq('id_paket', id_paket);
+
+    if (delPkgErr) {
+      return { success: false, error: delPkgErr.message };
+    }
+
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Gagal menghapus paket' };
   }
 }
 
@@ -600,6 +703,36 @@ export async function updateStatusPengajuanAdmin(
   }
 
   return { success: true };
+}
+
+export async function deletePengajuanAdmin(
+  id_pengajuan: number
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Cek apakah pengajuan ini sudah dikonversi menjadi data jamaah
+    const { count: jmCount } = await supabase
+      .from('jamaah')
+      .select('id_jamaah', { count: 'exact', head: true })
+      .eq('id_pengajuan', id_pengajuan);
+
+    if ((jmCount || 0) > 0) {
+      return {
+        success: false,
+        error:
+          'Pengajuan sudah terdaftar menjadi Jamaah resmi. Gunakan pembatalan di menu Data Jamaah.',
+      };
+    }
+
+    const { error } = await supabase
+      .from('pengajuan')
+      .delete()
+      .eq('id_pengajuan', id_pengajuan);
+
+    if (error) return { success: false, error: error.message };
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Gagal menghapus pengajuan' };
+  }
 }
 
 /**

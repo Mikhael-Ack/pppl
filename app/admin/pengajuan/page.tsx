@@ -6,6 +6,7 @@ import AdminShell from '@/components/AdminShell';
 import {
   getAllPengajuanAdmin,
   updateStatusPengajuanAdmin,
+  deletePengajuanAdmin,
 } from '@/services/admin.service';
 import { PengajuanItem } from '@/types/pengajuan.types';
 import {
@@ -14,8 +15,7 @@ import {
   AlertCircle,
   X,
   RotateCcw,
-  Clock,
-  Phone,
+  Trash2,
   XCircle,
 } from 'lucide-react';
 
@@ -40,6 +40,10 @@ export default function AdminPengajuanPage() {
   const [rejectTarget, setRejectTarget] = useState<PengajuanItem | null>(null);
   const [alasanTolak, setAlasanTolak] = useState<string>('');
   const [savingReject, setSavingReject] = useState(false);
+
+  // Dialog Hapus Pengajuan
+  const [deleteTarget, setDeleteTarget] = useState<PengajuanItem | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -106,6 +110,26 @@ export default function AdminPengajuanPage() {
     setToastMsg(
       `Pengajuan ${closedTarget.kode_pengajuan} (${closedTarget.nama_lengkap}) ditolak beserta alasan penolakan.`
     );
+    setTimeout(() => setToastMsg(null), 4000);
+    await loadData();
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    setErrorMsg(null);
+    const res = await deletePengajuanAdmin(deleteTarget.id_pengajuan);
+    setDeleting(false);
+
+    if (!res.success) {
+      setDeleteTarget(null);
+      setErrorMsg(res.error || 'Gagal menghapus pengajuan');
+      return;
+    }
+
+    const deletedKode = deleteTarget.kode_pengajuan;
+    setDeleteTarget(null);
+    setToastMsg(`Pengajuan ${deletedKode} berhasil dihapus.`);
     setTimeout(() => setToastMsg(null), 4000);
     await loadData();
   };
@@ -265,31 +289,57 @@ export default function AdminPengajuanPage() {
                       )}
                     </td>
                     <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                      {item.status_pengajuan === 'baru' ||
-                      item.status_pengajuan === 'dihubungi' ? (
-                        <Link
-                          href={`/admin/jamaah/form?pengajuan_id=${item.id_pengajuan}`}
-                          className="inline-flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs transition-colors shadow-2xs"
-                        >
-                          <UserPlus className="w-3.5 h-3.5" />
-                          <span>Daftarkan</span>
-                        </Link>
-                      ) : item.status_pengajuan === 'ditolak' ? (
-                        <button
-                          onClick={() =>
-                            handleDropdownStatusChange(item, 'dihubungi')
-                          }
-                          title="Buka kembali pengajuan yang ditolak dengan mengubah status ke Dihubungi"
-                          className="inline-flex items-center gap-1 text-blue-900 bg-blue-50 hover:bg-blue-100 border border-blue-200 font-semibold px-2.5 py-1 rounded-lg text-[11px] cursor-pointer"
-                        >
-                          <RotateCcw className="w-3 h-3" />
-                          <span>Buka Kembali</span>
-                        </button>
-                      ) : (
-                        <span className="text-[11px] text-slate-400 italic">
-                          Terdaftar Jamaah
-                        </span>
-                      )}
+                      <div className="inline-flex items-center gap-1.5">
+                        {item.status_pengajuan === 'baru' ||
+                        item.status_pengajuan === 'dihubungi' ? (
+                          <>
+                            <Link
+                              href={`/admin/jamaah/form?pengajuan_id=${item.id_pengajuan}`}
+                              className="inline-flex items-center gap-1 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-2.5 py-1.5 rounded-lg text-xs transition-colors shadow-2xs"
+                            >
+                              <UserPlus className="w-3.5 h-3.5" />
+                              <span>Daftarkan</span>
+                            </Link>
+                            <button
+                              onClick={() => handleDropdownStatusChange(item, 'ditolak')}
+                              className="inline-flex items-center gap-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-semibold px-2.5 py-1.5 rounded-lg text-xs transition-colors cursor-pointer"
+                              title="Tolak Pengajuan"
+                            >
+                              <XCircle className="w-3.5 h-3.5" />
+                              <span>Tolak</span>
+                            </button>
+                          </>
+                        ) : item.status_pengajuan === 'ditolak' ? (
+                          <button
+                            onClick={() =>
+                              handleDropdownStatusChange(item, 'dihubungi')
+                            }
+                            title="Buka kembali pengajuan yang ditolak dengan mengubah status ke Dihubungi"
+                            className="inline-flex items-center gap-1 text-blue-900 bg-blue-50 hover:bg-blue-100 border border-blue-200 font-semibold px-2.5 py-1 rounded-lg text-[11px] cursor-pointer"
+                          >
+                            <RotateCcw className="w-3 h-3" />
+                            <span>Buka Kembali</span>
+                          </button>
+                        ) : (
+                          <span className="text-[11px] text-slate-400 italic mr-1">
+                            Terdaftar Jamaah
+                          </span>
+                        )}
+
+                        {item.status_pengajuan !== 'diproses' && (
+                          <button
+                            onClick={() => {
+                              setErrorMsg(null);
+                              setDeleteTarget(item);
+                            }}
+                            className="inline-flex items-center justify-center p-1.5 rounded-lg text-slate-400 hover:text-rose-700 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
+                            title="Hapus Pengajuan"
+                            aria-label="Hapus Pengajuan"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -367,6 +417,52 @@ export default function AdminPengajuanPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Konfirmasi Hapus Pengajuan */}
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden text-xs">
+            <div className="bg-[#0b2242] text-white p-5 border-b border-[#163d73] flex items-center justify-between">
+              <h3 className="text-sm font-bold">Hapus Pengajuan Masuk</h3>
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-5 space-y-3 text-slate-700">
+              <p>
+                Yakin ingin menghapus pengajuan{' '}
+                <strong className="font-mono text-slate-900">
+                  {deleteTarget.kode_pengajuan}
+                </strong>{' '}
+                atas nama <strong>{deleteTarget.nama_lengkap}</strong>?
+              </p>
+              <p className="text-[11px] text-slate-500">
+                Data yang dihapus tidak dapat dikembalikan. Pengajuan yang sudah terdaftar sebagai jamaah resmi tidak dapat dihapus.
+              </p>
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setDeleteTarget(null)}
+                  className="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-100 rounded-xl font-medium cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmDelete}
+                  disabled={deleting}
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl cursor-pointer"
+                >
+                  {deleting ? 'Menghapus...' : 'Ya, Hapus'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

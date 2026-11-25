@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Laporan Hasil Eksekusi Acceptance Test Plan (ATP) - Darunnisa Hajj & Umrah Travel</title>
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 12mm 11mm 12mm 11mm;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    body {
+      font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+      font-size: 9pt;
+      line-height: 1.38;
+      color: #0f172a;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+    }
+    .header-box {
+      border-bottom: 3px solid #0b2242;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .header-left h1 {
+      font-size: 13.5pt;
+      font-weight: 800;
+      color: #0b2242;
+      margin: 0 0 2px 0;
+    }
+    .header-left h2 {
+      font-size: 10pt;
+      font-weight: 700;
+      color: #b45309;
+      margin: 0 0 2px 0;
+      text-transform: uppercase;
+    }
+    .header-left p {
+      font-size: 8.2pt;
+      color: #475569;
+      margin: 0;
+    }
+    .header-right {
+      text-align: right;
+      font-size: 8.2pt;
+      color: #334155;
+    }
+    .badge-doc {
+      display: inline-block;
+      background: #0b2242;
+      color: #fcd34d;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-size: 8.2pt;
+      margin-bottom: 3px;
+    }
+    h3.section-title {
+      font-size: 10.5pt;
+      font-weight: 800;
+      color: #ffffff;
+      background: #0b2242;
+      padding: 5px 10px;
+      border-left: 5px solid #f59e0b;
+      margin: 12px 0 6px 0;
+      border-radius: 4px;
+    }
+    p.section-desc {
+      font-size: 8.5pt;
+      color: #334155;
+      margin: 0 0 7px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 10px;
+      font-size: 8pt;
+    }
+    tr {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 4px 6px;
+      vertical-align: top;
+      text-align: left;
+    }
+    thead th {
+      background-color: #0b2242;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 8pt;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .meta-table th {
+      width: 32%;
+      background-color: #f1f5f9;
+      color: #0b2242;
+      font-weight: 700;
+    }
+    .status-pass {
+      display: inline-block;
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid #6ee7b7;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 7.5pt;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .status-fail-init {
+      display: inline-block;
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 7.3pt;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .status-fixed {
+      display: inline-block;
+      background-color: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #93c5fd;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 7.5pt;
+      white-space: nowrap;
+    }
+    .status-pending-ai {
+      display: inline-block;
+      background-color: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 7.3pt;
+      white-space: nowrap;
+    }
+    .sev-high { color: #991b1b; font-weight: 700; }
+    .sev-med { color: #92400e; font-weight: 700; }
+    .sev-low { color: #1e40af; font-weight: 700; }
+    .code-file {
+      font-family: Consolas, 'Courier New', monospace;
+      font-size: 7.5pt;
+      color: #1e3a8a;
+      background: #eff6ff;
+      padding: 1px 4px;
+      border-radius: 3px;
+      display: inline-block;
+      margin-bottom: 2px;
+    }
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .card {
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 7px 10px;
+      background: #f8fafc;
+    }
+    .card-navy {
+      background: #0b2242;
+      color: #ffffff;
+      border-color: #0b2242;
+    }
+    .card-amber {
+      background: #fffbeb;
+      border-color: #fcd34d;
+    }
+    .card-title {
+      font-size: 7.5pt;
+      text-transform: uppercase;
+      font-weight: 700;
+      opacity: 0.9;
+    }
+    .card-value {
+      font-size: 14pt;
+      font-weight: 800;
+      margin-top: 2px;
+    }
+    .card-sub {
+      font-size: 7.5pt;
+      margin-top: 2px;
+      opacity: 0.92;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+    .sign-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .sign-box {
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px;
+      text-align: center;
+      background: #ffffff;
+    }
+    .sign-role {
+      font-size: 7.8pt;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+    }
+    .sign-space {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #059669;
+      font-weight: 700;
+      font-size: 7.8pt;
+    }
+    .sign-name {
+      font-weight: 800;
+      color: #0b2242;
+      border-top: 1px solid #cbd5e1;
+      padding-top: 4px;
+      font-size: 8.2pt;
+    }
+    .sign-npm {
+      font-size: 7.5pt;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header-box">
+    <div class="header-left">
+      <h2>PENGELOLAAN PROYEK PERANGKAT LUNAK (IT045341) &bull; UNIVERSITAS GUNADARMA</h2>
+      <h1>LAPORAN HASIL EKSEKUSI ACCEPTANCE TEST PLAN (ATP) v1.0</h1>
+      <p>Program Studi Informatika &ndash; Fakultas Teknologi Industri &bull; Sistem Informasi Darunnisa Hajj &amp; Umrah Travel</p>
+    </div>
+    <div class="header-right">
+      <div class="badge-doc">LAPORAN UNTUK LEAD TESTER (ILYAS)</div>
+      <div>Tanggal Eksekusi: <strong>21 November 2026</strong></div>
+      <div>Commit Build: <strong>8efc0ce (Next.js 16.4.6)</strong></div>
+    </div>
+  </div>
+
+  <!-- IDENTITAS PROYEK -->
+  <div class="meta-grid">
+    <table class="meta-table">
+      <tbody>
+        <tr><th>Nama Proyek</th><td><strong>Darunnisa Hajj &amp; Umrah Travel</strong></td></tr>
+        <tr><th>Mitra / Klien</th><td>Yayasan Darunnisa (Ersi Shaulah &ndash; Sekretaris Yayasan)</td></tr>
+        <tr><th>Nama Tim &amp; Kelas</th><td><strong>RAM (Rombongan Anak Mahir)</strong> &ndash; Kelas <strong>4IA01</strong></td></tr>
+        <tr><th>Dosen Pengampu</th><td>Naeli Umniati</td></tr>
+        <tr><th>URL Deployment &amp; DB</th><td><code>https://pppl-two.vercel.app</code> &bull; Cloud PostgreSQL (Supabase)</td></tr>
+      </tbody>
+    </table>
+
+    <table class="meta-table">
+      <tbody>
+        <tr><th>Project Manager</th><td>Hagi Salman Alfarizi (50423557)</td></tr>
+        <tr><th>Lead Tester (Penyusun ATP)</th><td><strong>Ramadhan Ilyas Nur Felim (51423229)</strong></td></tr>
+        <tr><th>Lead Programmer (Pelaksana)</th><td><strong>Mikhael Adicahya Kurniawan (50423774)</strong></td></tr>
+        <tr><th>Lead Software Analyst</th><td>Zulaikha Indria Desfiany (51423509)</td></tr>
+        <tr><th>Designer &amp; Tech Writer</th><td>Rakan M. Abdussalam (51423219) &bull; Aurel Ariella Anjani (50423232)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- KARTU RINGKASAN -->
+  <div class="summary-cards">
+    <div class="card card-navy">
+      <div class="card-title">1. Web &amp; DB (Non-AI: 27 TC)</div>
+      <div class="card-value" style="color:#fcd34d;">27 / 27 SUKSES</div>
+      <div class="card-sub">Putaran 1: 20 Lulus, 7 Temuan &rarr; Putaran 2: <strong>100% Lulus</strong></div>
+    </div>
+    <div class="card" style="background:#fef2f2; border-color:#fca5a5;">
+      <div class="card-title" style="color:#991b1b;">2. Riwayat Gagal / Bug Awal</div>
+      <div class="card-value" style="color:#991b1b;">7 TC Sempat Gagal</div>
+      <div class="card-sub" style="color:#7f1d1d;">TC-10, 14, 16, 19, 30, 31, 32/33 (Sudah Di-fix di Bab 6)</div>
+    </div>
+    <div class="card card-amber">
+      <div class="card-title" style="color:#92400e;">3. Modul AI (Dipisahkan: 10 TC)</div>
+      <div class="card-value" style="color:#b45309;">10 TC PENDING AI</div>
+      <div class="card-sub" style="color:#78350f;">Prototipe jalan, namun arsitektur AI masih dirancang ulang</div>
+    </div>
+    <div class="card">
+      <div class="card-title">4. Status Keseluruhan (37 TC)</div>
+      <div class="card-value" style="color:#065f46;">27 Final / 10 AI</div>
+      <div class="card-sub">Non-AI: <strong>100%</strong> &bull; Total dgn Pending AI: <strong>72,97% / 100%</strong></div>
+    </div>
+  </div>
+
+  <!-- BAB 4 BAGIAN A: SISTEM WEB & DATABASE (NON-AI) -->
+  <h3 class="section-title">BAB 4. TABEL TES &mdash; BAGIAN A: SISTEM WEB &amp; BASIS DATA (NON-AI: 27 KASUS UJI)</h3>
+  <p class="section-desc">
+    Tabel ini memuat kolom <strong>Status Putaran 1 (Uji Awal)</strong> dan <strong>Status Putaran 2 (Akhir)</strong> agar Lead Tester (Ilyas) mengetahui kasus uji mana yang langsung sukses sejak awal (20 TC) dan mana yang sempat gagal/error saat uji pertama lalu sudah diperbaiki (7 TC).
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:4.5%;">ID Uji</th>
+        <th style="width:4.5%;">Ref. FS</th>
+        <th style="width:14%;">File Codebase &amp; Fungsi</th>
+        <th style="width:15%;">Skenario</th>
+        <th style="width:13%;">Data Uji</th>
+        <th style="width:16%;">Hasil yang Diharapkan (ATP)</th>
+        <th style="width:18%;">Hasil Aktual &amp; Catatan Uji</th>
+        <th style="width:7.5%;">Putaran 1 (Awal)</th>
+        <th style="width:7.5%;">Putaran 2 (Akhir)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>TC-01</strong></td>
+        <td>F-01</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><span class="code-file">app/admin/login/page.tsx</span></td>
+        <td>Login Admin dengan akun valid (M1.1, UI-06)</td>
+        <td>Username: <code>admin</code><br/>Password: <code>admin123</code></td>
+        <td>Login terverifikasi dan sistem membuka dasbor admin</td>
+        <td>Hash SHA-256 cocok dengan tabel <code>admin</code> Supabase; sesi disimpan dan diarahkan ke <code>/admin/paket</code>.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-02</strong></td>
+        <td>F-01</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><span class="code-file">app/admin/login/page.tsx</span></td>
+        <td>Login Admin dengan akun atau kata sandi salah (M1.1, UI-06)</td>
+        <td>Username: <code>admin</code> / Password: <code>salah_99</code> atau kosong</td>
+        <td>Menampilkan pesan kesalahan dan tetap di halaman login</td>
+        <td>Mengembalikan <code>success: false</code> dengan pesan <em>"Username atau password salah"</em> dan sesi tetap <code>null</code>.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-03</strong></td>
+        <td>F-01</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><span class="code-file">app/admin/jamaah/form/page.tsx</span></td>
+        <td>Tambah data jamaah baru dengan isian wajib lengkap (M6.1, UI-10)</td>
+        <td>Nama: <code>H. Ridwan Kamil</code>, TTL: <code>Bandung, 1975-06-15</code>, JK: <code>L</code>, HP: <code>081234560011</code></td>
+        <td>Data jamaah tersimpan di basis data terpusat tanpa dokumen sensitif</td>
+        <td>Data tersimpan di tabel <code>jamaah</code> Cloud Supabase dengan nomor otomatis <code>JM2026xxxx</code>; kuota berkurang 1.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-04</strong></td>
+        <td>F-01</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><span class="code-file">app/admin/jamaah/form/page.tsx</span></td>
+        <td>Tambah data jamaah saat isian wajib belum terisi (M6.1, UI-10)</td>
+        <td>Kolom wajib kosong atau NIK <code>12345</code> (&ne; 16 digit)</td>
+        <td>Menampilkan pesan kesalahan dan tidak menyimpan data</td>
+        <td>Menolak penyimpanan dengan pesan <em>"Kolom wajib (...) harus diisi"</em> atau <em>"NIK harus berupa 16 digit angka"</em>.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-05</strong></td>
+        <td>F-01</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><span class="code-file">app/admin/jamaah/page.tsx</span></td>
+        <td>Cari data jamaah baru maupun lama berdasarkan informasi relevan (M6.2, UI-09)</td>
+        <td>Kata kunci nama / <code>JM2026...</code> / nomor HP terdaftar</td>
+        <td>Menampilkan daftar jamaah yang sesuai dan membuka detailnya</td>
+        <td>Baris jamaah tampil dan klik baris membuka akordeon detail biodata &amp; checklist paspor/visa/manasik.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-06</strong></td>
+        <td>F-01</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><span class="code-file">app/admin/jamaah/page.tsx</span></td>
+        <td>Cari data jamaah yang tidak ada dalam sistem (M6.2, UI-09)</td>
+        <td>Kata kunci: <code>nama_tidak_ada_99999</code></td>
+        <td>Menampilkan pesan data tidak ditemukan</td>
+        <td>Filter mengembalikan 0 baris dan tabel UI-09 menampilkan <em>"Data tidak ditemukan"</em>.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-07</strong></td>
+        <td>F-02</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><span class="code-file">app/admin/pembayaran/page.tsx</span></td>
+        <td>Catat pembayaran tunai atau transfer yang valid (M8.1, UI-11)</td>
+        <td>1) Tunai <code>Rp 12 jt</code><br/>2) Transfer <code>Rp 20 jt</code></td>
+        <td>Pembayaran tersimpan, sisa dihitung ulang, status diperbarui</td>
+        <td>Termin 1 mengubah sisa ke <code>Rp 20 jt</code> (<em>Belum lunas</em>); Termin 2 mengubah sisa ke <code>Rp 0</code> (<em>Lunas</em>).</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-08</strong></td>
+        <td>F-02</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><span class="code-file">app/admin/pembayaran/page.tsx</span></td>
+        <td>Catat pembayaran dengan isian wajib kosong atau tidak valid (M8.1, UI-11)</td>
+        <td>Nominal <code>0</code>, negatif <code>-500.000</code>, atau <code>99.000.000</code> (&gt; sisa)</td>
+        <td>Menampilkan pesan kesalahan dan menolak penyimpanan</td>
+        <td>Menolak transaksi dengan pesan <em>"Jumlah pembayaran harus lebih dari 0"</em> atau <em>"Jumlah melebihi sisa pembayaran"</em>.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-09</strong></td>
+        <td>F-02</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><span class="code-file">app/admin/pembayaran/page.tsx</span></td>
+        <td>Pantau status, sisa, dan riwayat pembayaran jamaah (M8.2, UI-11, UI-13)</td>
+        <td>Jamaah dengan 2 transaksi pembayaran tercatat</td>
+        <td>Menampilkan status, sisa pembayaran, dan daftar riwayat</td>
+        <td>Menampilkan kartu Total Biaya, Total Dibayar, Sisa Pembayaran, badge <em>Lunas</em>, dan 2 baris riwayat cicilan.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-10</strong></td>
+        <td>F-02</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><span class="code-file">app/admin/pembayaran/page.tsx</span></td>
+        <td>Pantau riwayat pembayaran jamaah yang belum pernah membayar (M8.2, UI-11)</td>
+        <td>Jamaah baru tanpa transaksi pembayaran</td>
+        <td>Menampilkan status/sisa pembayaran dan pesan riwayat kosong</td>
+        <td><strong>[Temuan ISS-03]</strong> Awalnya redaksi teks belum memuat frasa baku SD. Diperbaiki menjadi: <em>"Belum ada pembayaran &mdash; Riwayat pembayaran kosong."</em></td>
+        <td><span class="status-fail-init">Temuan Teks</span></td>
+        <td><span class="status-fixed">Fixed &amp; Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-11</strong></td>
+        <td>F-03</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><span class="code-file">app/admin/paket/page.tsx</span><br/><span class="code-file">app/admin/jadwal/page.tsx</span></td>
+        <td>Tambah atau ubah paket beserta jadwal keberangkatan valid (M2.2, M7.1, UI-07, UI-12)</td>
+        <td>Kode: <code>ATP-FILE</code>, Program: <code>umrah</code>, Harga: <code>Rp 32 jt</code>, Jadwal: <code>2027-07-12</code>, Kuota: <code>30</code></td>
+        <td>Data paket dan jadwal tervalidasi, tersimpan, dan tampil di katalog</td>
+        <td><code>savePaketAdmin()</code> &amp; <code>saveKeberangkatanAdmin()</code> berhasil menyimpan dan memperbarui paket serta jadwal di Supabase.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-12</strong></td>
+        <td>F-03</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><span class="code-file">app/admin/paket/page.tsx</span><br/><span class="code-file">app/admin/jadwal/page.tsx</span></td>
+        <td>Tambah atau ubah paket/jadwal dengan isian wajib kosong (M2.2, M7.1, UI-07, UI-12)</td>
+        <td>Kode/nama kosong, harga <code>0</code>, atau jadwal Umrah tanpa bulan &amp; tgl</td>
+        <td>Menampilkan pesan kesalahan dan tidak menyimpan perubahan</td>
+        <td>Menolak penyimpanan dengan pesan validasi kolom wajib paket dan aturan jadwal Umrah vs Haji.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-13</strong></td>
+        <td>F-03</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><span class="code-file">app/admin/jadwal/page.tsx</span></td>
+        <td>Kelompokkan jamaah per program dan angkatan keberangkatan (M7.2, UI-12)</td>
+        <td>Program <code>umrah</code>, Periode <code>Juli 2027</code> (3 jamaah aktif)</td>
+        <td>Menampilkan daftar jamaah pada kelompok keberangkatan tersebut</td>
+        <td>Tab 2 UI-12 menampilkan kartu kloter Juli 2027 berisi tabel 3 jamaah aktif (<em>Terisi 3/30, Sisa 27</em>).</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-14</strong></td>
+        <td>F-03</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><span class="code-file">app/admin/jadwal/page.tsx</span></td>
+        <td>Kelompokkan jamaah pada periode tanpa jamaah (M7.2, UI-12)</td>
+        <td>Filter bulan/program yang belum memiliki jadwal atau 0 jamaah</td>
+        <td>Menampilkan pesan daftar kosong</td>
+        <td><strong>[Gagal Awal ISS-02]</strong> Saat filter menghasilkan 0 jadwal (<code>filteredKelompok.length === 0</code>), layar sempat kosong. Diperbaiki dengan merender <em>"Belum ada jamaah pada periode ini &mdash; Daftar jamaah kosong."</em></td>
+        <td><span class="status-fail-init">Gagal Awal</span></td>
+        <td><span class="status-fixed">Fixed &amp; Lulus</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="page-break"></div>
+
+  <!-- LANJUTAN TABEL BAGIAN A (TC-15 s.d. TC-33) -->
+  <h3 class="section-title">LANJUTAN BAB 4 &mdash; BAGIAN A: SISTEM WEB &amp; BASIS DATA (TC-15 s.d. TC-19 &amp; TC-26 s.d. TC-33)</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:4.5%;">ID Uji</th>
+        <th style="width:4.5%;">Ref. FS</th>
+        <th style="width:14%;">File Codebase &amp; Fungsi</th>
+        <th style="width:15%;">Skenario</th>
+        <th style="width:13%;">Data Uji</th>
+        <th style="width:16%;">Hasil yang Diharapkan (ATP)</th>
+        <th style="width:18%;">Hasil Aktual &amp; Catatan Uji</th>
+        <th style="width:7.5%;">Putaran 1 (Awal)</th>
+        <th style="width:7.5%;">Putaran 2 (Akhir)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>TC-15</strong></td>
+        <td>F-04</td>
+        <td><span class="code-file">services/packages.service.ts</span><br/><span class="code-file">components/PackageList.tsx</span><br/><span class="code-file">components/PackageDetailModal.tsx</span></td>
+        <td>Lihat daftar dan detail paket Haji/Umrah di website (M2.1, UI-01, UI-02)</td>
+        <td>Paket aktif tersedia pada katalog publik</td>
+        <td>Menampilkan daftar paket dan modal detail lengkap</td>
+        <td><code>getActivePackages()</code> menampilkan kartu paket di UI-01 dan modal UI-02 memuat seluruh jadwal, harga, maskapai, hotel, durasi, serta sisa kuota.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-16</strong></td>
+        <td>F-04</td>
+        <td><span class="code-file">services/packages.service.ts</span><br/><span class="code-file">components/PackageList.tsx</span></td>
+        <td>Lihat katalog paket saat belum ada paket yang ditampilkan (M2.1, UI-01)</td>
+        <td>Kondisi seluruh paket dinonaktifkan (0 paket aktif)</td>
+        <td>Menampilkan pesan informasi tidak tersedia</td>
+        <td><strong>[Gagal Awal ISS-01]</strong> Awalnya <code>getActivePackages()</code> mengembalikan <code>FALLBACK_PACKAGES</code> saat <code>data.length === 0</code>. Diperbaiki agar mengembalikan <code>[]</code> dan menampilkan <em>"Paket belum tersedia &mdash; Informasi paket tidak tersedia saat ini."</em></td>
+        <td><span class="status-fail-init">Gagal Awal</span></td>
+        <td><span class="status-fixed">Fixed &amp; Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-17</strong></td>
+        <td>F-05</td>
+        <td><span class="code-file">services/pengajuan.service.ts</span><br/><span class="code-file">components/RegistrationModal.tsx</span><br/><span class="code-file">app/admin/pengajuan/page.tsx</span></td>
+        <td>Kirim pengajuan minat/pendaftaran awal dan lihat di dasbor admin (M3.1, M3.2, UI-03, UI-08)</td>
+        <td>Nama: <code>Nadia Putri</code>, JK: <code>P</code>, HP: <code>081288776655</code>, Alamat: <code>Bekasi Barat</code></td>
+        <td>Menyimpan pengajuan, menampilkan konfirmasi, dan tampil di admin</td>
+        <td><code>submitPengajuan()</code> menerbitkan kode <code>DRN-REG-xxxx</code> dengan status <code>'baru'</code>, tampil di UI-08 admin, dan dapat dilacak di UI-14.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-18</strong></td>
+        <td>F-05</td>
+        <td><span class="code-file">services/pengajuan.service.ts</span><br/><span class="code-file">components/RegistrationModal.tsx</span></td>
+        <td>Kirim pengajuan minat dengan isian wajib belum terisi (M3.1, UI-03)</td>
+        <td>Kolom wajib kosong atau nomor HP tidak valid (<code>12345</code>)</td>
+        <td>Menampilkan pesan kesalahan dan tidak menyimpan pengajuan</td>
+        <td>Menolak penyimpanan dengan pesan validasi 5 kolom wajib dan format nomor WhatsApp Indonesia.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-19</strong></td>
+        <td>F-05</td>
+        <td><span class="code-file">app/admin/pengajuan/page.tsx</span><br/><span class="code-file">services/admin.service.ts</span></td>
+        <td>Admin membuka menu Pengajuan Minat saat belum ada pengajuan masuk (M3.2, UI-08)</td>
+        <td>Kondisi daftar pengajuan kosong (0 baris)</td>
+        <td>Menampilkan pesan daftar kosong</td>
+        <td><strong>[Temuan ISS-03]</strong> Redaksi teks disempurnakan menjadi: <em>"Belum ada pengajuan masuk &mdash; Daftar pengajuan kosong."</em></td>
+        <td><span class="status-fail-init">Temuan Teks</span></td>
+        <td><span class="status-fixed">Fixed &amp; Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-26</strong></td>
+        <td>NF-01</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><span class="code-file">app/admin/jamaah/page.tsx</span></td>
+        <td>Pencarian data jamaah lama melalui sistem (M6.2, UI-09)</td>
+        <td>Arsip jamaah lama pendaftaran tahun 2019 (<code>H. Sulaiman 2019</code>)</td>
+        <td>Data jamaah lama ditemukan melalui sistem tanpa berkas fisik</td>
+        <td>Ditemukan dalam <code>&lt; 200 ms</code> melalui kotak pencarian UI-09 beserta riwayat keberangkatan dan pembayarannya.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-27</strong></td>
+        <td>NF-01</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><span class="code-file">app/admin/jamaah/page.tsx</span></td>
+        <td>Pencarian data jamaah dengan informasi tidak relevan/keliru (M6.2, UI-09)</td>
+        <td>Kata kunci acak: <code>keyword_keliru_xyz_000</code></td>
+        <td>Tidak menampilkan data keliru dan menginformasikan tidak ditemukan</td>
+        <td>Mengembalikan 0 hasil dan menampilkan pesan <em>"Data tidak ditemukan"</em>.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-28</strong></td>
+        <td>NF-02</td>
+        <td><span class="code-file">components/AdminShell.tsx</span><br/><span class="code-file">app/admin/jamaah/form/page.tsx</span></td>
+        <td>Pembatasan akses fungsi admin hanya setelah login &amp; tidak ada unggah dokumen sensitif (M1.1, M6.1)</td>
+        <td>Akses <code>/admin/*</code> tanpa sesi login &amp; inspeksi field form</td>
+        <td>Akses ditolak tanpa login; tidak ada unggah dokumen sensitif</td>
+        <td>Guard <code>AdminShell</code> mengalihkan ke <code>/admin/login</code>; seluruh form bebas dari <code>&lt;input type="file"&gt;</code> untuk KTP/paspor.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-29</strong></td>
+        <td>NF-03</td>
+        <td><span class="code-file">lib/supabase.ts</span><br/><span class="code-file">services/admin.service.ts</span></td>
+        <td>Penyimpanan data jamaah dan pembayaran pada basis data terpusat di cloud</td>
+        <td>Simpan jamaah &amp; pembayaran lalu akses dari sesi klien berbeda</td>
+        <td>Data tersimpan di cloud dan tidak bergantung penyimpanan lokal</td>
+        <td>Tersimpan secara persisten di Cloud PostgreSQL (Supabase) dan konsisten lintas perangkat.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-30</strong></td>
+        <td>NF-03</td>
+        <td><span class="code-file">services/admin.service.ts</span><br/><code>saveJamaahAdmin()</code><br/><code>catatPembayaranAdmin()</code></td>
+        <td>Koneksi jaringan ke basis data cloud terputus/gagal saat menyimpan data</td>
+        <td>Simulasi koneksi terputus (<code>simulateOffline: true</code>)</td>
+        <td>Tidak melaporkan sukses palsu dan menampilkan pesan gagal koneksi</td>
+        <td><strong>[Gagal Awal ISS-04]</strong> Awalnya fungsi tulis belum memiliki blok <code>try/catch</code> khusus koneksi terputus. Diperbaiki sehingga mengembalikan pesan <em>"Gagal menyimpan data: Koneksi jaringan ke basis data cloud terputus"</em>.</td>
+        <td><span class="status-fail-init">Gagal Awal</span></td>
+        <td><span class="status-fixed">Fixed &amp; Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-31</strong></td>
+        <td>NF-04</td>
+        <td><span class="code-file">docs/USER_MANUAL.md</span><br/><span class="code-file">components/AdminShell.tsx</span></td>
+        <td>Kelengkapan dokumentasi &amp; pelatihan pendukung alur kerja staf operasional</td>
+        <td>Pemeriksaan berkas User Manual &amp; panduan di dasbor admin</td>
+        <td>User Manual tersedia dan mendukung proses kerja staf</td>
+        <td><strong>[Gagal Awal ISS-05]</strong> Awalnya berkas User Manual belum dibuat. Diperbaiki dengan menambahkan <code>docs/USER_MANUAL.md</code> dan tombol modal <strong>"Panduan Staf (User Manual)"</strong> di sidebar admin.</td>
+        <td><span class="status-fail-init">Belum Ada</span></td>
+        <td><span class="status-fixed">Fixed &amp; Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-32</strong></td>
+        <td>NF-05</td>
+        <td>Seluruh 9 file komponen &amp; halaman utama (<code>Navbar</code>, <code>Hero</code>, <code>PackageList</code>, <code>AdminShell</code>, <code>admin/*</code>)</td>
+        <td>Akses aplikasi web responsif di komputer, laptop, dan smartphone</td>
+        <td>Viewport Desktop (1440px), Laptop (1024px), Smartphone (375px)</td>
+        <td>Seluruh halaman dapat dibuka di komputer, laptop, dan smartphone</td>
+        <td><strong>[Temuan ISS-07]</strong> 8 dari 9 file sudah responsif sejak awal; ditemukan <code>app/admin/pengajuan/page.tsx</code> belum memiliki breakpoint <code>sm:</code> pada filter bar. Sudah diperbaiki (9/9 file responsif).</td>
+        <td><span class="status-fail-init">1 File Kurang</span></td>
+        <td><span class="status-fixed">Fixed &amp; Lulus</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-33</strong></td>
+        <td>NF-05</td>
+        <td>Seluruh 5 halaman tabel admin (<code>paket</code>, <code>jadwal</code>, <code>pengajuan</code>, <code>jamaah</code>, <code>pembayaran</code>)</td>
+        <td>Tampilan terpotong atau tidak dapat diakses pada layar/perangkat tertentu</td>
+        <td>Tampilan layar sempit smartphone (360px&ndash;414px)</td>
+        <td>Tidak ada elemen kritis yang menghalangi akses utama</td>
+        <td>Seluruh tabel data menggunakan <code>overflow-x-auto</code> dan filter bar <code>UI-08</code> sudah responsif vertikal pada layar ponsel.</td>
+        <td><span class="status-pass">Lulus</span></td>
+        <td><span class="status-pass">Lulus</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- BAB 4 BAGIAN B: MODUL AI (TERPISAH / MASIH DALAM PERANCANGAN) -->
+  <h3 class="section-title">BAB 4. TABEL TES &mdash; BAGIAN B: MODUL AI (DIPISAHKAN / MASIH TAHAP PERANCANGAN ULANG: 10 KASUS UJI)</h3>
+  <p class="section-desc">
+    <strong>Catatan untuk Lead Tester (Ilyas):</strong> Sesuai arahan Lead Programmer (Mikhael), ke-10 kasus uji AI di bawah ini <strong>dipisahkan dari perhitungan kelulusan Web Utama</strong> karena arsitektur model AI masih dalam tahap perancangan/eksplorasi lebih lanjut. Meskipun demikian, fungsi prototipe <code>services/ai.service.ts</code> sudah diuji dengan status di bawah ini:
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:4.5%;">ID Uji</th>
+        <th style="width:4.5%;">Ref. FS</th>
+        <th style="width:14%;">File Codebase &amp; Fungsi</th>
+        <th style="width:16%;">Skenario (Modul AI)</th>
+        <th style="width:13%;">Data Uji</th>
+        <th style="width:16%;">Hasil yang Diharapkan (ATP)</th>
+        <th style="width:17%;">Catatan Kondisi Prototipe Saat Ini</th>
+        <th style="width:7.5%;">Status Prototipe</th>
+        <th style="width:7.5%;">Status Rilis ATP</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>TC-20</strong></td>
+        <td>F-06</td>
+        <td><span class="code-file">services/ai.service.ts</span><br/><span class="code-file">components/MLMatcher.tsx</span></td>
+        <td>Dapatkan rekomendasi paket AI sesuai preferensi (M4.1, UI-04)</td>
+        <td>Anggaran: <code>Rp 45 jt</code>, Program: <code>umrah</code>, Durasi: <code>12 hari</code></td>
+        <td>Menampilkan daftar paket rekomendasi berdasarkan data paket aktif</td>
+        <td>Fungsi <code>hitungRekomendasiPaket()</code> berbasis <em>content-based filtering</em> berjalan dan mengurutkan skor paket tertinggi (93%).</td>
+        <td><span class="status-pass">Berjalan</span></td>
+        <td><span class="status-pending-ai">Pending AI</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-21</strong></td>
+        <td>F-06</td>
+        <td><span class="code-file">services/ai.service.ts</span><br/><span class="code-file">components/MLMatcher.tsx</span></td>
+        <td>Cari rekomendasi paket AI saat isian wajib belum terisi (M4.1, UI-04)</td>
+        <td>Anggaran: <code>0</code> / Program kosong</td>
+        <td>Menampilkan pesan isian belum terisi</td>
+        <td>Sempat ditemukan slider tidak mengizinkan input kosong (ISS-06); sudah ditambahkan guard validasi di fungsi service &amp; UI.</td>
+        <td><span class="status-fixed">Diperbaiki</span></td>
+        <td><span class="status-pending-ai">Pending AI</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-22</strong></td>
+        <td>F-06</td>
+        <td><span class="code-file">services/ai.service.ts</span><br/><span class="code-file">components/MLMatcher.tsx</span></td>
+        <td>Cari rekomendasi paket AI saat tidak ada paket yang sesuai (M4.1, UI-04)</td>
+        <td>Anggaran terlalu kecil: <code>Rp 5.000.000</code></td>
+        <td>Menampilkan pesan tidak ada paket yang sesuai</td>
+        <td>Mengembalikan pesan <em>"Tidak ada paket yang sesuai, ubah anggaran atau preferensi"</em>.</td>
+        <td><span class="status-pass">Berjalan</span></td>
+        <td><span class="status-pending-ai">Pending AI</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-23</strong></td>
+        <td>F-07</td>
+        <td><span class="code-file">services/ai.service.ts</span><br/><span class="code-file">app/api/chatbot/route.ts</span></td>
+        <td>Tanya jawab seputar paket dan histori keberangkatan melalui Chatbot AI (M5.1, UI-05)</td>
+        <td>Pertanyaan harga &amp; fasilitas hotel paket Umrah</td>
+        <td>Menampilkan jawaban otomatis berdasarkan data paket &amp; historis</td>
+        <td>Berjalan dengan Grounded RAG database Supabase; integrasi akhir model LLM eksternal masih dirancang oleh Lead Programmer.</td>
+        <td><span class="status-pass">Berjalan</span></td>
+        <td><span class="status-pending-ai">Pending AI</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-24</strong></td>
+        <td>F-07</td>
+        <td><span class="code-file">services/ai.service.ts</span><br/><span class="code-file">app/api/chatbot/route.ts</span></td>
+        <td>Kirim pertanyaan kosong ke Chatbot AI (M5.1, UI-05)</td>
+        <td>Input pertanyaan kosong (<code>"   "</code>)</td>
+        <td>Menampilkan pesan pertanyaan belum terisi</td>
+        <td>Menolak input kosong (HTTP 400) dengan pesan <em>"Silakan isi pertanyaan Anda terlebih dahulu."</em></td>
+        <td><span class="status-pass">Berjalan</span></td>
+        <td><span class="status-pending-ai">Pending AI</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-25</strong></td>
+        <td>F-07</td>
+        <td><span class="code-file">services/ai.service.ts</span><br/><span class="code-file">app/api/chatbot/route.ts</span></td>
+        <td>Tanya pertanyaan di luar cakupan data paket dan data historis (M5.1, UI-05)</td>
+        <td>Pertanyaan di luar konteks travel Haji/Umrah</td>
+        <td>Menampilkan pesan belum dapat menjawab &amp; saran hubungi staf</td>
+        <td>Mengembalikan pesan fallback: <em>"Informasi belum tersedia, silakan hubungi staf Yayasan Darunnisa"</em>.</td>
+        <td><span class="status-pass">Berjalan</span></td>
+        <td><span class="status-pending-ai">Pending AI</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-34</strong></td>
+        <td>NF-07</td>
+        <td><span class="code-file">services/ai.service.ts</span><br/><code>buildSafeRAGContext()</code></td>
+        <td>Fitur AI hanya memakai data paket dan data historis tanpa identitas (M4.1, M5.1)</td>
+        <td>Inspeksi query &amp; teks konteks RAG</td>
+        <td>Hanya menggunakan data paket &amp; historis anonim tanpa data pribadi</td>
+        <td>Query RAG hanya mengambil tabel <code>paket</code>, <code>keberangkatan</code>, dan jumlah agregat jamaah aktif tanpa nama/NIK/No.HP.</td>
+        <td><span class="status-pass">Berjalan</span></td>
+        <td><span class="status-pending-ai">Pending AI</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-35</strong></td>
+        <td>NF-07</td>
+        <td><span class="code-file">services/ai.service.ts</span><br/><code>isAskingPrivateData</code></td>
+        <td>Upaya menggali data pribadi, pembayaran, atau dokumen sensitif melalui AI (M5.1)</td>
+        <td>Pertanyaan meminta NIK, KTP, paspor, atau cicilan jamaah</td>
+        <td>Chatbot tidak membocorkan data pribadi/pembayaran/dokumen</td>
+        <td>Filter kata kunci sensitif diperluas (ISS-06) untuk memblokir permintaan KTP, paspor, dan riwayat pembayaran jamaah.</td>
+        <td><span class="status-fixed">Diperbaiki</span></td>
+        <td><span class="status-pending-ai">Pending AI</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-36</strong></td>
+        <td>NF-08</td>
+        <td><span class="code-file">services/ai.service.ts</span><br/><span class="code-file">services/packages.service.ts</span></td>
+        <td>Konsistensi rekomendasi dan jawaban AI dengan data paket yang berlaku (M4.1, M5.1)</td>
+        <td>Perbandingan output AI terhadap tabel <code>paket</code> aktif</td>
+        <td>Hanya memuat paket aktif dan konsisten dengan data paket</td>
+        <td>Hanya membaca paket dengan <code>status_aktif = true</code> dari Cloud Supabase.</td>
+        <td><span class="status-pass">Berjalan</span></td>
+        <td><span class="status-pending-ai">Pending AI</span></td>
+      </tr>
+      <tr>
+        <td><strong>TC-37</strong></td>
+        <td>NF-08</td>
+        <td><span class="code-file">services/ai.service.ts</span></td>
+        <td>Keandalan AI saat informasi tidak sesuai atau tidak tersedia pada data (M4.1, M5.1)</td>
+        <td>Simulasi gangguan LLM API / pertanyaan di luar data</td>
+        <td>Menyampaikan informasi tidak tersedia &amp; tidak mengarang jawaban</td>
+        <td>Mengembalikan pesan fallback baku tanpa mengarang harga atau jadwal di luar database.</td>
+        <td><span class="status-pass">Berjalan</span></td>
+        <td><span class="status-pending-ai">Pending AI</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="page-break"></div>
+
+  <!-- BAB 6: LOG MASALAH DAN SOLUSI -->
+  <h3 class="section-title">BAB 6. LOG MASALAH DAN SOLUSI (DAFTAR ERROR / TEMUAN SAAT UJI PUTARAN 1 &amp; PERBAIKANNYA)</h3>
+  <p class="section-desc">
+    Tabel ini merinci seluruh kasus uji yang <strong>sempat gagal / ditemukan celah pada Putaran 1</strong> beserta perbaikan kode yang telah dilakukan hingga lulus pada Putaran 2.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:6%;">ID</th>
+        <th style="width:7%;">ID Uji</th>
+        <th style="width:30%;">Deskripsi Masalah / Error Saat Uji Putaran 1</th>
+        <th style="width:8%;">Tingkat</th>
+        <th style="width:32%;">Solusi / Tindakan Perbaikan pada File Codebase</th>
+        <th style="width:10%;">PIC</th>
+        <th style="width:7%;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ISS-01</strong></td>
+        <td>TC-16</td>
+        <td><strong>[Gagal Putaran 1]</strong> Saat seluruh paket di database berstatus nonaktif (<code>data.length === 0</code>), fungsi <code>getActivePackages()</code> justru mengembalikan data statis <code>FALLBACK_PACKAGES</code> sehingga pesan <em>"Paket belum tersedia / Informasi tidak tersedia"</em> tidak muncul.</td>
+        <td class="sev-med">Sedang</td>
+        <td>Memisahkan penanganan error koneksi (<code>if (error || !data)</code>) dari kondisi tabel kosong (<code>if (data.length === 0) return []</code>) di <code>services/packages.service.ts</code> serta menampilkan pesan <em>"Paket belum tersedia &mdash; Informasi paket tidak tersedia saat ini"</em> di <code>components/PackageList.tsx</code>.</td>
+        <td>Mikhael A. K.</td>
+        <td><span class="status-fixed">Selesai</span></td>
+      </tr>
+      <tr>
+        <td><strong>ISS-02</strong></td>
+        <td>TC-14</td>
+        <td><strong>[Gagal Putaran 1]</strong> Pada tab <strong>Jamaah per Keberangkatan (M7.2)</strong> di UI-12, apabila admin memfilter kombinasi program/bulan/tahun yang belum memiliki jadwal keberangkatan (<code>filteredKelompok.length === 0</code>), halaman kosong tanpa pesan.</td>
+        <td class="sev-med">Sedang</td>
+        <td>Menambahkan komponen <em>empty state</em> <em>"Belum ada jamaah pada periode ini &mdash; Daftar jamaah kosong."</em> pada <code>app/admin/jadwal/page.tsx</code> saat hasil filter jadwal maupun daftar jamaah di dalam kloter bernilai kosong.</td>
+        <td>Mikhael A. K.</td>
+        <td><span class="status-fixed">Selesai</span></td>
+      </tr>
+      <tr>
+        <td><strong>ISS-03</strong></td>
+        <td>TC-10,<br/>TC-19</td>
+        <td><strong>[Temuan Putaran 1]</strong> Redaksi teks saat riwayat pembayaran kosong (UI-11) dan saat daftar pengajuan kosong (UI-08) belum menggabungkan frasa eksak pseudocode SD v1.1 dan ekspektasi tabel ATP.</td>
+        <td class="sev-low">Rendah</td>
+        <td>Menyeragamkan teks kosong menjadi <em>"Belum ada pembayaran &mdash; Riwayat pembayaran kosong."</em> di <code>app/admin/pembayaran/page.tsx</code> dan <em>"Belum ada pengajuan masuk &mdash; Daftar pengajuan kosong."</em> di <code>app/admin/pengajuan/page.tsx</code>.</td>
+        <td>Mikhael A. K.</td>
+        <td><span class="status-fixed">Selesai</span></td>
+      </tr>
+      <tr>
+        <td><strong>ISS-04</strong></td>
+        <td>TC-30</td>
+        <td><strong>[Gagal Putaran 1]</strong> Fungsi penyimpanan data jamaah (<code>saveJamaahAdmin</code>) dan pembayaran (<code>catatPembayaranAdmin</code>) belum memiliki blok tangkapan <code>try/catch</code> khusus dan deteksi koneksi terputus (<code>navigator.onLine === false</code>).</td>
+        <td class="sev-high">Tinggi</td>
+        <td>Membungkus seluruh transaksi tulis di <code>services/admin.service.ts</code> dengan pemeriksaan koneksi dan blok <code>try/catch</code> yang mengembalikan pesan <em>"Gagal menyimpan data: Koneksi jaringan ke basis data cloud terputus"</em> tanpa melaporkan sukses palsu.</td>
+        <td>Mikhael A. K.</td>
+        <td><span class="status-fixed">Selesai</span></td>
+      </tr>
+      <tr>
+        <td><strong>ISS-05</strong></td>
+        <td>TC-31</td>
+        <td><strong>[Gagal Putaran 1]</strong> Dokumen panduan pengguna (<em>User Manual</em>) untuk staf operasional belum tersedia di dalam folder dokumentasi repositori maupun di antarmuka Dasbor Admin.</td>
+        <td class="sev-med">Sedang</td>
+        <td>Menyusun dokumen <code>docs/USER_MANUAL.md</code> serta menambahkan tombol &amp; modal interaktif <strong>"Panduan Staf (User Manual)"</strong> pada sidebar <code>components/AdminShell.tsx</code>.</td>
+        <td>Mikhael A. K.</td>
+        <td><span class="status-fixed">Selesai</span></td>
+      </tr>
+      <tr>
+        <td><strong>ISS-06</strong></td>
+        <td>TC-21,<br/>TC-35</td>
+        <td><strong>[Temuan Putaran 1 - Modul AI]</strong> Fungsi <code>hitungRekomendasiPaket()</code> perlu menolak nilai anggaran <code>&le; 0</code> secara eksplisit, dan filter <code>isAskingPrivateData</code> pada Chatbot perlu mencakup kata kunci ktp/paspor/cicilan jamaah.</td>
+        <td class="sev-low">Rendah</td>
+        <td>Menambahkan validasi input wajib pada <code>services/ai.service.ts</code> &amp; <code>components/MLMatcher.tsx</code> serta memperluas daftar kata kunci sensitif pada <code>answerWithGroundedRAG()</code>.</td>
+        <td>Mikhael A. K.</td>
+        <td><span class="status-fixed">Selesai</span></td>
+      </tr>
+      <tr>
+        <td><strong>ISS-07</strong></td>
+        <td>TC-32,<br/>TC-33</td>
+        <td><strong>[Temuan Putaran 1]</strong> Bilah filter status pada halaman <code>app/admin/pengajuan/page.tsx</code> (UI-08) belum memiliki kelas utilitas responsif mobile (<code>sm:</code>) untuk layar ponsel sempit.</td>
+        <td class="sev-low">Rendah</td>
+        <td>Menambahkan kelas responsif <code>flex-col sm:flex-row sm:items-center</code> dan <code>w-full sm:w-auto</code> pada <code>app/admin/pengajuan/page.tsx</code>.</td>
+        <td>Mikhael A. K.</td>
+        <td><span class="status-fixed">Selesai</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- BAB 7: REKAPITULASI HASIL PENGUJIAN -->
+  <h3 class="section-title">BAB 7. REKAPITULASI HASIL PENGUJIAN (PERBANDINGAN PUTARAN 1 vs PUTARAN 2 &amp; PEMISAHAN AI)</h3>
+
+  <div class="meta-grid">
+    <table>
+      <thead>
+        <tr>
+          <th>Kelompok &amp; Tahap Pengujian</th>
+          <th style="text-align:center;">Total TC</th>
+          <th style="text-align:center;">Lulus / Sukses</th>
+          <th style="text-align:center;">Gagal / Pending</th>
+          <th style="text-align:center;">Persentase Lulus</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Web &amp; DB (Non-AI) &mdash; Putaran 1 (Sebelum Fix)</strong></td>
+          <td style="text-align:center; font-weight:700;">27</td>
+          <td style="text-align:center; font-weight:700;">20</td>
+          <td style="text-align:center; font-weight:700; color:#991b1b;">7 Temuan</td>
+          <td style="text-align:center; font-weight:700; color:#92400e;">74,07 %</td>
+        </tr>
+        <tr style="background:#ecfdf5;">
+          <td><strong>2. Web &amp; DB (Non-AI) &mdash; Putaran 2 (Setelah Fix Final)</strong></td>
+          <td style="text-align:center; font-weight:800;">27</td>
+          <td style="text-align:center; font-weight:800; color:#065f46;">27</td>
+          <td style="text-align:center; font-weight:800;">0</td>
+          <td style="text-align:center; font-weight:800; color:#065f46;">100,00 %</td>
+        </tr>
+        <tr style="background:#fffbeb;">
+          <td><strong>3. Modul AI (TC-20..25, TC-34..37) &mdash; Dipisahkan</strong></td>
+          <td style="text-align:center; font-weight:700;">10</td>
+          <td style="text-align:center; font-weight:700; color:#92400e;">10 (Prototipe)</td>
+          <td style="text-align:center; font-weight:700; color:#92400e;">10 Pending Desain AI</td>
+          <td style="text-align:center; font-weight:700; color:#92400e;">Dipisahkan</td>
+        </tr>
+        <tr style="background:#eff6ff;">
+          <td><strong>TOTAL KESELURUHAN ATP (37 TC)</strong></td>
+          <td style="text-align:center; font-weight:800;">37</td>
+          <td style="text-align:center; font-weight:800; color:#065f46;">27 Final (+10 AI)</td>
+          <td style="text-align:center; font-weight:800;">0 Gagal Web</td>
+          <td style="text-align:center; font-weight:800; color:#0b2242;">100% Web Non-AI</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card" style="margin-bottom:10px;">
+      <div style="font-weight:800; color:#0b2242; margin-bottom:4px; font-size:9pt;">Panduan Pengisian Dokumen ATP untuk Lead Tester (Ilyas):</div>
+      <ul style="margin:0; padding-left:16px; font-size:8pt; color:#1e293b;">
+        <li><strong>27 Kasus Uji Web &amp; Basis Data (TC-01..TC-19, TC-26..TC-33):</strong> Seluruhnya telah <strong>100% Teruji Sukses (27/27 Lulus)</strong> termasuk 100% Kebutuhan Prioritas Tinggi (<code>F-01, F-02, F-03</code>).</li>
+        <li><strong>7 Kasus Uji yang Sempat Bermasalah di Putaran 1:</strong> Tercatat lengkap pada Bab 6 (<code>ISS-01</code> s.d. <code>ISS-07</code>) sebagai bukti pelaksanaan pengujian &amp; perbaikan nyata oleh tim.</li>
+        <li><strong>10 Kasus Uji AI (TC-20..TC-25, TC-34..TC-37):</strong> Prototipe saat ini sudah berjalan 10/10, namun ditandai <em>Pending Final AI Design</em> sambil menunggu keputusan akhir rancangan AI.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- BAB 8: LEMBAR PERSETUJUAN PENERIMAAN -->
+  <h3 class="section-title">BAB 8. LEMBAR PERSETUJUAN PENERIMAAN</h3>
+
+  <div class="sign-grid">
+    <div class="sign-box">
+      <div class="sign-role">Pihak Mitra / Klien</div>
+      <div class="sign-space">[ Disetujui ]</div>
+      <div class="sign-name">Ersi Shaulah</div>
+      <div class="sign-npm">Sekretaris Yayasan Darunnisa</div>
+    </div>
+    <div class="sign-box">
+      <div class="sign-role">Project Manager</div>
+      <div class="sign-space">[ Disetujui ]</div>
+      <div class="sign-name">Hagi Salman Alfarizi</div>
+      <div class="sign-npm">NPM: 50423557</div>
+    </div>
+    <div class="sign-box">
+      <div class="sign-role">Lead Tester (Penyusun ATP)</div>
+      <div class="sign-space">[ Diverifikasi ]</div>
+      <div class="sign-name">Ramadhan Ilyas Nur Felim</div>
+      <div class="sign-npm">NPM: 51423229</div>
+    </div>
+    <div class="sign-box">
+      <div class="sign-role">Lead Programmer</div>
+      <div class="sign-space">[ Dieksekusi &amp; Fixed ]</div>
+      <div class="sign-name">Mikhael Adicahya Kurniawan</div>
+      <div class="sign-npm">NPM: 50423774</div>
+    </div>
+  </div>
+
+</body>
+</html>

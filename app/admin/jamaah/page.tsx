@@ -67,11 +67,8 @@ export default function AdminJamaahPage() {
     setLoading(true);
     const data = await getAllJamaahAdmin();
     setJamaahList(data);
-    if (data.length > 0 && expandedId === null) {
-      setExpandedId(data[0].id_jamaah);
-    }
     setLoading(false);
-  }, [expandedId]);
+  }, []);
 
   useEffect(() => {
     loadData();

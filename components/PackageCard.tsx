@@ -98,8 +98,8 @@ export default function PackageCard({ pkg, onViewDetail, onRegister }: PackageCa
             </div>
           </div>
           <div className="text-right">
-            <span className="text-[10px] font-semibold text-blue-900 bg-amber-200/80 border border-amber-300/80 px-2 py-0.5 rounded">
-              Hotel Ring 1
+            <span className="text-[10px] font-semibold font-mono text-blue-900 bg-amber-200/80 border border-amber-300/80 px-2 py-0.5 rounded">
+              {pkg.kode_paket}
             </span>
           </div>
         </div>

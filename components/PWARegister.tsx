@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Download, X } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -8,7 +9,10 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
+const PWA_DISMISSED_KEY = 'darunnisa_pwa_dismissed';
+
 export default function PWARegister() {
+  const pathname = usePathname();
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showBanner, setShowBanner] = useState<boolean>(false);
 
@@ -28,11 +32,14 @@ export default function PWARegister() {
       });
     }
 
-    // 2. Capture beforeinstallprompt event
+    // 2. Capture beforeinstallprompt event (hanya tampil jika belum di-dismiss di sesi ini)
     const handler = (e: Event) => {
       e.preventDefault();
       setInstallPrompt(e as BeforeInstallPromptEvent);
-      setShowBanner(true);
+      const dismissed = sessionStorage.getItem(PWA_DISMISSED_KEY) === '1';
+      if (!dismissed) {
+        setShowBanner(true);
+      }
     };
 
     window.addEventListener('beforeinstallprompt', handler);
@@ -49,12 +56,18 @@ export default function PWARegister() {
     const { outcome } = await installPrompt.userChoice;
     if (outcome === 'accepted') {
       console.log('[PWA] User accepted the install prompt');
+      sessionStorage.setItem(PWA_DISMISSED_KEY, '1');
       setShowBanner(false);
     }
     setInstallPrompt(null);
   };
 
-  if (!showBanner) return null;
+  const handleDismiss = () => {
+    sessionStorage.setItem(PWA_DISMISSED_KEY, '1');
+    setShowBanner(false);
+  };
+
+  if (!showBanner || pathname?.startsWith('/admin')) return null;
 
   return (
     <div className="fixed bottom-4 right-4 z-50 max-w-sm bg-[#0b2242] text-white rounded-2xl p-4 shadow-2xl border border-amber-400/40 flex items-center gap-3 animate-fadeIn">
@@ -74,8 +87,8 @@ export default function PWARegister() {
           Install
         </button>
         <button
-          onClick={() => setShowBanner(false)}
-          className="text-slate-400 hover:text-white p-1 rounded-md"
+          onClick={handleDismiss}
+          className="text-slate-400 hover:text-white p-1 rounded-md cursor-pointer"
           title="Tutup"
         >
           <X className="w-4 h-4" />
