@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Calendar, Sparkles, ClipboardCheck } from 'lucide-react';
+import { Calendar, Sparkles, Calculator } from 'lucide-react';
 
 interface HeroProps {
   onOpenRegister?: () => void;
 }
 
-export default function Hero({ onOpenRegister }: HeroProps) {
+export default function Hero({}: HeroProps) {
   return (
     <section className="bg-gradient-to-b from-[#0b2242] via-[#0e2a52] to-[#123463] text-white pt-10 pb-12 md:pt-16 md:pb-16 px-4 border-b border-[#1c4a8a]">
       <div className="max-w-7xl mx-auto">
@@ -35,23 +35,13 @@ export default function Hero({ onOpenRegister }: HeroProps) {
                 <span>Lihat Jadwal Paket</span>
               </Link>
 
-              {onOpenRegister ? (
-                <button
-                  onClick={onOpenRegister}
-                  className="inline-flex items-center gap-2 bg-[#133666] hover:bg-[#1a4785] text-blue-50 border border-[#245ca6] font-medium px-5 py-3 rounded-xl text-xs sm:text-sm transition-colors cursor-pointer"
-                >
-                  <ClipboardCheck className="w-4 h-4 text-amber-300" />
-                  <span>Pengajuan Pendaftaran</span>
-                </button>
-              ) : (
-                <Link
-                  href="#daftar"
-                  className="inline-flex items-center gap-2 bg-[#133666] hover:bg-[#1a4785] text-blue-50 border border-[#245ca6] font-medium px-5 py-3 rounded-xl text-xs sm:text-sm transition-colors"
-                >
-                  <ClipboardCheck className="w-4 h-4 text-amber-300" />
-                  <span>Pengajuan Pendaftaran</span>
-                </Link>
-              )}
+              <Link
+                href="#kalkulator-biaya"
+                className="inline-flex items-center gap-2 bg-[#133666] hover:bg-[#1a4785] text-blue-50 border border-[#245ca6] font-medium px-5 py-3 rounded-xl text-xs sm:text-sm transition-colors"
+              >
+                <Calculator className="w-4 h-4 text-amber-300" />
+                <span>Simulasi Biaya</span>
+              </Link>
 
               <Link
                 href="#rekomendasi-ml"

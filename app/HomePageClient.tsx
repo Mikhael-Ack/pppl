@@ -84,9 +84,6 @@ export default function HomePageClient({ initialPackages }: HomePageClientProps)
 
         {/* Section 5: Feature ML 2 - Kalkulator Biaya */}
         <MLPriceCalculator />
-
-        {/* Section 6: Marquee Testimoni 2 Jalur (Preserved) */}
-        <TestimonialMarquee />
       </main>
 
       {/* Floating Chatbot AI (UI-05) */}

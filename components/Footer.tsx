@@ -38,17 +38,17 @@ export default function Footer() {
             <ul className="space-y-2 text-slate-400 text-[11px]">
               <li>
                 <Link href="/#jadwal" className="hover:text-amber-300 transition-colors">
-                  Katalog Umrah &amp; Haji (UI-01)
+                  Katalog Umrah &amp; Haji
                 </Link>
               </li>
               <li>
                 <Link href="/#daftar" className="hover:text-amber-300 transition-colors">
-                  Pengajuan Pendaftaran Daring (UI-03)
+                  Pengajuan Pendaftaran Daring
                 </Link>
               </li>
               <li>
                 <Link href="/#rekomendasi-ml" className="hover:text-amber-300 transition-colors">
-                  Rekomendasi Paket AI (UI-04)
+                  Rekomendasi Paket AI
                 </Link>
               </li>
               <li>
@@ -58,7 +58,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/tracking" className="hover:text-amber-300 transition-colors">
-                  Pelacakan Pengajuan (UI-14)
+                  Pelacakan Pengajuan
                 </Link>
               </li>
             </ul>
@@ -93,14 +93,6 @@ export default function Footer() {
             <p className="text-slate-400 leading-relaxed text-[11px]">
               Sesuai arahan mitra, dokumen fisik sensitif (KTP, paspor, buku nikah) diproses manual di kantor yayasan demi keamanan data jemaah. Terhubung sistem pengawasan SISKOPATUH Kemenag RI.
             </p>
-            <div className="pt-1">
-              <Link
-                href="/tracking"
-                className="inline-block text-[11px] font-medium text-amber-300 hover:text-white border border-[#1f5296] bg-[#0b2242] px-3 py-1.5 rounded-lg transition-colors"
-              >
-                Lacak Status Pengajuan &rarr;
-              </Link>
-            </div>
           </div>
         </div>
 

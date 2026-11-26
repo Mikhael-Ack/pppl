@@ -54,25 +54,6 @@ export default function Navbar({ onOpenRegister }: NavbarProps) {
           </div>
         </Link>
 
-        {/* Links */}
-        <nav className="hidden md:flex items-center gap-6 text-xs font-medium tracking-wide text-slate-200">
-          <Link href="/#jadwal" className="hover:text-amber-300 transition-colors">
-            Katalog Paket
-          </Link>
-          <Link href="/#rekomendasi-ml" className="hover:text-amber-300 transition-colors">
-            Pencocok AI
-          </Link>
-          <Link href="/#kalkulator-biaya" className="hover:text-amber-300 transition-colors">
-            Simulasi Biaya
-          </Link>
-          <Link href="/#daftar" className="hover:text-amber-300 transition-colors">
-            Daftar Daring
-          </Link>
-          <Link href="/tracking" className="hover:text-amber-300 transition-colors">
-            Lacak Pengajuan
-          </Link>
-        </nav>
-
         {/* Action Button */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <div className="hidden sm:block">

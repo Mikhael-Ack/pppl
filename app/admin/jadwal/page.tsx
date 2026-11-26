@@ -6,6 +6,7 @@ import {
   getAllKeberangkatanAdmin,
   getAllPackagesAdmin,
   saveKeberangkatanAdmin,
+  deleteKeberangkatanAdmin,
   pindahkanJamaahKeberangkatanAdmin,
   KeberangkatanWithPaket,
   SaveKeberangkatanInput,
@@ -14,6 +15,7 @@ import { PaketItem } from '@/types/package.types';
 import {
   Plus,
   Pencil,
+  Trash2,
   Calendar,
   CalendarDays,
   ChevronLeft,
@@ -59,6 +61,8 @@ export default function AdminJadwalPage() {
   // Modal Tambah/Ubah Jadwal (M7.1)
   const [modalOpen, setModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deletingJadwal, setDeletingJadwal] = useState(false);
+  const [confirmDeleteJadwal, setConfirmDeleteJadwal] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
@@ -116,6 +120,7 @@ export default function AdminJadwalPage() {
 
   const handleOpenEdit = (item: KeberangkatanWithPaket) => {
     setErrorMsg(null);
+    setConfirmDeleteJadwal(false);
     setForm({
       id_keberangkatan: item.id_keberangkatan,
       id_paket: item.id_paket,
@@ -126,6 +131,31 @@ export default function AdminJadwalPage() {
       status: item.status,
     });
     setModalOpen(true);
+  };
+
+  const handleDeleteJadwal = async () => {
+    if (!form.id_keberangkatan) return;
+    if (!confirmDeleteJadwal) {
+      setConfirmDeleteJadwal(true);
+      return;
+    }
+
+    setDeletingJadwal(true);
+    setErrorMsg(null);
+    const res = await deleteKeberangkatanAdmin(form.id_keberangkatan);
+    setDeletingJadwal(false);
+
+    if (!res.success) {
+      setConfirmDeleteJadwal(false);
+      setErrorMsg(res.error || 'Gagal menghapus jadwal keberangkatan');
+      return;
+    }
+
+    setModalOpen(false);
+    setConfirmDeleteJadwal(false);
+    setToastMsg('Jadwal keberangkatan berhasil dihapus.');
+    setTimeout(() => setToastMsg(null), 4000);
+    await loadData();
   };
 
   const handleSaveJadwal = async (e: React.FormEvent) => {
@@ -202,7 +232,7 @@ export default function AdminJadwalPage() {
           className="inline-flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition-colors cursor-pointer shadow-xs"
         >
           <Plus className="w-4 h-4" />
-          <span>+ Tambah Jadwal</span>
+          <span>Tambah Jadwal</span>
         </button>
       }
     >
@@ -306,7 +336,7 @@ export default function AdminJadwalPage() {
                   <th className="py-3.5 px-4 font-semibold text-center">Terisi</th>
                   <th className="py-3.5 px-4 font-semibold text-center">Sisa Kuota</th>
                   <th className="py-3.5 px-4 font-semibold text-center">Status</th>
-                  <th className="py-3.5 px-4 font-semibold text-right">Aksi</th>
+                  <th className="py-3.5 px-4 font-semibold text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -373,7 +403,7 @@ export default function AdminJadwalPage() {
                           {item.status}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 text-right">
+                      <td className="py-3.5 px-4 text-center">
                         <button
                           onClick={() => handleOpenEdit(item)}
                           className="inline-flex items-center gap-1 bg-[#0b2242] hover:bg-[#133666] text-amber-300 font-semibold px-3 py-1.5 rounded-lg text-xs transition-colors cursor-pointer"
@@ -776,68 +806,49 @@ export default function AdminJadwalPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                    Tahun Keberangkatan / Alokasi <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    min={2025}
-                    max={2040}
-                    value={form.tahun}
-                    onChange={(e) =>
-                      setForm({ ...form, tahun: Number(e.target.value) })
-                    }
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 font-mono bg-slate-50 focus:bg-white focus:outline-blue-800"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                    Bulan (1–12) {isFormUmrah ? <span className="text-rose-500">*</span> : <span className="text-slate-400">(kosong utk Haji)</span>}
-                  </label>
-                  <select
-                    required={isFormUmrah}
-                    disabled={!isFormUmrah}
-                    value={isFormUmrah ? form.bulan || '' : ''}
-                    onChange={(e) =>
-                      setForm({
-                        ...form,
-                        bulan: e.target.value ? Number(e.target.value) : null,
-                      })
-                    }
-                    className="w-full border border-slate-300 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-blue-800 disabled:bg-slate-200 disabled:text-slate-500"
-                  >
-                    <option value="">-- Kosong (Khusus Haji) --</option>
-                    {BULAN_NAMES.slice(1).map((name, idx) => (
-                      <option key={idx + 1} value={idx + 1}>
-                        {idx + 1} - {name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                    Tanggal Berangkat {isFormUmrah ? <span className="text-rose-500">*</span> : <span className="text-slate-400">(kosong utk Haji)</span>}
-                  </label>
-                  <input
-                    type="date"
-                    required={isFormUmrah}
-                    disabled={!isFormUmrah}
-                    value={isFormUmrah ? form.tgl_berangkat || '' : ''}
-                    onChange={(e) =>
-                      setForm({
-                        ...form,
-                        tgl_berangkat: e.target.value || null,
-                      })
-                    }
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 font-mono bg-slate-50 focus:bg-white focus:outline-blue-800 disabled:bg-slate-200 disabled:text-slate-500"
-                  />
-                </div>
+                {isFormUmrah ? (
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Tanggal Berangkat <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      required
+                      value={form.tgl_berangkat || ''}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        const parts = val.split('-');
+                        setForm({
+                          ...form,
+                          tgl_berangkat: val || null,
+                          tahun: parts[0] ? Number(parts[0]) : form.tahun,
+                          bulan: parts[1] ? Number(parts[1]) : form.bulan,
+                        });
+                      }}
+                      className="w-full border border-slate-300 rounded-lg px-3 py-2 font-mono bg-slate-50 focus:bg-white focus:outline-blue-800"
+                    />
+                    <span className="text-[10px] text-slate-500 mt-1 block">
+                      Tahun &amp; bulan otomatis mengikuti tanggal berangkat.
+                    </span>
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                      Tahun Alokasi Kuota Haji <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      min={2025}
+                      max={2040}
+                      value={form.tahun}
+                      onChange={(e) =>
+                        setForm({ ...form, tahun: Number(e.target.value), bulan: null, tgl_berangkat: null })
+                      }
+                      className="w-full border border-slate-300 rounded-lg px-3 py-2 font-mono bg-slate-50 focus:bg-white focus:outline-blue-800"
+                    />
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-700 mb-1">
@@ -875,21 +886,50 @@ export default function AdminJadwalPage() {
                 </select>
               </div>
 
-              <div className="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-medium cursor-pointer"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-xl text-xs transition-colors cursor-pointer"
-                >
-                  {saving ? 'Menyimpan...' : 'Simpan Jadwal'}
-                </button>
+              <div className="pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                {form.id_keberangkatan ? (
+                  <button
+                    type="button"
+                    onClick={handleDeleteJadwal}
+                    disabled={deletingJadwal}
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+                      confirmDeleteJadwal
+                        ? 'bg-rose-600 hover:bg-rose-700 text-white'
+                        : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200'
+                    }`}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>
+                      {deletingJadwal
+                        ? 'Menghapus...'
+                        : confirmDeleteJadwal
+                        ? 'Klik Lagi untuk Hapus'
+                        : 'Hapus Jadwal'}
+                    </span>
+                  </button>
+                ) : (
+                  <div />
+                )}
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setConfirmDeleteJadwal(false);
+                      setModalOpen(false);
+                    }}
+                    className="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-medium cursor-pointer"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-xl text-xs transition-colors cursor-pointer"
+                  >
+                    {saving ? 'Menyimpan...' : 'Simpan Jadwal'}
+                  </button>
+                </div>
               </div>
             </form>
           </div>

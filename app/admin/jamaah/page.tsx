@@ -172,7 +172,7 @@ export default function AdminJamaahPage() {
           className="inline-flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition-colors shadow-xs"
         >
           <Plus className="w-4 h-4" />
-          <span>+ Tambah</span>
+          <span>Tambah</span>
         </Link>
       }
     >

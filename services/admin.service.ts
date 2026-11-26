@@ -197,6 +197,105 @@ export async function loginAdmin(
   }
 }
 
+export async function getAllAdmins(): Promise<AdminUser[]> {
+  const { data } = await supabase
+    .from('admin')
+    .select('id_admin, username, nama_lengkap')
+    .order('id_admin', { ascending: true });
+  return (data as AdminUser[]) || [];
+}
+
+export async function createAdminAccount(input: {
+  username: string;
+  nama_lengkap: string;
+  password: string;
+}): Promise<{ success: boolean; data?: AdminUser; error?: string }> {
+  const username = (input.username || '').trim().toLowerCase();
+  const nama_lengkap = (input.nama_lengkap || '').trim();
+  const password = (input.password || '').trim();
+
+  if (!username || !nama_lengkap || !password) {
+    return { success: false, error: 'Username, nama lengkap, dan password wajib diisi' };
+  }
+  if (!/^[a-z0-9_.-]{3,30}$/.test(username)) {
+    return {
+      success: false,
+      error: 'Username hanya boleh huruf kecil, angka, titik, underscore (3–30 karakter)',
+    };
+  }
+  if (password.length < 6) {
+    return { success: false, error: 'Password minimal 6 karakter' };
+  }
+
+  try {
+    const { data: existing } = await supabase
+      .from('admin')
+      .select('id_admin')
+      .eq('username', username)
+      .maybeSingle();
+
+    if (existing) {
+      return { success: false, error: 'Username sudah terdaftar' };
+    }
+
+    const password_hash = await sha256Hex(password);
+    const { data, error } = await supabase
+      .from('admin')
+      .insert([{ username, nama_lengkap, password_hash }])
+      .select('id_admin, username, nama_lengkap')
+      .single();
+
+    if (error) return { success: false, error: error.message };
+
+    await recordAdminLog({
+      aksi: 'TAMBAH_ADMIN',
+      modul: 'M1.1 Akun Admin',
+      detail: `Membuat akun admin baru '@${username}' (${nama_lengkap}).`,
+    });
+
+    return { success: true, data: data as AdminUser };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Gagal membuat akun admin' };
+  }
+}
+
+export async function deleteAdminAccount(
+  id_admin: number
+): Promise<{ success: boolean; error?: string }> {
+  const current = getAdminSession();
+  if (current && current.id_admin === id_admin) {
+    return {
+      success: false,
+      error: 'Tidak dapat menghapus akun yang sedang Anda gunakan untuk login.',
+    };
+  }
+  if (id_admin === 1) {
+    return {
+      success: false,
+      error: 'Akun admin utama (default) tidak dapat dihapus.',
+    };
+  }
+
+  try {
+    const { error } = await supabase
+      .from('admin')
+      .delete()
+      .eq('id_admin', id_admin);
+
+    if (error) return { success: false, error: error.message };
+
+    await recordAdminLog({
+      aksi: 'HAPUS_ADMIN',
+      modul: 'M1.1 Akun Admin',
+      detail: `Menghapus akun admin #${id_admin}.`,
+    });
+
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Gagal menghapus akun admin' };
+  }
+}
+
 /**
  * M2.2 Kelola Data Paket (UI-07)
  */
@@ -547,18 +646,28 @@ export async function saveKeberangkatanAdmin(
 
   const isUmrah = paket?.program === 'umrah';
 
-  if (isUmrah && (!input.bulan || !input.tgl_berangkat)) {
-    return {
-      success: false,
-      error: 'Untuk program Umrah, bulan dan tanggal berangkat wajib diisi',
-    };
-  }
+  // Untuk Umrah, ekstrak tahun & bulan otomatis dari tgl_berangkat agar tidak pernah beda
+  let resolvedTahun = Number(input.tahun);
+  let resolvedBulan: number | null = input.bulan ? Number(input.bulan) : null;
 
-  if (isUmrah && (Number(input.bulan) < 1 || Number(input.bulan) > 12)) {
-    return {
-      success: false,
-      error: 'Bulan keberangkatan harus bernilai antara 1 sampai 12',
-    };
+  if (isUmrah) {
+    if (!input.tgl_berangkat) {
+      return {
+        success: false,
+        error: 'Untuk program Umrah, bulan dan tanggal berangkat wajib diisi',
+      };
+    }
+    const parts = input.tgl_berangkat.split('-');
+    if (parts.length === 3) {
+      resolvedTahun = Number(parts[0]);
+      resolvedBulan = Number(parts[1]);
+    }
+    if (!resolvedBulan || resolvedBulan < 1 || resolvedBulan > 12) {
+      return {
+        success: false,
+        error: 'Bulan keberangkatan harus bernilai antara 1 sampai 12',
+      };
+    }
   }
 
   // Jika mode ubah, cek jumlah jamaah aktif pada keberangkatan tersebut
@@ -581,8 +690,8 @@ export async function saveKeberangkatanAdmin(
   // Sesuai SD Bab 5.3: bulan & tgl_berangkat wajib untuk umrah, kosong (null) untuk haji
   const payload = {
     id_paket: Number(input.id_paket),
-    tahun: Number(input.tahun),
-    bulan: isUmrah ? Number(input.bulan) : null,
+    tahun: resolvedTahun,
+    bulan: isUmrah ? resolvedBulan : null,
     tgl_berangkat: isUmrah ? input.tgl_berangkat : null,
     kuota: Number(input.kuota),
     status: input.status,
@@ -601,12 +710,61 @@ export async function saveKeberangkatanAdmin(
         error: 'Gagal memperbarui jadwal: Izin RLS UPDATE pada tabel keberangkatan belum aktif di Supabase',
       };
     }
+    await recordAdminLog({
+      aksi: 'UBAH_JADWAL',
+      modul: 'M7.1 Jadwal',
+      detail: `Memperbarui jadwal #${input.id_keberangkatan} (${payload.tgl_berangkat || `Tahun ${payload.tahun}`}, kuota ${payload.kuota}).`,
+    });
   } else {
     const { error } = await supabase.from('keberangkatan').insert([payload]);
     if (error) return { success: false, error: error.message };
+    await recordAdminLog({
+      aksi: 'TAMBAH_JADWAL',
+      modul: 'M7.1 Jadwal',
+      detail: `Menambahkan jadwal baru untuk paket #${payload.id_paket} (${payload.tgl_berangkat || `Tahun ${payload.tahun}`}, kuota ${payload.kuota}).`,
+    });
   }
 
   return { success: true };
+}
+
+export async function deleteKeberangkatanAdmin(
+  id_keberangkatan: number
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { count: jmCount } = await supabase
+      .from('jamaah')
+      .select('id_jamaah', { count: 'exact', head: true })
+      .eq('id_keberangkatan', id_keberangkatan);
+
+    if ((jmCount || 0) > 0) {
+      return {
+        success: false,
+        error:
+          'Jadwal keberangkatan tidak dapat dihapus karena masih memiliki data jamaah terdaftar. Pindahkan jamaah terlebih dahulu atau ubah status jadwal menjadi "tutup".',
+      };
+    }
+
+    const { error } = await supabase
+      .from('keberangkatan')
+      .delete()
+      .eq('id_keberangkatan', id_keberangkatan);
+
+    if (error) return { success: false, error: error.message };
+
+    await recordAdminLog({
+      aksi: 'HAPUS_JADWAL',
+      modul: 'M7.1 Jadwal',
+      detail: `Menghapus jadwal keberangkatan #${id_keberangkatan}.`,
+    });
+
+    return { success: true };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err?.message || 'Gagal menghapus jadwal keberangkatan',
+    };
+  }
 }
 
 export async function pindahkanJamaahKeberangkatanAdmin(

@@ -179,7 +179,7 @@ export default function AdminPaketPage() {
           className="inline-flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition-colors cursor-pointer shadow-xs"
         >
           <Plus className="w-4 h-4" />
-          <span>+ Tambah Paket</span>
+          <span>Tambah Paket</span>
         </button>
       }
     >
@@ -226,7 +226,7 @@ export default function AdminPaketPage() {
                 <th className="py-3.5 px-4 font-semibold">Durasi</th>
                 <th className="py-3.5 px-4 font-semibold">Maskapai &amp; Hotel</th>
                 <th className="py-3.5 px-4 font-semibold text-center">Aktif</th>
-                <th className="py-3.5 px-4 font-semibold text-right">Aksi</th>
+                <th className="py-3.5 px-4 font-semibold text-center">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -283,29 +283,28 @@ export default function AdminPaketPage() {
                     </td>
                     <td className="py-3.5 px-4 text-center whitespace-nowrap">
                       <button
+                        type="button"
+                        role="switch"
+                        aria-checked={pkg.status_aktif}
                         onClick={() => handleToggleActive(pkg)}
-                        title="Klik untuk ubah status aktif"
-                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold cursor-pointer transition-colors ${
+                        title={
                           pkg.status_aktif
-                            ? 'bg-emerald-100 text-emerald-900 border border-emerald-300 hover:bg-emerald-200'
-                            : 'bg-slate-200 text-slate-700 border border-slate-300 hover:bg-slate-300'
+                            ? 'Aktif (klik untuk menonaktifkan)'
+                            : 'Nonaktif (klik untuk mengaktifkan)'
+                        }
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer focus:outline-none ${
+                          pkg.status_aktif ? 'bg-emerald-500' : 'bg-slate-300'
                         }`}
                       >
-                        {pkg.status_aktif ? (
-                          <>
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
-                            <span>Ya</span>
-                          </>
-                        ) : (
-                          <>
-                            <XCircle className="w-3.5 h-3.5 text-slate-500" />
-                            <span>Tidak</span>
-                          </>
-                        )}
+                        <span
+                          className={`inline-block h-4.5 w-4.5 transform rounded-full bg-white shadow-sm transition-transform ${
+                            pkg.status_aktif ? 'translate-x-5.5' : 'translate-x-1'
+                          }`}
+                        />
                       </button>
                     </td>
-                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                      <div className="inline-flex items-center gap-1.5">
+                    <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                      <div className="inline-flex items-center justify-center gap-1.5">
                         <button
                           onClick={() => handleOpenEdit(pkg)}
                           className="inline-flex items-center gap-1 bg-[#0b2242] hover:bg-[#133666] text-amber-300 font-semibold px-3 py-1.5 rounded-lg text-xs transition-colors cursor-pointer"
@@ -548,72 +547,53 @@ export default function AdminPaketPage() {
                   </div>
 
                   {form.jadwal_awal.buat_jadwal && (
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
-                      <div>
-                        <label className="block text-[10px] font-semibold text-slate-600 mb-1">
-                          Tahun *
-                        </label>
-                        <input
-                          type="number"
-                          min={2026}
-                          max={2035}
-                          value={form.jadwal_awal.tahun}
-                          onChange={(e) =>
-                            setForm({
-                              ...form,
-                              jadwal_awal: {
-                                ...form.jadwal_awal!,
-                                tahun: Number(e.target.value),
-                              },
-                            })
-                          }
-                          className="w-full border border-slate-300 rounded-lg px-2 py-1.5 font-mono text-xs bg-white"
-                        />
-                      </div>
-
-                      {form.program === 'umrah' && (
-                        <>
-                          <div>
-                            <label className="block text-[10px] font-semibold text-slate-600 mb-1">
-                              Bulan (1-12) *
-                            </label>
-                            <input
-                              type="number"
-                              min={1}
-                              max={12}
-                              value={form.jadwal_awal.bulan ?? 3}
-                              onChange={(e) =>
-                                setForm({
-                                  ...form,
-                                  jadwal_awal: {
-                                    ...form.jadwal_awal!,
-                                    bulan: Number(e.target.value),
-                                  },
-                                })
-                              }
-                              className="w-full border border-slate-300 rounded-lg px-2 py-1.5 font-mono text-xs bg-white"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-semibold text-slate-600 mb-1">
-                              Tgl Berangkat *
-                            </label>
-                            <input
-                              type="date"
-                              value={form.jadwal_awal.tgl_berangkat ?? ''}
-                              onChange={(e) =>
-                                setForm({
-                                  ...form,
-                                  jadwal_awal: {
-                                    ...form.jadwal_awal!,
-                                    tgl_berangkat: e.target.value,
-                                  },
-                                })
-                              }
-                              className="w-full border border-slate-300 rounded-lg px-2 py-1.5 font-mono text-xs bg-white"
-                            />
-                          </div>
-                        </>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                      {form.program === 'umrah' ? (
+                        <div>
+                          <label className="block text-[10px] font-semibold text-slate-600 mb-1">
+                            Tanggal Berangkat (Tahun &amp; Bulan otomatis) *
+                          </label>
+                          <input
+                            type="date"
+                            value={form.jadwal_awal.tgl_berangkat ?? ''}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              const parts = val.split('-');
+                              setForm({
+                                ...form,
+                                jadwal_awal: {
+                                  ...form.jadwal_awal!,
+                                  tgl_berangkat: val,
+                                  tahun: parts[0] ? Number(parts[0]) : form.jadwal_awal!.tahun,
+                                  bulan: parts[1] ? Number(parts[1]) : form.jadwal_awal!.bulan,
+                                },
+                              });
+                            }}
+                            className="w-full border border-slate-300 rounded-lg px-2 py-1.5 font-mono text-xs bg-white"
+                          />
+                        </div>
+                      ) : (
+                        <div>
+                          <label className="block text-[10px] font-semibold text-slate-600 mb-1">
+                            Tahun Alokasi Haji *
+                          </label>
+                          <input
+                            type="number"
+                            min={2026}
+                            max={2035}
+                            value={form.jadwal_awal.tahun}
+                            onChange={(e) =>
+                              setForm({
+                                ...form,
+                                jadwal_awal: {
+                                  ...form.jadwal_awal!,
+                                  tahun: Number(e.target.value),
+                                },
+                              })
+                            }
+                            className="w-full border border-slate-300 rounded-lg px-2 py-1.5 font-mono text-xs bg-white"
+                          />
+                        </div>
                       )}
 
                       <div>

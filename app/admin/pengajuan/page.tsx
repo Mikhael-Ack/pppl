@@ -204,7 +204,7 @@ export default function AdminPengajuanPage() {
                 <th className="py-3.5 px-4 font-semibold">Paket Diminati</th>
                 <th className="py-3.5 px-4 font-semibold">Tgl. Pengajuan</th>
                 <th className="py-3.5 px-4 font-semibold">Status</th>
-                <th className="py-3.5 px-4 font-semibold text-right">Aksi</th>
+                <th className="py-3.5 px-4 font-semibold text-center">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -288,27 +288,17 @@ export default function AdminPengajuanPage() {
                         </select>
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                      <div className="inline-flex items-center gap-1.5">
+                    <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                      <div className="inline-flex items-center justify-center gap-1.5">
                         {item.status_pengajuan === 'baru' ||
                         item.status_pengajuan === 'dihubungi' ? (
-                          <>
-                            <Link
-                              href={`/admin/jamaah/form?pengajuan_id=${item.id_pengajuan}`}
-                              className="inline-flex items-center gap-1 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-2.5 py-1.5 rounded-lg text-xs transition-colors shadow-2xs"
-                            >
-                              <UserPlus className="w-3.5 h-3.5" />
-                              <span>Daftarkan</span>
-                            </Link>
-                            <button
-                              onClick={() => handleDropdownStatusChange(item, 'ditolak')}
-                              className="inline-flex items-center gap-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-semibold px-2.5 py-1.5 rounded-lg text-xs transition-colors cursor-pointer"
-                              title="Tolak Pengajuan"
-                            >
-                              <XCircle className="w-3.5 h-3.5" />
-                              <span>Tolak</span>
-                            </button>
-                          </>
+                          <Link
+                            href={`/admin/jamaah/form?pengajuan_id=${item.id_pengajuan}`}
+                            className="inline-flex items-center gap-1 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-2.5 py-1.5 rounded-lg text-xs transition-colors shadow-2xs"
+                          >
+                            <UserPlus className="w-3.5 h-3.5" />
+                            <span>Daftarkan</span>
+                          </Link>
                         ) : item.status_pengajuan === 'ditolak' ? (
                           <button
                             onClick={() =>
